@@ -12,19 +12,6 @@ import Card from './components/Card.vue'
 
 <template>
   <div id="app">
-    <Button title="Выбрать товар" kind="primary"/>
-    <Button title="" kind="basket-adding" />
-    <Button kind="buying">hnbgfd</Button>
-    <ImageCard src="/src/assets/image/royalcaninKorm.png" />
-    <Text title="Консервы ROYAL CANIN STERILISED для взрослых кастрированных котов.." />
     <Card />
-    
-
-
-
-    
-      
-    
-    
   </div>
 </template>
