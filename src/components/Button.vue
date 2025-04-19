@@ -56,6 +56,7 @@ console.log(props)
     border: none;
     border-radius: 2px;
     padding: 2px 8px;
+    width: 48px;
     &:hover {
       background: var(--highlight-active);
       color: var(--white);
