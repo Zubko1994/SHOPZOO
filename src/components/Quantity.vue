@@ -17,12 +17,9 @@ const props = defineProps<{
 </template>
 
 <style lang="scss" scoped>
-
 .wrapper-quantity {
   display: flex;
   flex-direction: row;
   gap: 4px;
 }
-
-
 </style>
