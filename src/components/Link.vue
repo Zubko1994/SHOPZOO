@@ -4,7 +4,6 @@ import { RouterLink } from 'vue-router'
 
 
 const props = withDefaults(defineProps<{
-  title?: string,
   kind?: string,
   link: string,
   isLink?: boolean,
@@ -20,7 +19,7 @@ const computedtag = computed(() => props.isLink ? RouterLink: 'a')
 </script>
 
 <template>
-  <component :is="computedtag" :to="link" :class="['link', `link_${kind}`]"><slot /></component>
+  <component :is="computedtag" :href="link" :to="link" :class="['link', `link_${kind}`]"><slot /></component>
 </template>
 
 <style lang="scss" scoped>

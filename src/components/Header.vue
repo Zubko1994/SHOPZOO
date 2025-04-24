@@ -33,7 +33,9 @@ import Button from './Button.vue';
         <div class="contacts">
           <div class="contacts__phone">
             <img src="../assets/image/mobile_major.svg" alt="" />
-            <Link class="link" link="#" title="+ 375 (44) 501 03 55" />
+            <Link :is-link="false" class="link" link="tel:+375445010355">
+              + 375 (44) 501 03 55
+            </Link>
           </div>
           <Link kind="instagram">
             <img class="instagram_image" src="../assets/image/instagram-2-1 1.svg" alt="">

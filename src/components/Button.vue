@@ -16,8 +16,6 @@ const emit = defineEmits(['customClick'])
 function btnHandler(e: Event) {
   emit('customClick', e)
 }
-
-console.log(props)
 </script>
 
 <template>

@@ -6,14 +6,11 @@ import Footer from '../components/Footer.vue'
 </script>
 
 <template>
-
-<Header>
-
-</Header>
-<Footer>
-  
-</Footer>
-
+<Header />
+<main>
+  <slot />
+</main>
+<Footer />
 </template>
 
 <style lang="scss" scoped>
