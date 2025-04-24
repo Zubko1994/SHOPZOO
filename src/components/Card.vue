@@ -6,26 +6,36 @@ import ImageCard from './ImageCard.vue'
 import Text from './Text.vue'
 import Button from './Button.vue'
 
-const array = ['85 г.']
+const props = defineProps<{
+img: string
+title: string
+quantity: string[]
+price: number
+}>()
+
+
+
+// const array = ['85 г.']
+
 </script>
 
 <template>
   <div :class="'card'">
-    <div class="wrapper-image">
-      <ImageCard src="/src/assets/image/royalCaninkonserv .png" />
-    </div>
-    <div class="wrapper-title">
-      <Text
-        title="Консервы ROYAL CANIN STERILISED для взрослых кастрированных котов.."
-      />
+    <div class="wrapper-ceil">
+      <ImageCard :src="props.img" />
+      <div class="wrapper-title">
+        <Text class="title_card" :title="props.title"/>
+      </div>
     </div>
     <div class="wrapper-quantity">
-      <Quantity :list="array" />
+      <Quantity :list="props.quantity || []" />
     </div>
+    <div class="wrapper-basket">
     <div class="cost-info">
-      <span class="cost">12 BYN</span> <Button title="" kind="basket-adding" />
+      <span class="cost">{{price}} BYN</span> <Button title="" kind="basket-adding" />
     </div>
-    <Button kind="buying">Купить в 1 клик</Button>
+      <Button kind="buying">Купить в 1 клик</Button>
+    </div>
   </div>
 </template>
 
@@ -33,21 +43,22 @@ const array = ['85 г.']
 .card {
   display: flex;
   flex-direction: column;
-  gap: 11px;
+  justify-content: space-between;
+  gap: 16px;
   max-width: 270px;
   padding: 8px;
 }
 
-.wrapper-image {
-  margin-bottom: 5px;
-}
+// .wrapper-image {
+//   margin-bottom: 5px;
+// }
 
-.wrapper-title {
-  margin-bottom: 10px;
-}
+// .wrapper-title {
+//   margin-bottom: 10px;
+// }
 
 .wrapper-quantity {
-  margin-bottom: 10px;
+  // margin-bottom: 10px;
   align-items: center;
 }
 
@@ -66,5 +77,17 @@ const array = ['85 г.']
   line-height: 130%;
   letter-spacing: 0px;
   color: var(--text-default);
+}
+
+.wrapper-basket {
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+}
+
+.wrapper-ceil {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 </style>

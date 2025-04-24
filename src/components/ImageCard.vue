@@ -1,13 +1,5 @@
 <script setup lang="ts">
 
-// import royalCaninKonserve from '../assets/image/royalCaninkonserv .png',
-// import royalCaninKorm from '../assets/image/royalcaninKorm.png',
-// import freshStep from '../assets/image/freshStep.png',
-// import furminator from '../assets/image/furminatorHair.png',
-
-
-
-
   const props = defineProps({
   src: {
     type: String,

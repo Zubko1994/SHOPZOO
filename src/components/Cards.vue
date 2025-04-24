@@ -2,75 +2,129 @@
 
 <script setup lang="ts">
 
+import Card from "./Card.vue"
+import Header from "./header.vue"
+import Footer from "./Footer.vue"
+
+
 const dataCard = [
-            {
-                img: "/src/assets/image/royalCaninkonserv .png",
-                title: "Консервы ROYAL CANIN STERILISED для взрослых кастрированных котов..FRESH STEP CAT LITTER CLAY EXTREME – Фреш Степ наполнитель..",
-                quantity: ['85 г.'],
-                price: '12 BYN',
-            },
+    {
+        id: 1,
+        img: "/src/assets/image/royalCaninkonserv .png",
+        title: "Консервы ROYAL CANIN STERILISED для взрослых кастрированных котов..",
+        quantity: ['85 г.'],
+        price: 12,
+    },
 
-            {
-                img: "/src/assets/image/freshStepCat.png",
-                title: "FRESH STEP CAT LITTER CLAY EXTREME – Фреш Степ наполнитель..",
-                quantity: ['6 л.', '12 л.', '18 л.', '30 л.'],
-                price: '95 BYN',
-            },
+    {
+        id: 2,
+        img: "/src/assets/image/freshStepCat.png",
+        title: "FRESH STEP CAT LITTER CLAY EXTREME – Фреш Степ наполнитель..",
+        quantity: ['6 л.', '12 л.', '18 л.', '30 л.'],
+        price: 95,
+    },
 
-            {
-                img: "/src/assets/image/furminatorHair.png",
-                title: "FURMINATOR SHORT HAIR LARGE CAT M/L Фурминатор для короткошерстных кошек..",
-                quantity: ['1 шт.'],
-                price: '95 BYN',
-            },
+    {
+        id: 3,
+        img: "/src/assets/image/furminatorHair.png",
+        title: "FURMINATOR SHORT HAIR LARGE CAT M/L Фурминатор для короткошерстных кошек..",
+        quantity: ['1 шт.'],
+        price: 95,
+    },
 
-            {
-                img: "/src/assets/image/royalcaninKorm.png",
-                title: "Сухой корм ROYAL CANIN STERILISED 37 для взрослых кастрированных котов и..",
-                quantity: ['0,2 кг.', '0,4 кг.', '1,2 кг.', '2 кг.', '4 кг.', '10 кг.', 'Задать вес'],
-                price: '5 BYN',
-            },
+    {
+        id: 4,
+        img: "/src/assets/image/royalcaninKorm.png",
+        title: "Сухой корм ROYAL CANIN STERILISED 37 для взрослых кастрированных котов и..",
+        quantity: ['0,2 кг.', '0,4 кг.', '1,2 кг.', '2 кг.', '4 кг.', '10 кг.', 'Задать вес'],
+        price: 5,
+    },
 
-          ]
+]
 
 console.log(dataCard)
 
-const elem = document.createElement("div");
-elem.classList.add('wrapper-cards')
-document.body.append(elem)
-console.log(elem)
+// const wrap = document.createElement("div");
+// wrap.classList.add('wrapper-cards')
+// document.body.append(wrap)
+// console.log(wrap)
 
-function showGoods(dataCard:any) {
-        dataCard.forEach((elem:any) => {
-                let item = document.createElement('div');
-                item.classList.add('card')
+// function showGoods(dataCard: any) {
+//     dataCard.forEach((elems: any) => {
+//         let item = document.createElement('div');
+//         item.classList.add('card')
+//         console.log(elems.title)
 
-                item.innerHTML = `<div class="wrapp-delete">
-                <div class="delete">&#215;</div>
-                </div>
-                <img class="foto-goods" src="${elem.img}">
-                <p class="title">${elem.title}</p>
-                <div class="wrapper-count">
-                <div class="ves-active">${elem.quantity}</div>
-                </div>
-                <div class="price">
-                <span>${elem.price} BYN</span>
-                <img class="bask" src="./images/Auto layout button.png" alt="">
-                </div>
-                <button>Купить в 1 клик</button>`;
 
-                elem.append(item)
-        });
-        return elem;
-}
 
-let goodsBasket = showGoods(savedCards);
+//         item.innerHTML = `
+//     <div class="wrapper-image">
+//       <ImageCard src="${elems.img}" />
+//     </div>
+//     <div class="wrapper-title">
+//       <Text
+//         title="${elems.title}"
+//       />
+//     </div>
+//     <div class="wrapper-quantity">
+//       <Quantity :list="${elems.quantity}" />
+//     </div>
+//     <div class="cost-info">
+//       <span class="cost">${elems.price} BYN</span> <Button title="" kind="basket-adding" />
+//     </div>
+//     <Button kind="buying">Купить в 1 клик</Button>
+//   </div>`;
+
+
+
+//         wrap.append(item)
+//     });
+//     return wrap;
+// }
+
+// let goodsZOO = showGoods(dataCard);
+// console.log(goodsZOO)
+// let nextCardId = 4
+
+// function addNewCard() {
+//     card.value.push({
+//         id: nextCardId++,
+//         img: card.img,
+//         title: title.value,
+//         quantity: ['0,2 кг.', '0,4 кг.', '1,2 кг.', '2 кг.', '4 кг.', '10 кг.', 'Задать вес'],
+//         price: '5',
+//     })
+//     console.log(img.value)
+//     title.value = ''
+// }
 
 
 </script>
 
 <template>
-  
+    <div class="wrapper-cards">
+        <!-- <Card v-for="card in dataCard" :key="card.id" :quantity="card.quantity" :img="card.img" :title="card.title" :price="card.price">
+
+        </Card> -->
+
+        <Header>
+ 
+        </Header>
+
+        <Footer>
+            
+        </Footer>
+
+        
+
+    </div>
 </template>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+// .wrapper-cards {
+//     display: flex;
+//     flex-direction: row;
+//     gap: 30px;
+//     flex-wrap: wrap;
+// }
+</style>

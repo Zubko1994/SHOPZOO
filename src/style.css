@@ -159,5 +159,11 @@ h6 {
           #babfc3 86.46%,
           #bbbfc3 100%);
   --bg-button: #F6F6F7;
+  --blue-text: rgb(44, 110, 203);
+  --bg-default: rgb(246, 246, 247);
+}
 
+.container {
+  max-width: 1440px;
+  margin: 0 auto;
 }

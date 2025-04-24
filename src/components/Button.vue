@@ -1,21 +1,30 @@
 <!-- @format -->
 
 <script setup lang="ts">
-
-
 const props = defineProps({
-
   kind: {
     type: String,
-    // default: '',
+  },
+
+  isActive: {
+    type: Boolean,
   },
 })
+
+const emit = defineEmits(['customClick'])
+
+function btnHandler(e: Event) {
+  emit('customClick', e)
+}
 
 console.log(props)
 </script>
 
 <template>
-  <button :class="['btn', `btn_${kind}`]">
+  <button
+    @click="emit('customClick')"
+    :class="['btn', `btn_${kind}`, { 'btn_quantity-active': isActive }]"
+  >
     <slot />
   </button>
 </template>
@@ -33,6 +42,8 @@ console.log(props)
   background: var(--white);
   display: inline-block;
   transition: all 0.1s ease;
+  white-space: nowrap;
+
   &:hover {
     background-color: var(--default-hover);
   }
@@ -56,7 +67,6 @@ console.log(props)
     border: none;
     border-radius: 2px;
     padding: 2px 8px;
-    width: 48px;
     &:hover {
       background: var(--highlight-active);
       color: var(--white);
@@ -65,7 +75,6 @@ console.log(props)
   &_quantity-active {
     background: var(--highlight-active);
     color: var(--white);
-
   }
   &_basket {
     border: 1px solid;
@@ -116,6 +125,16 @@ console.log(props)
     background-position: center;
     margin-right: 10px;
     background-color: var(--bg-button);
+  }
+  &_backcall {
+    color: var(--blue-text);
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 20px;
+    padding: 0px;
+    border: none;
+    background-color: var(--bg-default);
+    
   }
 }
 </style>
