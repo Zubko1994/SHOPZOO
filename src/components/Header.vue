@@ -27,7 +27,7 @@ import Button from './Button.vue';
           </div>
           <div class="line"></div>
           <div class="timetable">
-            <Text tag="p" class="title_time" title="Суб.-Вос. 10:00-20:00" />
+            <Text tag="p" print="title_time" title="Суб.-Вос. 10:00-20:00" />
           </div>
         </div>
         <div class="contacts">
@@ -37,7 +37,7 @@ import Button from './Button.vue';
               + 375 (44) 501 03 55
             </Link>
           </div>
-          <Link kind="instagram">
+          <Link :is-link="false" link="https://yandex.by/search" kind="instagram">
             <img class="instagram_image" src="../assets/image/instagram-2-1 1.svg" alt="">
           </Link>
         </div>

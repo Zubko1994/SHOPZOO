@@ -1,15 +1,10 @@
 <!-- @format -->
 
 <script setup lang="ts">
-const props = defineProps({
-  kind: {
-    type: String,
-  },
-
-  isActive: {
-    type: Boolean,
-  },
-})
+const props = defineProps<{
+  kind: string,
+  isActive?: boolean,
+}>()
 
 const emit = defineEmits(['customClick'])
 
