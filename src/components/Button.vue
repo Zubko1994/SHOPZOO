@@ -33,7 +33,7 @@ function btnHandler(e: Event) {
   padding: 8px 16px;
   border: var(--border-default);
   background: var(--white);
-  display: inline-block;
+  // display: inline-block;
   transition: all 0.1s ease;
   white-space: nowrap;
 
@@ -47,6 +47,7 @@ function btnHandler(e: Event) {
     color: var(--white);
     padding: 12px 24px;
     border: none;
+    display: inline;
     &:hover {
       background-color: var(--highlight-hover);
     }
@@ -73,7 +74,7 @@ function btnHandler(e: Event) {
     border: 1px solid;
     border-image-source: var(--gradient-button);
     padding: 8px 14px;
-    background-image: url('./src/assets/image/basket.png');
+    // background-image: url('./src/assets/image/basket.png');
     width: 60px;
     height: 36px;
     background-repeat: no-repeat;

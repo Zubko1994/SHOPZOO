@@ -24,7 +24,7 @@ price: number
     <div class="wrapper-ceil">
       <ImageCard :src="props.img" />
       <div class="wrapper-title">
-        <Text class="title_card" :title="props.title"/>
+        <Text tag="h3" print="title" :title="props.title"/>
       </div>
     </div>
     <div class="wrapper-quantity">

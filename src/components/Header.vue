@@ -3,7 +3,10 @@
 <script setup lang="ts">
 import Text from './Text.vue'
 import Link from './Link.vue'
-import Button from './Button.vue';
+import Button from './Button.vue'
+import LogoHeader from './LogoHeader.vue'
+import Navigation from './Navigation.vue'
+import Input from './Input.vue'
 </script>
 
 <template>
@@ -13,21 +16,21 @@ import Button from './Button.vue';
         <div class="header__info">
         <div class="header__adress">
           <img src="../assets/image/Primary.svg" alt="" />
-          <Text tag="p" print="title_adress" title="Минск, ул. Чюрлёниса, 6." />
+          <Text tag="p" print="adress" title="Минск, ул. Чюрлёниса, 6." />
         </div>
         <div class="header__metro">
           <img src="../assets/image/metro.svg" alt="" />
-          <Text tag="p" print="title_adress" title="Малиновка" />
+          <Text tag="p" print="adress" title="Малиновка" />
         </div>
       </div>
         <div class="header__time">
           <div class="timetable">
             <img src="../assets/image/clock.svg" alt="" />
-            <Text tag="p" print="title_time" title="Пон.-Пят. 10:00-21:00" />
+            <Text tag="p" print="time" title="Пон.-Пят. 10:00-21:00" />
           </div>
           <div class="line"></div>
           <div class="timetable">
-            <Text tag="p" print="title_time" title="Суб.-Вос. 10:00-20:00" />
+            <Text tag="p" print="time" title="Суб.-Вос. 10:00-20:00" />
           </div>
         </div>
         <div class="contacts">
@@ -44,13 +47,28 @@ import Button from './Button.vue';
         <Button kind="backcall">Обратный звонок</Button>
       </div>
     </div>
+    <div class="wrapper-navigation">
+      <div class="container">
+        <div class="wrapper">
+        <LogoHeader />
+        <Input />
+        <Navigation color="white" />
+        <Button kind="basket">
+          <div class="wrapper-basket">
+          <img src="../assets/svg/basket.svg" alt="иконка корзины">
+          <span>0</span>
+        </div>
+        </Button>
+      </div>
+      </div>
+    </div>
   </header>
 </template>
 
 <style lang="scss" scoped>
 
 .container {
-  max-width: 1440px;
+  max-width: 1170px;
   margin: 0 auto;
 }
 
@@ -85,6 +103,7 @@ import Button from './Button.vue';
 .header__metro {
   display: flex;
   gap: 6px;
+  align-items: center;
 }
 
 .header__time {
@@ -106,14 +125,41 @@ import Button from './Button.vue';
 .contacts {
   display: flex;
   gap: 30px;
+  align-items: center;
 }
 
 .contacts__phone {
   display: flex;
   gap: 10px;
+  align-items: center;
 }
 
+.wrapper-navigation {
+  background: var(--highlight);
+  padding: 8px 5px 8px 5px;
+}
 
+.wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+span {
+  /* Mobile/Button */
+color: var(--text-default);
+font-family: "SFProText";
+font-size: 15px;
+font-weight: 500;
+line-height: 20px;
+letter-spacing: 0px;
+text-align: left;
+}
+
+.wrapper-basket {
+  display: flex;
+  gap: 5px;
+}
 
 
 
