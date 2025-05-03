@@ -2,8 +2,8 @@
 
 <script setup lang="ts">
 const props = defineProps<{
-  kind: string,
-  isActive?: boolean,
+  kind: string
+  isActive?: boolean
 }>()
 
 const emit = defineEmits(['customClick'])
@@ -32,6 +32,7 @@ function btnHandler(e: Event) {
   text-align: center;
   padding: 8px 16px;
   border: var(--border-default);
+  border-radius: 4px;
   background: var(--white);
   // display: inline-block;
   transition: all 0.1s ease;
@@ -47,6 +48,7 @@ function btnHandler(e: Event) {
     color: var(--white);
     padding: 12px 24px;
     border: none;
+    border-radius: 4px;
     display: inline;
     &:hover {
       background-color: var(--highlight-hover);
@@ -103,22 +105,29 @@ function btnHandler(e: Event) {
     height: 40px;
     border-radius: 40px;
     padding: 10px;
-    background-image: url('/src/assets/image/Primaryfillleft.svg');
+    // background-image: url('/src/assets/image/Primaryfillleft.svg');
     background-repeat: no-repeat;
     background-position: center;
-    margin-right: 10px;
-    background-color: var(--bg-button);
+    border: none;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    top: 5px;
   }
   &_indicator-right {
     width: 40px;
     height: 40px;
     border-radius: 40px;
     padding: 10px;
-    background-image: url('/src/assets/image/Primaryfill.svg');
+    // background-image: url('/src/assets/image/Primaryfill.svg');
     background-repeat: no-repeat;
     background-position: center;
-    margin-right: 10px;
-    background-color: var(--bg-button);
+    border: none;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
   &_backcall {
     color: var(--blue-text);
@@ -128,7 +137,6 @@ function btnHandler(e: Event) {
     padding: 0px;
     border: none;
     background-color: var(--bg-default);
-    
   }
 }
 </style>

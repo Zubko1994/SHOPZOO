@@ -28,6 +28,7 @@ const props = defineProps<{
   align-items: center;
   gap: 16px;
   background-color: var(--white);
+  cursor: pointer;
 }
 
 

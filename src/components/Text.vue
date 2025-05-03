@@ -32,7 +32,9 @@ const computedClass = computed(() => {
 </script>
 
 <template>
-  <component :is="tag" :class="computedClass">{{ title }}<slot></slot></component>
+  <component :is="tag" :class="computedClass"
+    >{{ title }}<slot></slot
+  ></component>
 </template>
 
 <style lang="scss" scoped>
@@ -82,7 +84,6 @@ const computedClass = computed(() => {
       font-weight: 700;
     }
   }
-
 }
 
 h1 {
@@ -100,10 +101,11 @@ h2 {
   font-family: 'SFProDisplay';
   letter-spacing: 0px;
   text-align: left;
+  font-weight: 600;
+  line-height: 32px;
+  font-size: 28px;
   &-title {
     font-size: 28px;
-    font-weight: 600;
-    line-height: 32px;
   }
 }
 
@@ -113,9 +115,23 @@ h3 {
   letter-spacing: 0px;
   text-align: left;
   font-weight: 600;
-  line-height: 24px;
+  line-height: 130%;
+  font-size: 16px;
   &-title {
     font-size: 16px;
+  }
+}
+
+h4 {
+  color: var(--text-default);
+  font-family: 'SFProDisplay';
+  font-weight: 700;
+  line-height: 130%;
+  letter-spacing: 0px;
+  text-align: left;
+  font-size: 20px; 
+  &-title {
+    font-size: 20px; 
   }
 }
 </style>

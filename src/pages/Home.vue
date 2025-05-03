@@ -2,6 +2,8 @@
 import Layout from '../layout/Layout.vue'
 import CardsAnimal from '../components/CardsAnimal.vue'
 import Presentation from '../components/Presentation.vue'
+import PromotionAll from '../components/PromotionAll.vue'
+import PopularGoods from '../components/PopularGoods.vue'
 
 
 </script>
@@ -10,6 +12,8 @@ import Presentation from '../components/Presentation.vue'
   <Layout>
   <CardsAnimal />
   <Presentation />
+  <PromotionAll />
+  <PopularGoods />
   </Layout>
 </template>
 

@@ -162,6 +162,8 @@ h6 {
           #bbbfc3 100%);
   --blue-text: rgb(44, 110, 203);
   --bg-default: rgb(246, 246, 247);
+  --bg-surface-warning: #FFD79D;
+  --bg-surface-success: #AEE9D1;
   --text-gray: rgb(109, 113, 117);
   --magnifier: rgb(92, 95, 98);
 }

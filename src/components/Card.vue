@@ -7,28 +7,24 @@ import Text from './Text.vue'
 import Button from './Button.vue'
 
 const props = defineProps<{
-img: string
+image_prev: string
 title: string
-quantity: string[]
+countitemproduct_set: string[]
 price: number
 }>()
-
-
-
-// const array = ['85 г.']
 
 </script>
 
 <template>
   <div :class="'card'">
     <div class="wrapper-ceil">
-      <ImageCard :src="props.img" />
+      <ImageCard class="image-good" :src="props.image_prev" />
       <div class="wrapper-title">
         <Text tag="h3" print="title" :title="props.title"/>
       </div>
     </div>
     <div class="wrapper-quantity">
-      <Quantity :list="props.quantity || []" />
+      <Quantity :list="props.countitemproduct_set || []" />
     </div>
     <div class="wrapper-basket">
     <div class="cost-info">
@@ -47,6 +43,11 @@ price: number
   gap: 16px;
   max-width: 270px;
   padding: 8px;
+  background-color: var(--white);
+}
+
+.image-good {
+  text-align: center;
 }
 
 // .wrapper-image {

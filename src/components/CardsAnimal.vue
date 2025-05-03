@@ -7,6 +7,7 @@ interface Animal  {
   type: string
   image: string
 }
+
 interface AnimalObj {
   count: number
   next: string | null
