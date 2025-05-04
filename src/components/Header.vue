@@ -14,15 +14,15 @@ import Input from './Input.vue'
     <div class="container">
       <div class="header__wrapper">
         <div class="header__info">
-        <div class="header__adress">
-          <img src="../assets/image/Primary.svg" alt="" />
-          <Text tag="p" print="adress" title="Минск, ул. Чюрлёниса, 6." />
+          <div class="header__adress">
+            <img src="../assets/image/Primary.svg" alt="" />
+            <Text tag="p" print="adress" title="Минск, ул. Чюрлёниса, 6." />
+          </div>
+          <div class="header__metro">
+            <img src="../assets/image/metro.svg" alt="" />
+            <Text tag="p" print="adress" title="Малиновка" />
+          </div>
         </div>
-        <div class="header__metro">
-          <img src="../assets/image/metro.svg" alt="" />
-          <Text tag="p" print="adress" title="Малиновка" />
-        </div>
-      </div>
         <div class="header__time">
           <div class="timetable">
             <img src="../assets/image/clock.svg" alt="" />
@@ -40,8 +40,16 @@ import Input from './Input.vue'
               + 375 (44) 501 03 55
             </Link>
           </div>
-          <Link :is-link="false" link="https://yandex.by/search" kind="instagram">
-            <img class="instagram_image" src="../assets/image/instagram-2-1 1.svg" alt="">
+          <Link
+            :is-link="false"
+            link="https://yandex.by/search"
+            kind="instagram"
+          >
+            <img
+              class="instagram_image"
+              src="../assets/image/instagram-2-1 1.svg"
+              alt=""
+            />
           </Link>
         </div>
         <Button kind="backcall">Обратный звонок</Button>
@@ -50,23 +58,22 @@ import Input from './Input.vue'
     <div class="wrapper-navigation">
       <div class="container">
         <div class="wrapper">
-        <LogoHeader />
-        <Input />
-        <Navigation color="white" />
-        <Button kind="basket">
-          <div class="wrapper-basket">
-          <img src="../assets/svg/basket.svg" alt="иконка корзины">
-          <span>0</span>
+          <LogoHeader />
+          <Input />
+          <Navigation color="white" />
+          <Button kind="basket">
+            <div class="wrapper-basket">
+              <img src="../assets/svg/basket.svg" alt="иконка корзины" />
+              <span>0</span>
+            </div>
+          </Button>
         </div>
-        </Button>
-      </div>
       </div>
     </div>
   </header>
 </template>
 
 <style lang="scss" scoped>
-
 .container {
   max-width: 1170px;
   margin: 0 auto;
@@ -80,6 +87,10 @@ import Input from './Input.vue'
 
 .header {
   background-color: var(--bg-default);
+  position: sticky;
+  top: 0;
+
+  z-index: 10;
 }
 
 .header__wrapper {
@@ -147,21 +158,17 @@ import Input from './Input.vue'
 
 span {
   /* Mobile/Button */
-color: var(--text-default);
-font-family: "SFProText";
-font-size: 15px;
-font-weight: 500;
-line-height: 20px;
-letter-spacing: 0px;
-text-align: left;
+  color: var(--text-default);
+  font-family: 'SFProText';
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 20px;
+  letter-spacing: 0px;
+  text-align: left;
 }
 
 .wrapper-basket {
   display: flex;
   gap: 5px;
 }
-
-
-
-
 </style>

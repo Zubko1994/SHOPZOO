@@ -165,6 +165,7 @@ h6 {
   --bg-surface-warning: #FFD79D;
   --bg-surface-success: #AEE9D1;
   --text-gray: rgb(109, 113, 117);
+  --text-warning: rgb(145, 106, 0);
   --magnifier: rgb(92, 95, 98);
 }
 

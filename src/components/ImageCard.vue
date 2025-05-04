@@ -10,7 +10,7 @@
 
 <template>
   <div :class="'wrapper-image'">
-    <img :class="'imageCard'" :src="props.src" alt="">
+    <img :class="'imageCard'" :src="props.src" alt="изображение товара">
   </div>
 </template>
 
@@ -23,6 +23,8 @@
 .imageCard {
   max-height: 100%;
   max-width: 100%;
+  mix-blend-mode: multiply;
+  // background-color: var(--bg-default);
 }
 
 </style>

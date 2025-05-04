@@ -12,6 +12,9 @@ type Kind =
   | 'time'
   | 'phone'
   | 'title'
+  | 'contacts_medium'
+  | 'author'
+  | 'feedback'
 
 const props = defineProps<{
   title?: string
@@ -72,6 +75,16 @@ const computedClass = computed(() => {
     letter-spacing: 0px;
     text-align: left;
   }
+
+  &-contacts_medium {
+    color: rgb(109, 113, 117);
+    font-family: 'SFProText';
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 24px;
+    letter-spacing: 0px;
+    text-align: center;
+  }
   &-subtitle {
     color: var(--text-default);
     font-family: 'SFProText';
@@ -83,6 +96,24 @@ const computedClass = computed(() => {
     &-bold {
       font-weight: 700;
     }
+  }
+  &-author {
+    color: var(--text-default);
+    font-family: 'SFProText';
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 24px;
+    letter-spacing: 0px;
+    text-align: left;
+  }
+  &-feedback {
+    color: var(--text-default);
+    font-family: 'SFProText';
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 140%;
+    letter-spacing: 0px;
+    text-align: center;
   }
 }
 
@@ -129,9 +160,9 @@ h4 {
   line-height: 130%;
   letter-spacing: 0px;
   text-align: left;
-  font-size: 20px; 
+  font-size: 20px;
   &-title {
-    font-size: 20px; 
+    font-size: 20px;
   }
 }
 </style>

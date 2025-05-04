@@ -44,6 +44,7 @@ price: number
   max-width: 270px;
   padding: 8px;
   background-color: var(--white);
+  border-radius: 5px;
 }
 
 .image-good {
