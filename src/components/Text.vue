@@ -15,6 +15,7 @@ type Kind =
   | 'contacts_medium'
   | 'author'
   | 'feedback'
+  | 'indicator'
 
 const props = defineProps<{
   title?: string
@@ -114,6 +115,15 @@ const computedClass = computed(() => {
     line-height: 140%;
     letter-spacing: 0px;
     text-align: center;
+  }
+  &-indicator {
+    color: var(--text-warning);
+font-family: "SFProText";
+font-size: 16px;
+font-weight: 400;
+line-height: 24px;
+letter-spacing: 0px;
+text-align: center;
   }
 }
 

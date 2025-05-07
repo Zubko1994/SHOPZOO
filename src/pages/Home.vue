@@ -8,6 +8,7 @@ import PromotionAll from '../components/PromotionAll.vue'
 import PopularGoods from '../components/PopularGoods.vue'
 import NewGoods from '../components/NewGoods.vue'
 import BrendAll from '../components/BrendAll.vue'
+import FeedbackAll from '../components/FeedbackAll.vue'
 </script>
 
 <template>
@@ -18,6 +19,7 @@ import BrendAll from '../components/BrendAll.vue'
     <PopularGoods />
     <NewGoods />
     <BrendAll />
+    <FeedbackAll />
   </Layout>
 </template>
 
