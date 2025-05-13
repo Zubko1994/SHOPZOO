@@ -9,6 +9,9 @@ import PopularGoods from '../components/PopularGoods.vue'
 import NewGoods from '../components/NewGoods.vue'
 import BrendAll from '../components/BrendAll.vue'
 import FeedbackAll from '../components/FeedbackAll.vue'
+import ArticleAll from '../components/ArticleAll.vue'
+import AboutZoo from '../components/AboutZoo.vue'
+import Contacts from '../components/Contacts.vue'
 </script>
 
 <template>
@@ -20,6 +23,10 @@ import FeedbackAll from '../components/FeedbackAll.vue'
     <NewGoods />
     <BrendAll />
     <FeedbackAll />
+    <ArticleAll />
+    <AboutZoo />
+    <Contacts />
+
   </Layout>
 </template>
 

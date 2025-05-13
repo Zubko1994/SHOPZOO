@@ -16,6 +16,13 @@ type Kind =
   | 'author'
   | 'feedback'
   | 'indicator'
+  | 'article_title'
+  | 'article_indicator'
+  | 'article'
+  | 'advanteges-title'
+  | 'advanteges-description'
+  | 'title_contacts'
+  | 'title_time'
 
 const props = defineProps<{
   title?: string
@@ -37,8 +44,8 @@ const computedClass = computed(() => {
 
 <template>
   <component :is="tag" :class="computedClass"
-    >{{ title }}<slot></slot
-  ></component>
+    >{{ title }}<slot></slot>
+  </component>
 </template>
 
 <style lang="scss" scoped>
@@ -48,6 +55,7 @@ const computedClass = computed(() => {
   font-size: 16px;
   line-height: 130%;
   color: var(--text-default);
+
   &-card {
     -webkit-line-clamp: 3;
     position: relative;
@@ -55,6 +63,7 @@ const computedClass = computed(() => {
     display: -webkit-box;
     -webkit-box-orient: vertical;
   }
+
   &-adress {
     font-size: 14px;
     font-weight: 400;
@@ -68,6 +77,7 @@ const computedClass = computed(() => {
     line-height: 20px;
     color: var(--text-default);
   }
+
   &-phone {
     color: var(--text-default);
     font-size: 14px;
@@ -86,6 +96,7 @@ const computedClass = computed(() => {
     letter-spacing: 0px;
     text-align: center;
   }
+
   &-subtitle {
     color: var(--text-default);
     font-family: 'SFProText';
@@ -94,10 +105,12 @@ const computedClass = computed(() => {
     line-height: 130%;
     letter-spacing: 0px;
     text-align: left;
+
     &-bold {
       font-weight: 700;
     }
   }
+
   &-author {
     color: var(--text-default);
     font-family: 'SFProText';
@@ -107,6 +120,7 @@ const computedClass = computed(() => {
     letter-spacing: 0px;
     text-align: left;
   }
+
   &-feedback {
     color: var(--text-default);
     font-family: 'SFProText';
@@ -116,14 +130,58 @@ const computedClass = computed(() => {
     letter-spacing: 0px;
     text-align: center;
   }
+
   &-indicator {
     color: var(--text-warning);
-font-family: "SFProText";
-font-size: 16px;
-font-weight: 400;
-line-height: 24px;
-letter-spacing: 0px;
-text-align: center;
+    font-family: "SFProText";
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 24px;
+    letter-spacing: 0px;
+    text-align: center;
+  }
+
+  &-article_title {
+    font-family: "SFProText";
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 24px;
+    letter-spacing: 0px;
+    color: var(--text-default);
+  }
+
+  &-article {
+    font-family: "SFProText";
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 125%;
+    letter-spacing: 0px;
+    color: var(--text-default);
+  }
+
+  &-article_indicator {
+    font-family: "SFProText";
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 20px;
+    letter-spacing: 0px;
+    color: var(--text-disabled);
+  }
+
+  &-advanteges-description {
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 125%;
+    letter-spacing: 0px;
+    text-align: left;
+  }
+
+  &-advanteges-title {
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 125%;
+    letter-spacing: 0px;
+    text-align: left;
   }
 }
 
@@ -145,6 +203,7 @@ h2 {
   font-weight: 600;
   line-height: 32px;
   font-size: 28px;
+
   &-title {
     font-size: 28px;
   }
@@ -158,8 +217,17 @@ h3 {
   font-weight: 600;
   line-height: 130%;
   font-size: 16px;
+
   &-title {
     font-size: 16px;
+  }
+
+  &-title_contacts {
+    font-size: 20px;
+  }
+
+  &-title_time {
+    line-height: 24px;
   }
 }
 
@@ -171,6 +239,7 @@ h4 {
   letter-spacing: 0px;
   text-align: left;
   font-size: 20px;
+
   &-title {
     font-size: 20px;
   }

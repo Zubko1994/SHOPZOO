@@ -155,11 +155,11 @@ h6 {
   --surface-neutral: #e4e5e7;
   --border-default: 1px solid #8c9196;
   --border-highlight: 1px solid #00a0ac;
+  --border-highlight-subdued: 2px solid rgb(152, 198, 205);
   --border-advantages: #98C6CD;
-  --gradient-button: linear-gradient(
-          180deg,
-          #babfc3 86.46%,
-          #bbbfc3 100%);
+  --gradient-button: linear-gradient(180deg,
+      #babfc3 86.46%,
+      #bbbfc3 100%);
   --blue-text: rgb(44, 110, 203);
   --bg-default: rgb(246, 246, 247);
   --bg-surface-warning: #FFD79D;
@@ -167,6 +167,7 @@ h6 {
   --text-gray: rgb(109, 113, 117);
   --text-warning: rgb(145, 106, 0);
   --magnifier: rgb(92, 95, 98);
+  --text-disabled: rgba(140, 145, 150, 1);
 }
 
 .container {
