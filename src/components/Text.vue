@@ -23,6 +23,8 @@ type Kind =
   | 'advanteges-description'
   | 'title_contacts'
   | 'title_time'
+  | 'email'
+  | 'copyright'
 
 const props = defineProps<{
   title?: string
@@ -182,6 +184,26 @@ const computedClass = computed(() => {
     line-height: 125%;
     letter-spacing: 0px;
     text-align: left;
+  }
+
+  &-copyright {
+    color: var(--text-disabled);
+font-family: "SFProText";
+font-size: 14px;
+font-weight: 400;
+line-height: 20px;
+letter-spacing: 0px;
+text-align: left;
+  }
+
+  &-email {
+    color: var(--blue-text);
+font-family: "SFProText";
+font-size: 14px;
+font-weight: 400;
+line-height: 24px;
+letter-spacing: 0px;
+text-align: left;
   }
 }
 

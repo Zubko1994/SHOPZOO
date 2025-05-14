@@ -12,6 +12,7 @@ import FeedbackAll from '../components/FeedbackAll.vue'
 import ArticleAll from '../components/ArticleAll.vue'
 import AboutZoo from '../components/AboutZoo.vue'
 import Contacts from '../components/Contacts.vue'
+import LogoFooter from '../components/LogoFooter.vue'
 </script>
 
 <template>
@@ -26,6 +27,7 @@ import Contacts from '../components/Contacts.vue'
     <ArticleAll />
     <AboutZoo />
     <Contacts />
+
 
   </Layout>
 </template>

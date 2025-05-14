@@ -157,6 +157,7 @@ h6 {
   --border-highlight: 1px solid #00a0ac;
   --border-highlight-subdued: 2px solid rgb(152, 198, 205);
   --border-advantages: #98C6CD;
+  --border-disabled: 1px solid rgb(210, 213, 216);
   --gradient-button: linear-gradient(180deg,
       #babfc3 86.46%,
       #bbbfc3 100%);
@@ -168,6 +169,7 @@ h6 {
   --text-warning: rgb(145, 106, 0);
   --magnifier: rgb(92, 95, 98);
   --text-disabled: rgba(140, 145, 150, 1);
+  --text-green: rgb(0, 128, 96);
 }
 
 .container {

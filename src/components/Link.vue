@@ -42,4 +42,14 @@ const computedtag = computed(() => (props.isLink ? RouterLink : 'a'))
   //   height: 14px;
   // }
 }
+
+.email {
+  color: var(--);
+font-family: "SFProText";
+font-size: 14px;
+font-weight: 400;
+line-height: 24px;
+letter-spacing: 0px;
+text-align: left;
+}
 </style>
