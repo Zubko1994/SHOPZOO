@@ -36,13 +36,13 @@ fetch('https://oliver1ck.pythonanywhere.com/api/get_products_list/')
         <div class="goods-popular_ceil">
           <Text tag="h2" print="title" title="Популярные товары" />
           <div class="wrapper-button">
-            <Button kind="indicator-left"
+            <Button class="button-strela" kind="indicator-left"
               ><img
                 class="strela"
                 src="../assets/image/Primaryfillleft.svg"
                 alt="стрелка влево"
             /></Button>
-            <Button kind="indicator-right"
+            <Button class="button-strela" kind="indicator-right"
               ><img
                 class="strela"
                 src="../assets/image/Primaryfill.svg"
@@ -90,5 +90,13 @@ fetch('https://oliver1ck.pythonanywhere.com/api/get_products_list/')
   margin: 0 auto;
 }
 
+.button-strela {
+  background-color: var(--white);
+  &:hover{
+    .strela {
+  filter: brightness(0) invert(1);
+}
+  }
+}
 
 </style>

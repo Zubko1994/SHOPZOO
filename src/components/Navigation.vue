@@ -42,7 +42,7 @@ const props = defineProps<{
   letter-spacing: 0px;
   text-align: left;
   &:hover {
-    color: var(--text-hover);
+    text-decoration: underline;
   }
   &-white {
     color: var(--white);

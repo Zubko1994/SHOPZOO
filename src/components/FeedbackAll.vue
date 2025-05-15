@@ -98,7 +98,13 @@ const dataFeedback = [
 }
 
 .button-strela {
-  background-color: var(--bg-default)
+  background-color: var(--bg-default);
+  &:hover{
+    .strela {
+  filter: brightness(0) invert(1);
 }
+  }
+}
+
 
 </style>

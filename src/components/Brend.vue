@@ -21,6 +21,9 @@
   padding: 14px 20px;
   background-color: var(--white);
   border-radius: 4px;
+  &:hover {
+    cursor: pointer;
+  }
 }
 
 .brend-image {

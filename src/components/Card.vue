@@ -16,11 +16,11 @@ price: number
 </script>
 
 <template>
-  <div :class="'card'">
+  <div class="card">
     <div class="wrapper-ceil">
       <ImageCard class="image-good" :src="props.image_prev" />
       <div class="wrapper-title">
-        <Text tag="h3" print="title" :title="props.title"/>
+        <Text class="card_title" tag="h3" print="title" :title="props.title"/>
       </div>
     </div>
     <div class="wrapper-quantity">
@@ -49,6 +49,11 @@ price: number
 
 .image-good {
   text-align: center;
+}
+
+.card_title:hover {
+ color: var(--highlight);
+ cursor: pointer;
 }
 
 // .wrapper-image {

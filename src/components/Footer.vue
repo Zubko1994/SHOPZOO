@@ -155,6 +155,7 @@ text-align: left;
 .creator {
   display: flex;
   gap: 6px;
+  align-items: center;
 }
 
 .contacts_info {

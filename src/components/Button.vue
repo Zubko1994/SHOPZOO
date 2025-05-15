@@ -39,7 +39,7 @@ function btnHandler(e: Event) {
   white-space: nowrap;
 
   &:hover {
-    background-color: var(--default-hover);
+    background-color: var(--secondary-hovered);
   }
   &_primary {
     background-color: var(--highlight);
@@ -56,6 +56,10 @@ function btnHandler(e: Event) {
   }
   &_buying {
     border: var(--border-highlight);
+    &:hover {
+      background: var(--highlight);
+      color: var(--white);
+    }
   }
   &_quantity {
     background: var(--surface-neutral);
@@ -84,6 +88,10 @@ function btnHandler(e: Event) {
     border: 1px solid #babfc3;
     border-radius: 4px;
     margin-right: 10px;
+    &:hover {
+      box-shadow: 0px 1px 0px 0px rgba(0, 0, 0, 0.05);
+      background: rgb(246, 246, 247);
+    }
   }
   &_basket-adding {
     border-radius: 5px;
@@ -114,6 +122,10 @@ function btnHandler(e: Event) {
     align-items: center;
     justify-content: center;
     top: 5px;
+    &:hover {
+      background-color: var(--highlight);
+      
+    }
   }
   &_indicator-right {
     width: 40px;
@@ -128,6 +140,10 @@ function btnHandler(e: Event) {
     display: flex;
     align-items: center;
     justify-content: center;
+    &:hover {
+      background-color: var(--highlight);
+      
+    }
   }
   &_backcall {
     color: var(--blue-text);

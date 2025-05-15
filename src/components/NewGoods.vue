@@ -100,4 +100,14 @@ fetch('https://oliver1ck.pythonanywhere.com/api/get_products_list/')
 .new-goods {
   background: var(--bg-default);
 }
+
+.button-strela {
+  background-color: var(--bg-default);
+  &:hover{
+    .strela {
+  filter: brightness(0) invert(1);
+}
+  }
+}
+
 </style>

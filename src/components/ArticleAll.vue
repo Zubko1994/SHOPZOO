@@ -102,5 +102,13 @@ fetch('https://oliver1ck.pythonanywhere.com/api/get_articles_list/')
     margin-bottom: 24px;
 }
 
+.button-strela {
+  background-color: var(--white);
+  &:hover{
+    .strela {
+  filter: brightness(0) invert(1);
+}
+  }
+}
 
 </style>

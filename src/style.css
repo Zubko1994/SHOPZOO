@@ -147,6 +147,7 @@ h6 {
 :root {
   --white: #ffffff;
   --default-hover: #dad0d0a9;
+  --secondary-hovered: #F6F6F7;
   --text-default: #202223;
   --text-hover: #80CFD5;
   --highlight: #00a0ac;
