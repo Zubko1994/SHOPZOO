@@ -13,6 +13,8 @@
 .logo {
   display: flex;
   gap: 6px;
+  text-wrap: nowrap;
+  margin-right: 5px;
 }
 
 .logo-title {
@@ -24,5 +26,8 @@
   text-align: left;
   text-transform: uppercase;
   color: var(--white);
+  text-wrap: nowrap;
 }
+
+
 </style>

@@ -83,6 +83,7 @@ fetch('https://oliver1ck.pythonanywhere.com/api/get_products_list/')
   gap: 30px;
   flex-wrap: wrap;
   margin-bottom: 25px;
+  justify-content: center;
 }
 
 .show-goods {
@@ -99,4 +100,25 @@ fetch('https://oliver1ck.pythonanywhere.com/api/get_products_list/')
   }
 }
 
+@media (max-width: 992px) {
+
+.container {
+    max-width: 992px;
+}
+
+.goods-popular_wrapper {
+  padding: 1px 10px 32px 10px;
+}
+
+.wrapper-button {
+  display: none;
+}
+
+.wrapper-cards {
+overflow: scroll;
+flex-wrap: nowrap;
+justify-content: flex-start;
+}
+
+}
 </style>

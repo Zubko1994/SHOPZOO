@@ -135,7 +135,7 @@ const computedClass = computed(() => {
 
   &-indicator {
     color: var(--text-warning);
-    font-family: "SFProText";
+    font-family: 'SFProText';
     font-size: 16px;
     font-weight: 400;
     line-height: 24px;
@@ -144,7 +144,7 @@ const computedClass = computed(() => {
   }
 
   &-article_title {
-    font-family: "SFProText";
+    font-family: 'SFProText';
     font-weight: 700;
     font-size: 16px;
     line-height: 24px;
@@ -153,7 +153,7 @@ const computedClass = computed(() => {
   }
 
   &-article {
-    font-family: "SFProText";
+    font-family: 'SFProText';
     font-weight: 400;
     font-size: 14px;
     line-height: 125%;
@@ -162,7 +162,7 @@ const computedClass = computed(() => {
   }
 
   &-article_indicator {
-    font-family: "SFProText";
+    font-family: 'SFProText';
     font-weight: 400;
     font-size: 14px;
     line-height: 20px;
@@ -188,22 +188,22 @@ const computedClass = computed(() => {
 
   &-copyright {
     color: var(--text-disabled);
-font-family: "SFProText";
-font-size: 14px;
-font-weight: 400;
-line-height: 20px;
-letter-spacing: 0px;
-text-align: left;
+    font-family: 'SFProText';
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 20px;
+    letter-spacing: 0px;
+    text-align: left;
   }
 
   &-email {
     color: var(--blue-text);
-font-family: "SFProText";
-font-size: 14px;
-font-weight: 400;
-line-height: 24px;
-letter-spacing: 0px;
-text-align: left;
+    font-family: 'SFProText';
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 24px;
+    letter-spacing: 0px;
+    text-align: left;
   }
 }
 
@@ -264,6 +264,20 @@ h4 {
 
   &-title {
     font-size: 20px;
+  }
+}
+
+@media (max-width: 992px) {
+  .container {
+    max-width: 992px;
+  }
+
+  h2 {
+    font-size: 21px;
+    font-weight: 700;
+    line-height: 28px;
+    letter-spacing: 0px;
+    text-align: left;
   }
 }
 </style>

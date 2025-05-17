@@ -33,6 +33,8 @@ const props = defineProps<{
   gap: 5px;
   justify-content: space-between;
   width: 350px;
+  padding-left: 5px;
+  padding-right: 5px;
 }
 .item {
   font-family: 'SFProText';

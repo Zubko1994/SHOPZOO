@@ -90,6 +90,7 @@ fetch('https://oliver1ck.pythonanywhere.com/api/get_products_list/')
   gap: 30px;
   flex-wrap: wrap;
   margin-bottom: 25px;
+  justify-content: center;
 }
 
 .show-goods {
@@ -110,4 +111,31 @@ fetch('https://oliver1ck.pythonanywhere.com/api/get_products_list/')
   }
 }
 
+
+@media (max-width: 992px) {
+
+.container {
+    max-width: 992px;
+}
+
+
+.wrapper-button {
+  display: none;
+}
+
+.wrapper-cards {
+overflow: scroll;
+flex-wrap: nowrap;
+justify-content: flex-start;
+}
+
+.new-goods {
+  background: var(--white);
+}
+
+.goods-new_wrapper {
+  background: var(--bg-default);
+  padding: 0px 10px 33px 10px
+}
+}
 </style>

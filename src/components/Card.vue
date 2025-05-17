@@ -42,6 +42,7 @@ price: number
   justify-content: space-between;
   gap: 16px;
   max-width: 270px;
+  min-width: 243px;
   padding: 8px;
   background-color: var(--white);
   border-radius: 5px;
@@ -96,5 +97,14 @@ price: number
   display: flex;
   flex-direction: column;
   gap: 16px;
+}
+
+
+@media (max-width: 992px) {
+
+.container {
+    max-width: 992px;
+}
+
 }
 </style>

@@ -48,8 +48,9 @@ fetch('https://oliver1ck.pythonanywhere.com/api/get_animals_list/')
 .wrapper-card {
   display: flex;
   gap: 16px;
-  flex-wrap: wrap;
+  // flex-wrap: wrap;
   justify-content: space-between;
+  overflow-x: scroll;
 }
 
 </style>

@@ -32,6 +32,22 @@
   // display: block;
 }
 
+@media (max-width: 992px) {
+
+.container {
+    max-width: 992px;
+}
+
+.brend-image_wrapper {
+  max-height: 58px;
+  max-width: 80px;
+  padding: 8px;
+}
+
+
+
+
+}
 
 
 </style>

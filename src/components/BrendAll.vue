@@ -52,6 +52,7 @@ fetch('https://oliver1ck.pythonanywhere.com/api/get_brands_list/')
   gap: 25px;
   flex-wrap: wrap;
   margin-bottom: 25px;
+  justify-content: center;
 }
 
 .brends_title {
@@ -61,5 +62,21 @@ fetch('https://oliver1ck.pythonanywhere.com/api/get_brands_list/')
 .show-brends {
   display: block;
   margin: 0 auto;
+}
+
+@media (max-width: 992px) {
+
+.container {
+    max-width: 992px;
+}
+
+.brends_wrapper {
+  padding: 0px 5px 56px 5px;
+}
+
+.cards_wrapper {
+  gap: 24px 8px;
+}
+
 }
 </style>

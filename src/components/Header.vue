@@ -7,6 +7,7 @@ import Button from './Button.vue'
 import LogoHeader from './LogoHeader.vue'
 import Navigation from './Navigation.vue'
 import Input from './Input.vue'
+
 </script>
 
 <template>
@@ -58,7 +59,7 @@ import Input from './Input.vue'
     <div class="wrapper-navigation">
       <div class="container">
         <div class="wrapper">
-          <LogoHeader />
+          <LogoHeader/>
           <Input />
           <Navigation color="white" />
           <Button kind="basket">
@@ -67,6 +68,11 @@ import Input from './Input.vue'
               <span>0</span>
             </div>
           </Button>
+          <div class="burger">
+            <button class="burger__menu">
+              <span></span>
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -93,6 +99,16 @@ import Input from './Input.vue'
   z-index: 10;
 }
 
+// .logo-header {
+//   display: block;
+//   text-wrap: nowrap;
+// }
+
+// .logo-header_adapt {
+//   display: none;
+//   text-wrap: nowrap;
+// }
+
 .header__wrapper {
   display: flex;
   justify-content: space-between;
@@ -109,17 +125,20 @@ import Input from './Input.vue'
 .header__adress {
   display: flex;
   gap: 10px;
+  text-wrap: nowrap;
 }
 
 .header__metro {
   display: flex;
   gap: 6px;
   align-items: center;
+  text-wrap: nowrap;
 }
 
 .header__time {
   display: flex;
   gap: 6px;
+  text-wrap: nowrap;
 }
 
 .timetable {
@@ -135,14 +154,16 @@ import Input from './Input.vue'
 
 .contacts {
   display: flex;
-  gap: 30px;
+  gap: 10px;
   align-items: center;
+  justify-content: space-between;
 }
 
 .contacts__phone {
   display: flex;
   gap: 10px;
   align-items: center;
+  text-wrap: nowrap;
 }
 
 .wrapper-navigation {
@@ -170,5 +191,24 @@ span {
 .wrapper-basket {
   display: flex;
   gap: 5px;
+}
+
+
+
+@media (max-width: 992px) {
+
+.container {
+    max-width: 992px;
+}
+
+.header__wrapper {
+    display: none;
+}
+
+.burger {
+    display: block;
+}
+
+
 }
 </style>

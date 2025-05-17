@@ -24,12 +24,27 @@ const props = defineProps<{
 
 .card-animal {
   display: flex;
-  flex: 0 1 215px;
+  flex: 0 0 215px;
   align-items: center;
   gap: 16px;
   background-color: var(--white);
   cursor: pointer;
 }
 
+@media (max-width: 992px) {
+
+.container {
+    max-width: 992px;
+}
+
+.card-animal {
+  flex: 0 1 138px;
+  font-size: 15px;
+  text-align: center;
+  padding-right: 19px;
+  gap: 8px;
+}
+
+}
 
 </style>

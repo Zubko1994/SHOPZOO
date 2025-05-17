@@ -11,24 +11,24 @@ import Button from './Button.vue'
         <div class="wrapper-cards">
           <div class="promo item-left">
     <div class="wrapper-info">
-      <Text tag="h4" print="title" title="Скидка 25% на первый заказ любого товара на сумму от 50BYN" />
+      <Text class="promotion_title" tag="h4" print="title" title="Скидка 25% на первый заказ любого товара на сумму от 50BYN" />
       <div>
       <Button kind="'btn'">Перейти к выбору товара</Button>
     </div>
     </div>
     <div>
-      <img src="../assets/image/animal.png" alt="изображение животного">
+      <img class="animal" src="../assets/image/animal.png" alt="изображение животного">
     </div>
   </div>
   <div class="promo item-right">
     <div class="wrapper-info">
-      <Text tag="h4" print="title" title="Получите игрушку в подарок при сумме заказа от 200BYN" />
+      <Text class="promotion_title" tag="h4" print="title" title="Получите игрушку в подарок при сумме заказа от 200BYN" />
       <div>
       <Button kind="'btn'">Перейти к выбору товара</Button>
     </div>
     </div>
     <div>
-      <img src="../assets/image/catGrey.png" alt="изображение животного">
+      <img class="animal" src="../assets/image/catGrey.png" alt="изображение животного">
     </div>
   </div>
         </div>
@@ -48,6 +48,8 @@ import Button from './Button.vue'
   gap: 10px;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 .promo {
@@ -58,6 +60,7 @@ import Button from './Button.vue'
   gap: 18px;
   align-items: center;
   max-width: 569px;
+  justify-content: center;
 }
 
 .wrapper-info {
@@ -69,6 +72,50 @@ import Button from './Button.vue'
 .item-right {
   background: var(--bg-surface-success);
 }
+
+
+@media (max-width: 992px) {
+
+.container {
+    max-width: 992px;
+}
+
+.promotion-wrapper {
+  padding: 33px 10px 32px 10px;
+}
+
+
+}
+
+@media (max-width: 576px) {
+
+.container {
+    max-width: 576px;
+}
+
+.item-right, .item-left {
+  width: 100%;
+}
+
+.promotion_title {
+  font-size: 15px;
+}
+
+.promo {
+  padding: 8px;
+  gap: 2px;
+}
+
+.wrapper-info {
+  max-width: 215px;
+}
+.animal {
+  width: 116px;
+  height: 114px;
+}
+}
+
+
 
 
 </style>

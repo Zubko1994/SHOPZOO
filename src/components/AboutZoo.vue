@@ -70,6 +70,9 @@ import Text from './Text.vue'
 </template>
 
 <style lang="scss" scoped>
+.information_wrapper{
+  padding: 0 5px 0 5px;
+}
 .title {
   margin-bottom: 12px;
 }
@@ -83,6 +86,8 @@ import Text from './Text.vue'
   gap: 10px;
   justify-content: space-between;
   align-items: center;
+  // flex-wrap: wrap;
+  justify-content: center;
 }
 
 .advantages_block {
@@ -98,4 +103,8 @@ import Text from './Text.vue'
   flex-direction: column;
   gap: 24px;
 }
+
+// .advantages_left {
+
+// }
 </style>

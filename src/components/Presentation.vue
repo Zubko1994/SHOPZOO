@@ -9,21 +9,23 @@ import Button from './Button.vue';
     <div class="container">
       <div class="presentation-wrapper">
         <div class="presentation-info">
-          <Text tag="h1" print="title" title="Всё, что нужно вашему питомцу в 9 мин от метро Малиновка" />
           <div class="advantages">
-            <div>
+            <Text class="presentation_title" tag="h1" print="title" title="Всё, что нужно вашему питомцу в 9 мин от метро Малиновка" />
+            <div class="presentation_subtitle">
+              <div>
               <Text tag="p" print="subtitle"><span>Более 5000 товаров</span> для животных в наличии</Text>
             </div>
             <div>
               <Text tag="p" print="subtitle"><span>Вкусные сюрпризы </span> для ваших питомцев в магазине  </Text>
             </div>
           </div>
+          </div>
           <div>
           <Button kind="primary">Выбрать товар</Button>
         </div>
         </div>
         <div class="presentation-image">
-          <img src="../assets/image/goods.png" alt="изображение товаров">
+          <img class="goods" src="../assets/image/goods.png" alt="изображение товаров">
         </div>
       </div>
 
@@ -40,6 +42,11 @@ import Button from './Button.vue';
   gap: 10px;
   justify-content: space-between;
   align-items: center;
+}
+
+.presentation_subtitle {
+  display: flex;
+  gap: 31px;
 }
 
 .presentation-info {
@@ -63,13 +70,53 @@ span {
 }
 
 .advantages {
+  max-width: 524px;
   display: flex;
-  gap: 31px;
+  flex-direction: column;
+  gap: 32px;
 }
 
-.advantages div {
-  border-left: 2px solid var(--border-advantages);
+.presentation_subtitle div {
+border-left: 2px solid var(--border-advantages);
  padding-left: 9px;
+}
+
+.goods {
+  overflow: hidden;
+  z-index: 10;
+}
+
+@media (max-width: 992px) {
+
+.container {
+    max-width: 992px;
+}
+
+.presentation-wrapper {
+  padding: 24px 10px 24px 10px;
+}
+
+.presentation_subtitle {
+  flex-direction: column;
+  gap: 16px;
+}
+
+.presentation_title {
+  font-size: 21px;
+}
+
+.advantages {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 267px;
+}
+
+.goods {
+  max-height: 275px;
+}
+
+
 }
 
 </style>

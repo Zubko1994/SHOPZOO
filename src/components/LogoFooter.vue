@@ -12,6 +12,7 @@
   display: flex;
   gap: 6px;
   align-items: center;
+  text-wrap: nowrap;
 }
 
 .logo-title {
@@ -23,6 +24,7 @@ letter-spacing: 0px;
 text-align: left;
 text-transform: uppercase;
 color: var(--text-default);
+text-wrap: nowrap;
 }
 
 span {

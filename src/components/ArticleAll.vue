@@ -98,8 +98,9 @@ fetch('https://oliver1ck.pythonanywhere.com/api/get_articles_list/')
     display: flex;
     gap: 30px;
     flex-wrap: wrap;
-    justify-content: space-between;
+    justify-content: center;
     margin-bottom: 24px;
+
 }
 
 .button-strela {
