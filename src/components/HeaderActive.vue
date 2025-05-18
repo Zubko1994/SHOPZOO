@@ -1,13 +1,26 @@
 <script setup lang="ts">
 import LogoFooter from './LogoFooter.vue'
 import Button from './Button.vue'
+import { ref, computed } from 'vue';
+import BurgerActive from './BurgerActive.vue';
+
+const isActive = ref(false);
+
+const toggleClass = () => {
+  isActive.value = !isActive.value;
+};
+
+const themeClass = computed(() => (isActive.value ? 'burger-active' : 'burger__menu'));
+const showMenu = computed(() => (isActive.value ? 'showMenu' : 'hideMenu'));
+
 </script>
 
 <template>
   <div class="wrapper-navigation">
       <div class="container">
+        <div class="side-bar">
         <div class="wrapper">
-          <LogoFooter />
+          <LogoFooter class="logo-active" />
           <div class="wrapper-element">
           <img class="magnifier" src="../assets/image/Search.png" alt="иконка лупы">
           <Button class="basket-button" kind="basket">
@@ -17,11 +30,15 @@ import Button from './Button.vue'
             </div>
           </Button>
           <div class="burger">
-            <button class="burger__menu">
+            <button class="burger__menu" :class="themeClass" @click="toggleClass">
               <span></span>
             </button>
           </div>
         </div>
+      </div>
+      <BurgerActive class="hideMenu" :class="showMenu"/>
+
+
         </div>
       </div>
   </div>
@@ -29,12 +46,18 @@ import Button from './Button.vue'
 
 <style lang="scss" scoped>
 
+.wrapper-navigation {
+  background-color: var(--white);
+}
+
 .wrapper {
   display: flex;
   gap: 5px;
   justify-content: space-between;
   align-items: center;
   padding: 8px 5px 8px 5px;
+  
+
 }
 
 .wrapper-element {
@@ -126,15 +149,52 @@ import Button from './Button.vue'
     transition: all .3s linear;
 }
 
+
+
+
 @media (max-width: 992px) {
 
 .container {
     max-width: 992px;
 }
 
+.wrapper-navigation {
+  position: fixed;
+  z-index: 1000;
+  width: 100%;
+}
 .burger {
     display: block;
+    z-index: 2;
 }
+
+.logo-active {
+  z-index: 2;
+}
+
+.hideMenu {
+  position: fixed;
+  top: 0;
+  left: -300%;
+  z-index: 1;
+  background-color: var(--white);
+  width: 100%;
+  height: 100%;
+  transition: all .3s linear;
+  padding: 45px 10px 0px;
+}
+
+.showMenu {
+  left: 0;
+}
+
+.side-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  
+}
+
 
 }
 

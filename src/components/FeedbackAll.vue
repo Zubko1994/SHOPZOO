@@ -107,4 +107,20 @@ const dataFeedback = [
 }
 
 
+@media (max-width: 992px) {
+
+.container {
+    max-width: 992px;
+}
+
+.feedback_wrapper {
+    padding: 16px 10px 24px 10px;
+  }
+
+  .title {
+    margin-bottom: 12px;
+  }
+
+}
+
 </style>

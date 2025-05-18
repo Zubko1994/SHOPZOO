@@ -120,5 +120,7 @@ flex-wrap: nowrap;
 justify-content: flex-start;
 }
 
+
+.wrapper-cards::-webkit-scrollbar {width:0px;}
 }
 </style>

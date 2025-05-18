@@ -104,7 +104,26 @@ import Text from './Text.vue'
   gap: 24px;
 }
 
-// .advantages_left {
+@media (max-width: 992px) {
 
-// }
+.container {
+    max-width: 992px;
+}
+
+img {
+  display: none;
+}
+
+.information_wrapper{
+  padding: 16px 10px 16px 10px;
+  max-width: 656px;
+  margin: 0 auto;
+}
+
+.subtitle {
+  margin-bottom: 16px;
+}
+
+}
+
 </style>

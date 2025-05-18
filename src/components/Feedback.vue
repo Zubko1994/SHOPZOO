@@ -68,6 +68,22 @@ pet: string
   margin-bottom:  22px;
 }
 
+@media (max-width: 992px) {
+
+.container {
+    max-width: 992px;
+}
+
+.contacts {
+  flex-direction: column;
+  gap: 8px;
+}
+
+.wrapper_contacts {
+  gap: 7px;
+}
+}
+
 
 
 

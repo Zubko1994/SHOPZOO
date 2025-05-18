@@ -12,7 +12,7 @@ import FeedbackAll from '../components/FeedbackAll.vue'
 import ArticleAll from '../components/ArticleAll.vue'
 import AboutZoo from '../components/AboutZoo.vue'
 import Contacts from '../components/Contacts.vue'
-import LogoFooter from '../components/LogoFooter.vue'
+
 </script>
 
 <template>
@@ -32,4 +32,5 @@ import LogoFooter from '../components/LogoFooter.vue'
   </Layout>
 </template>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+</style>

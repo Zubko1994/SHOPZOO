@@ -112,4 +112,30 @@ fetch('https://oliver1ck.pythonanywhere.com/api/get_articles_list/')
   }
 }
 
+
+@media (max-width: 992px) {
+
+.container {
+    max-width: 992px;
+}
+
+.article-information {
+    padding: 32px 10px 33px 10px;
+}
+
+.wrapper_button {
+  display: none;
+}
+
+.info_wrapper {
+  overflow: scroll;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  margin-bottom: 16px;
+}
+
+.info_wrapper::-webkit-scrollbar {width:0px;} 
+}
+
+
 </style>

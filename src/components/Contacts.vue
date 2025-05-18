@@ -11,7 +11,7 @@ import Link from './Link.vue'
       <div class="container">
         <div class="contacts_information">
           <div class="map">
-          <div style="position: relative; overflow: hidden">
+          <div class="map" style="position: relative; overflow:hidden">
             <a
               href="https://yandex.by/maps/157/minsk/?utm_medium=mapframe&utm_source=maps"
               style="color: #eee; font-size: 12px; position: absolute; top: 0px"
@@ -147,7 +147,6 @@ import Link from './Link.vue'
   flex-direction: column;
   gap: 24px;
   max-width: 344px;
-
   padding: 14px 70px 13px 0px;
 }
 
@@ -191,4 +190,29 @@ import Link from './Link.vue'
   flex-direction: column;
   gap: 10px;
 }
+
+@media (max-width: 992px) {
+
+.container {
+    max-width: 992px;
+}
+
+.contacts_information {
+  flex-direction: column;
+  gap: 16px;
+}
+.map {
+  width: 100%;
+}
+
+.contacts_wrapper {
+  padding: 32px 10px 32px 10px;
+}
+
+.contacts_adress {
+  padding: 0px 0px 0px 0px;
+  width: 100%;
+}
+}
+
 </style>

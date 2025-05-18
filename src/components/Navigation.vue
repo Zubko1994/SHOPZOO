@@ -3,12 +3,13 @@
 <script setup lang="ts">
 const props = defineProps<{
   color?: string
+  direction?: string
 }>()
 </script>
 
 <template>
   <nav>
-    <ul class="list">
+    <ul :class="['list', `list-${direction}`]">
       <li>
         <RouterLink to="/about" :class="['item', `item-${color}`]">Главная</RouterLink>
       </li>
@@ -35,6 +36,12 @@ const props = defineProps<{
   width: 350px;
   padding-left: 5px;
   padding-right: 5px;
+  &-vertical {
+    flex-direction: column;
+    gap: 32px;
+    align-items: center;
+    width: 100%;
+  }
 }
 .item {
   font-family: 'SFProText';

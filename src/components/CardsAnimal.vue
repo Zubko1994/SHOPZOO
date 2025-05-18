@@ -42,7 +42,7 @@ fetch('https://oliver1ck.pythonanywhere.com/api/get_animals_list/')
 }
 
 .animal-wrapper {
-  padding: 24px 5px 24px 5px;
+  padding: 24px 5px 14px 5px;
 }
 
 .wrapper-card {
@@ -51,6 +51,20 @@ fetch('https://oliver1ck.pythonanywhere.com/api/get_animals_list/')
   // flex-wrap: wrap;
   justify-content: space-between;
   overflow-x: scroll;
+}
+
+.wrapper-card::-webkit-scrollbar {width:0px;}
+
+
+@media (max-width: 992px) {
+
+.container {
+    max-width: 992px;
+}
+
+.animal-wrapper {
+  padding: 70px 5px 16px 5px;
+}
 }
 
 </style>

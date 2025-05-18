@@ -119,6 +119,7 @@ import Button from './Button.vue'
 .time_wrapper {
   display: flex;
   gap: 6px;
+  text-wrap: nowrap;
 }
 
 .time {
@@ -167,5 +168,53 @@ text-align: left;
   gap: 10px;
   justify-content: space-between;
   align-items: center;
+}
+
+@media (max-width: 992px) {
+
+.container {
+    max-width: 992px;
+}
+
+.footer__wrapper {
+  padding: 16px 10px 16px 10px;
+}
+
+.footer__ceil {
+  flex-wrap: wrap;
+  gap: 16px 50px;
+  justify-content: center;
+}
+
+.contacts_info {
+  gap: 16px;
+  flex-wrap: wrap;
+  border-bottom: 1px solid rgb(210, 213, 216);
+  padding-bottom: 16px;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.info {
+  justify-content: center;
+}
+
+.line_vertical {
+  display: none;
+}
+
+.copyright {
+  flex-wrap: wrap;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.phone_wrapper {
+  justify-content: center;
+}
+
+.time_wrapper {
+  justify-content: center;
+}
 }
 </style>

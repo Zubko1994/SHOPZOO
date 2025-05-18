@@ -92,6 +92,13 @@ function btnHandler(e: Event) {
       box-shadow: 0px 1px 0px 0px rgba(0, 0, 0, 0.05);
       background: rgb(246, 246, 247);
     }
+    &-big {
+      min-width: 338px;
+      height: 44px;
+      padding: 12px 24px;
+      margin: 0 auto;
+      display: block;
+    }
   }
   &_basket-adding {
     border-radius: 5px;

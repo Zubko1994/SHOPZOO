@@ -18,7 +18,6 @@
   position: relative;
 }
 
-
 ::placeholder, .search {
   color: var(--text-gray);
   font-family: "SFProText";

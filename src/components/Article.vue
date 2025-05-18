@@ -86,4 +86,19 @@ const text = props.text.split("<p>").join("").split("</p>").join(" ").split("<br
     border-radius: 5px;
 }
 
+
+
+@media (max-width: 992px) {
+
+.container {
+    max-width: 992px;
+}
+
+.article_title {
+    font-size: 15px;
+    line-height: 20px;
+}
+}
+
+
 </style>
