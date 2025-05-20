@@ -1,6 +1,6 @@
 <!-- @format -->
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, defineEmits } from 'vue';
 import Button from './Button.vue';
 
 const selectedItem = ref<string | null>(null)
@@ -9,12 +9,16 @@ const props = defineProps<{
   list: string[],
   value: number,
   unit: string[],
+  price: number,
 
 }>()
 
+const emit = defineEmits(['updateQuantity']);
+
 function quantityHandler (item: string){
-  console.log(item);
   selectedItem.value = item
+  console.log(item)
+  emit('updateQuantity', item);
 }
 </script>
 

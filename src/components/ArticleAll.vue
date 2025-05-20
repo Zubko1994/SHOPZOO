@@ -29,6 +29,13 @@ fetch('https://oliver1ck.pythonanywhere.com/api/get_articles_list/')
   .then(resp => resp.json())
   .then(data => dataArticle.value = data)
 
+
+  const length = ref(3)
+
+const lengthArray = () => {
+  length.value = length.value + 3
+}
+
 </script>
 
 <template>
@@ -53,9 +60,9 @@ fetch('https://oliver1ck.pythonanywhere.com/api/get_articles_list/')
       </div>
       </div>
       <div class="info_wrapper">
-          <Article v-for="article in dataArticle?.results" :key="article.id" :image="article.image" :title="article.title" :text="article.text" :date_create="article.date_create" :read_time="article.read_time" />
+          <Article v-for="article in dataArticle?.results.slice(0, length)" :key="article.id" :image="article.image" :title="article.title" :text="article.text" :date_create="article.date_create" :read_time="article.read_time" />
         </div>
-          <Button class="show-article" kind="primary">Читать больше статей</Button>
+          <Button @click="lengthArray"  class="show-article" kind="primary">Читать больше статей</Button>
     </div>
       </div>
   </section>

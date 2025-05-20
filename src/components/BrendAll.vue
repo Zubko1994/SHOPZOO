@@ -24,6 +24,12 @@ fetch('https://oliver1ck.pythonanywhere.com/api/get_brands_list/')
   .then(resp => resp.json())
   .then(data => dataBrend.value = data)
 
+  const length = ref(18)
+
+const lengthArray = () => {
+  length.value = length.value + 6
+}
+
 
 </script>
 
@@ -33,9 +39,9 @@ fetch('https://oliver1ck.pythonanywhere.com/api/get_brands_list/')
       <div class="container">
         <Text class="brends_title" tag="h2" print="title" title="Популярные бренды" />
         <div class="cards_wrapper">
-          <Brend v-for="brend in dataBrend?.results" :key="brend.id" :src="brend.image"/>
+          <Brend v-for="brend in dataBrend?.results.slice(0, length)" :key="brend.id" :src="brend.image"/>
         </div>
-        <Button class="show-brends" kind="primary">Смотреть больше брендов</Button>
+        <Button @click="lengthArray" class="show-brends" kind="primary">Смотреть больше брендов</Button>
       </div>
     </div>
   </section>

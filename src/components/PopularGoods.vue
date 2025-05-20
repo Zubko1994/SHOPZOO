@@ -26,6 +26,13 @@ fetch('https://oliver1ck.pythonanywhere.com/api/get_products_list/')
   .then(resp => resp.json())
   .then(data => dataCards.value = data)
 
+const length = ref(4)
+
+const lengthArray = () => {
+  length.value = length.value + 4
+}
+
+
 
 </script>
 
@@ -51,9 +58,9 @@ fetch('https://oliver1ck.pythonanywhere.com/api/get_products_list/')
           </div>
         </div>
         <div class="wrapper-cards">
-          <Card v-for="card in dataCards?.results" :key="card.id" :image_prev="card.image_prev" :title="card.title" :price="card.price" :countitemproduct_set="card.countitemproduct_set" />
+          <Card  v-for="(card, index) in dataCards?.results.slice(0, length)" :key="index" :image_prev="card.image_prev" :title="card.title" :price="card.price" :countitemproduct_set="card.countitemproduct_set"  />
         </div>
-        <Button class="show-goods" kind="primary">Смотреть больше товаров</Button>
+        <Button @click="lengthArray" class="show-goods" kind="primary">Смотреть больше товаров</Button>
       </div>
     </div>
   </section>
@@ -84,6 +91,8 @@ fetch('https://oliver1ck.pythonanywhere.com/api/get_products_list/')
   flex-wrap: wrap;
   margin-bottom: 25px;
   justify-content: center;
+  
+
 }
 
 .show-goods {

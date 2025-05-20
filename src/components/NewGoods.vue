@@ -24,6 +24,14 @@ const dataCards = ref<CardsObj | null>(null)
 fetch('https://oliver1ck.pythonanywhere.com/api/get_products_list/')
   .then((resp) => resp.json())
   .then((data) => (dataCards.value = data))
+
+  const length = ref(4)
+
+const lengthArray = () => {
+  length.value = length.value + 4
+}
+
+
 </script>
 
 <template>
@@ -49,7 +57,7 @@ fetch('https://oliver1ck.pythonanywhere.com/api/get_products_list/')
         </div>
         <div class="wrapper-cards">
           <Card class="new-goods"
-            v-for="card in dataCards?.results"
+            v-for="card in dataCards?.results.slice(0, length)"
             :key="card.id"
             :image_prev="card.image_prev"
             :title="card.title"
@@ -57,7 +65,7 @@ fetch('https://oliver1ck.pythonanywhere.com/api/get_products_list/')
             :countitemproduct_set="card.countitemproduct_set"
           />
         </div>
-        <Button class="show-goods" kind="primary">Смотреть больше товаров</Button>
+        <Button @click="lengthArray" class="show-goods" kind="primary">Смотреть больше товаров</Button>
       </div>
     </div>
   </section>

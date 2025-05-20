@@ -1,17 +1,34 @@
 <!-- @format -->
 
 <script setup lang="ts">
+import { ref } from 'vue'
 import Quantity from './Quantity.vue'
 import ImageCard from './ImageCard.vue'
 import Text from './Text.vue'
 import Button from './Button.vue'
 
 const props = defineProps<{
-image_prev: string
-title: string
-countitemproduct_set: string[]
-price: number
+  image_prev: string
+  title: string
+  countitemproduct_set: string[]
+  price: number
 }>()
+
+const selectedQuantity = ref<string | null>(null)
+console.log(selectedQuantity.value)
+const totalPrice = ref(props.price)
+
+const updateTotalPrice = (quantity: string) => {
+  selectedQuantity.value = quantity
+  console.log(quantity)
+
+  const info = JSON.parse(JSON.stringify(quantity))
+  console.log(info.value)
+  totalPrice.value = (props.price * info.value).toFixed(2)
+  console.log(selectedQuantity.value)
+}
+
+
 
 </script>
 
@@ -20,16 +37,20 @@ price: number
     <div class="wrapper-ceil">
       <ImageCard class="image-good" :src="props.image_prev" />
       <div class="wrapper-title">
-        <Text class="card_title" tag="h3" print="title" :title="props.title"/>
+        <Text class="card_title" tag="h3" print="title" :title="props.title" />
       </div>
     </div>
     <div class="wrapper-quantity">
-      <Quantity :list="props.countitemproduct_set || []" />
+      <Quantity
+        :list="props.countitemproduct_set || []"
+        @updateQuantity="updateTotalPrice"
+      />
     </div>
     <div class="wrapper-basket">
-    <div class="cost-info">
-      <span class="cost">{{price}} BYN</span> <Button title="" kind="basket-adding" />
-    </div>
+      <div class="cost-info">
+        <span class="cost">{{ totalPrice }} BYN </span>
+        <Button title="" kind="basket-adding" />
+      </div>
       <Button kind="buying">Купить в 1 клик</Button>
     </div>
   </div>
@@ -53,8 +74,8 @@ price: number
 }
 
 .card_title:hover {
- color: var(--highlight);
- cursor: pointer;
+  color: var(--highlight);
+  cursor: pointer;
 }
 
 // .wrapper-image {
@@ -99,12 +120,9 @@ price: number
   gap: 16px;
 }
 
-
 @media (max-width: 992px) {
-
-.container {
+  .container {
     max-width: 992px;
-}
-
+  }
 }
 </style>
