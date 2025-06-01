@@ -31,6 +31,21 @@ const lengthArray = () => {
   length.value = length.value + 4
 }
 
+const currentSliderIndex = ref(0); 
+
+const nextSlide = () => { 
+    currentSliderIndex.value = (currentSliderIndex.value + 1) % length.value; 
+   dataCards.value?.results.push(dataCards.value.results.shift())
+   
+    
+}; 
+
+const prevSlide = () => { 
+    currentSliderIndex.value = (currentSliderIndex.value - 1 + length.value) % length.value; 
+    dataCards.value?.results.unshift(dataCards.value?.results.pop())
+}; 
+
+
 
 </script>
 
@@ -41,13 +56,13 @@ const lengthArray = () => {
         <div class="goods-new_ceil">
           <Text tag="h2" print="title" title="Новинки" />
           <div class="wrapper-button">
-            <Button class="button-strela" kind="indicator-left"
+            <Button @click = "prevSlide" class="button-strela" kind="indicator-left"
               ><img
                 class="strela"
                 src="../assets/image/Primaryfillleft.svg"
                 alt="стрелка влево"
             /></Button>
-            <Button class="button-strela" kind="indicator-right"
+            <Button @click="nextSlide" class="button-strela" kind="indicator-right"
               ><img
                 class="strela"
                 src="../assets/image/Primaryfill.svg"

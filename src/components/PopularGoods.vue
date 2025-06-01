@@ -10,7 +10,6 @@ interface Cards {
   id: number
   image_prev: string
   title: string
-  // countitemproduct_set: QuantityObj[]
   price: number
 }
 
@@ -20,6 +19,8 @@ interface CardsObj {
   previous: string | null
   results: Cards[]
 }
+
+
 
 const dataCards = ref<CardsObj | null>(null)
 fetch('https://oliver1ck.pythonanywhere.com/api/get_products_list/')
@@ -32,6 +33,22 @@ const lengthArray = () => {
   length.value = length.value + 4
 }
 
+const currentSliderIndex = ref(0); 
+
+
+
+
+const nextSlide = () => { 
+    currentSliderIndex.value = (currentSliderIndex.value + 1) % length.value; 
+   dataCards.value?.results.push(dataCards.value.results.shift())
+   console.log(dataCards.value?.results)
+    
+}; 
+
+const prevSlide = () => { 
+    currentSliderIndex.value = (currentSliderIndex.value - 1 + length.value) % length.value; 
+    dataCards.value?.results.unshift(dataCards.value?.results.pop())
+}; 
 
 
 </script>
@@ -43,13 +60,13 @@ const lengthArray = () => {
         <div class="goods-popular_ceil">
           <Text tag="h2" print="title" title="Популярные товары" />
           <div class="wrapper-button">
-            <Button class="button-strela" kind="indicator-left"
+            <Button @click = "prevSlide"  class="button-strela" kind="indicator-left"
               ><img
                 class="strela"
                 src="../assets/image/Primaryfillleft.svg"
                 alt="стрелка влево"
             /></Button>
-            <Button class="button-strela" kind="indicator-right"
+            <Button @click="nextSlide" class="button-strela" kind="indicator-right"
               ><img
                 class="strela"
                 src="../assets/image/Primaryfill.svg"
@@ -91,7 +108,8 @@ const lengthArray = () => {
   flex-wrap: wrap;
   margin-bottom: 25px;
   justify-content: center;
-  
+  overflow: hidden;
+  transform: translateX(0);
 
 }
 

@@ -50,11 +50,15 @@ pet: string
   flex-direction: column;
   gap: 12px;
   margin: 0 auto;
-  max-width: 718px;
-}
+  width: 718px;
+  flex-wrap: wrap;
+  // margin: auto;
+  padding: 5px;
 
+}
 .feedback_author {
   text-align: center;
+  text-wrap: wrap;
 }
 
 .contacts,
@@ -68,6 +72,17 @@ pet: string
   margin-bottom:  22px;
 }
 
+@media (max-width: 1080px) {
+
+.container {
+    max-width: 1080px;
+}
+.feedback_wrapper {
+  width: 700px;
+}
+
+}
+
 @media (max-width: 992px) {
 
 .container {
@@ -79,12 +94,47 @@ pet: string
   gap: 8px;
 }
 
+.feedback_wrapper {
+  width: 600px;
+}
+
 .wrapper_contacts {
   gap: 7px;
 }
 }
 
 
+@media (max-width: 826px) {
 
+.container {
+    max-width: 826px;
+}
+
+.feedback_wrapper {
+  width: 500px;
+}
+}
+
+@media (max-width: 650px) {
+
+.container {
+    max-width: 650px;
+}
+
+.feedback_wrapper {
+  width: 400px;
+}
+}
+
+@media (max-width: 500px) {
+
+.container {
+    max-width: 500px;
+}
+
+.feedback_wrapper {
+  width: 340px;
+}
+}
 
 </style>

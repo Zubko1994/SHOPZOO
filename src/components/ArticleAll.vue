@@ -36,6 +36,21 @@ const lengthArray = () => {
   length.value = length.value + 3
 }
 
+const currentSliderIndex = ref(0); 
+
+const nextSlide = () => { 
+    currentSliderIndex.value = (currentSliderIndex.value + 1) % length.value; 
+   dataArticle.value?.results.push(dataArticle.value.results.shift())
+   
+    
+}; 
+
+const prevSlide = () => { 
+    currentSliderIndex.value = (currentSliderIndex.value - 1 + length.value) % length.value; 
+    dataArticle.value?.results.unshift(dataArticle.value?.results.pop())
+}; 
+
+
 </script>
 
 <template>
@@ -45,13 +60,13 @@ const lengthArray = () => {
         <div class="article_ceil">
             <Text class="article_title" tag="h2" print="title" title="Полезные статьи" />
             <div class="wrapper_button">
-      <Button class="button-strela" kind="indicator-left"
+      <Button @click = "prevSlide" class="button-strela" kind="indicator-left"
               ><img
                 class="strela"
                 src="../assets/image/Primaryfillleft.svg"
                 alt="стрелка влево"
             /></Button>
-            <Button class="button-strela" kind="indicator-right"
+            <Button @click="nextSlide" class="button-strela" kind="indicator-right"
               ><img
                 class="strela"
                 src="../assets/image/Primaryfill.svg"
