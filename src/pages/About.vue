@@ -1,9 +1,9 @@
 <script setup lang="ts">
-
+import AcceptRequest from '../components/AcceptRequest.vue'
 </script>
 
 <template>
- lknh;jn
+ <AcceptRequest/>
 </template>
 
 <style lang="scss" scoped>

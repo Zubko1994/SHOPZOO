@@ -4,6 +4,7 @@ import Header from '../components/Header.vue'
 import Footer from '../components/Footer.vue'
 import HeaderActive from '../components/HeaderActive.vue'
 
+
 </script>
 
 <template>

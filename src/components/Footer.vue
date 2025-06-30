@@ -6,6 +6,30 @@ import Navigation from './Navigation.vue'
 import LogoFooter from './LogoFooter.vue'
 import Text from './Text.vue'
 import Button from './Button.vue'
+import { ref } from 'vue'
+import FormBackCall from '../components/FormBackCall.vue'
+import AcceptRequest from './AcceptRequest.vue'
+
+const showModalWindow = ref(false);
+const showAcceptWindow = ref(false);
+
+
+const showModalOpen = () => {
+  showModalWindow.value = !showModalWindow.value
+};
+
+const closeForm = () => {
+  showModalWindow.value = false
+}
+
+const openAccept = () => {
+  showModalWindow.value = false
+  showAcceptWindow.value = true 
+}
+
+const closeAccept = () => {
+  showAcceptWindow.value = false
+}
 </script>
 
 <template>
@@ -46,10 +70,12 @@ import Button from './Button.vue'
               <Text tag="p" print="time" title="Суб.-Вос. 10:00-20:00" />
             </div>
           </div>
-          <Button class="backcall_footer" kind="backcall"
+          <Button class="backcall_footer" kind="backcall" @click="showModalOpen"
             >Обратный звонок</Button
           >
         </div>
+        <FormBackCall  class="modal" v-if="showModalWindow" @close="closeForm"  @open-waiting="openAccept" />
+        <AcceptRequest  class="modal" v-if="showAcceptWindow" @close="closeAccept" />
         <div class="copyright">
           <div class="creator">
             <Text tag="p" print="copyright" title="Дизайн сайта:" />

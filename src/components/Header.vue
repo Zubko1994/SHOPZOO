@@ -7,7 +7,30 @@ import Button from './Button.vue'
 import LogoHeader from './LogoHeader.vue'
 import Navigation from './Navigation.vue'
 import Input from './Input.vue'
+import FormBackCall from '../components/FormBackCall.vue'
+import AcceptRequest from './AcceptRequest.vue'
+import { ref } from 'vue';
 
+const showModalWindow = ref(false);
+const showAcceptWindow = ref(false);
+
+
+const showModalOpen = () => {
+  showModalWindow.value = !showModalWindow.value
+};
+
+const closeForm = () => {
+  showModalWindow.value = false
+}
+
+const openAccept = () => {
+  showModalWindow.value = false
+  showAcceptWindow.value = true 
+}
+
+const closeAccept = () => {
+  showAcceptWindow.value = false
+}
 </script>
 
 <template>
@@ -53,9 +76,11 @@ import Input from './Input.vue'
             />
           </Link>
         </div>
-        <Button kind="backcall">Обратный звонок</Button>
+        <Button @click="showModalOpen" kind="backcall">Обратный звонок</Button>
       </div>
+      <FormBackCall  class="modal" v-if="showModalWindow" @close="closeForm"  @open-waiting="openAccept"/>
     </div>
+    <AcceptRequest  class="modal" v-if="showAcceptWindow" @close="closeAccept" />
     <div class="wrapper-navigation">
       <div class="container">
         <div class="wrapper">
@@ -95,8 +120,11 @@ import Input from './Input.vue'
   background-color: var(--bg-default);
   position: sticky;
   top: 0;
-
   z-index: 10;
+}
+
+.modal {
+  position: fixed;
 }
 
 // .logo-header {
@@ -211,4 +239,6 @@ span {
 
 
 }
+
+
 </style>

@@ -25,6 +25,9 @@ type Kind =
   | 'title_time'
   | 'email'
   | 'copyright'
+  | 'title-backcall'
+  | 'personal'
+  | 'waiting'
 
 const props = defineProps<{
   title?: string
@@ -205,9 +208,27 @@ const computedClass = computed(() => {
     letter-spacing: 0px;
     text-align: left;
   }
+
+  &-personal {
+    font-family: 'SFProText';
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 16px;
+    letter-spacing: 0px;
+    text-align: center;
+  }
+
+  &-waiting {
+    font-family: 'SFProText';
+    font-size: 15px;
+    font-weight: 400;
+    line-height: 20px;
+    letter-spacing: 0px;
+    text-align: center;
+  }
 }
 
-h1 {
+.h1 {
   color: var(--text-default);
   font-family: 'SFProDisplay';
   letter-spacing: 0px;
@@ -217,7 +238,7 @@ h1 {
   line-height: 120%;
 }
 
-h2 {
+.h2 {
   color: var(--text-default);
   font-family: 'SFProDisplay';
   letter-spacing: 0px;
@@ -231,7 +252,7 @@ h2 {
   }
 }
 
-h3 {
+.h3 {
   color: var(--text-default);
   font-family: 'SFProText';
   letter-spacing: 0px;
@@ -253,7 +274,7 @@ h3 {
   }
 }
 
-h4 {
+.h4 {
   color: var(--text-default);
   font-family: 'SFProDisplay';
   font-weight: 700;
@@ -265,6 +286,10 @@ h4 {
   &-title {
     font-size: 20px;
   }
+
+  &-title-backcall {
+    line-height: 28px;
+  }
 }
 
 @media (max-width: 992px) {
@@ -272,7 +297,7 @@ h4 {
     max-width: 992px;
   }
 
-  h2 {
+  .h2 {
     font-size: 21px;
     font-weight: 700;
     line-height: 28px;

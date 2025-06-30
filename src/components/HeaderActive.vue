@@ -13,6 +13,8 @@ const toggleClass = () => {
 const themeClass = computed(() => (isActive.value ? 'burger-active' : 'burger__menu'));
 const showMenu = computed(() => (isActive.value ? 'showMenu' : 'hideMenu'));
 
+
+
 </script>
 
 <template>

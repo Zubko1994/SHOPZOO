@@ -13,6 +13,7 @@ import ArticleAll from '../components/ArticleAll.vue'
 import AboutZoo from '../components/AboutZoo.vue'
 import Contacts from '../components/Contacts.vue'
 
+
 </script>
 
 <template>
@@ -27,6 +28,8 @@ import Contacts from '../components/Contacts.vue'
     <ArticleAll />
     <AboutZoo />
     <Contacts />
+    
+    
 
 
   </Layout>

@@ -1,11 +1,42 @@
 <!-- @format -->
 
 <script setup lang="ts">
+import { ref } from 'vue'
 import Input from './Input.vue'
 import Navigation from './Navigation.vue'
 import Button from './Button.vue'
 import Link from './Link.vue'
 import Text from './Text.vue'
+import FormBackCall from '../components/FormBackCall.vue'
+import AcceptRequest from './AcceptRequest.vue'
+
+const show = ref(false);
+
+const showModal = () => {
+  show.value = !show.value
+};
+
+const showModalWindow = ref(false);
+const showAcceptWindow = ref(false);
+
+
+const showModalOpen = () => {
+  showModalWindow.value = !showModalWindow.value
+};
+
+const closeForm = () => {
+  showModalWindow.value = false
+}
+
+const openAccept = () => {
+  showModalWindow.value = false
+  showAcceptWindow.value = true 
+}
+
+const closeAccept = () => {
+  showAcceptWindow.value = false
+}
+
 </script>
 
 <template>
@@ -59,7 +90,9 @@ import Text from './Text.vue'
 
             </div>
         
-          <Button class="backcall" kind="backcall">Обратный звонок</Button>
+          <Button class="backcall" @custom-click="showModal"  @click="showModalOpen" kind="backcall">Обратный звонок</Button>
+          <FormBackCall  class="modal" v-if="showModalWindow" @close="closeForm"  @open-waiting="openAccept" />
+          <AcceptRequest  class="modal" v-if="showAcceptWindow" @close="closeAccept" />
         </div>
       </div>
     </div>
@@ -166,4 +199,6 @@ import Text from './Text.vue'
   gap: 10px;
   justify-content: center;
 }
+
+
 </style>
