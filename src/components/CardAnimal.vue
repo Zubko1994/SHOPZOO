@@ -15,7 +15,7 @@ const props = defineProps<{
       <img :src="props.image" alt="изображение собаки" />
     </div>
     <div class="wrapper-text">
-    <Text tag="h3" print="title" :title="props.type" />
+    <Text class="kind-animal" tag="h3" print="title" :title="props.type" />
   </div>
   </div>
 </template>
@@ -29,7 +29,17 @@ const props = defineProps<{
   gap: 16px;
   background-color: var(--white);
   cursor: pointer;
+
 }
+
+.card-animal:hover {
+  box-shadow: 0px 12px 32px 0px rgba(0, 0, 0, 0.1), 0px 0px 2px 0px rgba(0, 0, 0, 0.06);
+  
+  .kind-animal {
+    color: var(--highlight);
+  }
+}
+
 
 @media (max-width: 992px) {
 

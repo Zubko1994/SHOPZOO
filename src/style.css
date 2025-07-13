@@ -171,6 +171,9 @@ h6 {
   --magnifier: rgb(92, 95, 98);
   --text-disabled: rgba(140, 145, 150, 1);
   --text-green: rgb(0, 128, 96);
+  --surface-selected: rgb(242, 247, 254);
+  --interactive-default: rgb(44, 110, 203);
+  --Action-Primar-Default: rgb(0, 128, 96);
 }
 
 .container {

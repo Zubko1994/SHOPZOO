@@ -58,11 +58,11 @@ const showModalWaiting = () => {
         <div class="contacts-info">
           <div class="customer-name">
             <label for="name">Имя</label>
-            <input id="name" type="text" placeholder="Иванов Иван Иванович" />
+            <input id="name" type="text" placeholder="Иванов Иван Иванович" required/>
           </div>
           <div class="customer-phone">
             <label for="name">Номер телефона</label>
-            <input id="name" type="text" placeholder="+375 ___-__-__" />
+            <input id="name" type="text" placeholder="+375 ___-__-__" required />
           </div>
         </div>
         <Button class="button-send" kind="primary"  @click="showModalWaiting" 

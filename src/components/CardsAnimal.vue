@@ -19,6 +19,7 @@ const dataAnimal = ref<AnimalObj | null>(null)
 fetch('https://oliver1ck.pythonanywhere.com/api/get_animals_list/')
   .then(resp => resp.json())
   .then(data => dataAnimal.value = data)
+  console.log(dataAnimal)
 
 
 </script>

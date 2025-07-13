@@ -11,10 +11,10 @@ const props = defineProps<{
   <nav>
     <ul :class="['list', `list-${direction}`]">
       <li>
-        <RouterLink to="/about" :class="['item', `item-${color}`]">Главная</RouterLink>
+        <RouterLink to="/" :class="['item', `item-${color}`]">Главная</RouterLink>
       </li>
       <li>
-        <RouterLink to="https://oliver1ck.pythonanywhere.com/doc/" :class="['item', `item-${color}`]"
+        <RouterLink to="/catalog" :class="['item', `item-${color}`]"
           >Каталог</RouterLink
         >
       </li>

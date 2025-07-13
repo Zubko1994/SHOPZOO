@@ -2,7 +2,8 @@ import { createMemoryHistory, createRouter } from 'vue-router'
 
 export const RoutePath = {
   Home: '/',
-  About: '/about',
+  Catalog: '/catalog',
+  
 
 } as const
 
@@ -16,9 +17,9 @@ export const router = createRouter({
     },
 
     {
-      path: RoutePath.About,
-      name: 'about',
-      component: () => import('../pages/About.vue'),
+      path: RoutePath.Catalog,
+      name: 'catalog',
+      component: () => import('../pages/Сatalog.vue'),
     }
   ],
 })

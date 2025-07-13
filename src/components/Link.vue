@@ -37,19 +37,35 @@ const computedtag = computed(() => (props.isLink ? RouterLink : 'a'))
   line-height: 20px;
   letter-spacing: 0px;
   text-align: left;
-  // &_instagram {
-  //   width: 14px;
-  //   height: 14px;
-  // }
+
+  &_crumbs-black {
+    color: var(--text-default);
+    font-family: 'SFProText';
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 20px;
+    letter-spacing: 0px;
+    text-align: left;
+  }
+
+  &_crumbs-grey {
+    color: var(--text-gray);
+    font-family: 'SFProText';
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 20px;
+    letter-spacing: 0px;
+    text-align: left;
+  }
 }
 
 .email {
   color: var(--);
-font-family: "SFProText";
-font-size: 14px;
-font-weight: 400;
-line-height: 24px;
-letter-spacing: 0px;
-text-align: left;
+  font-family: 'SFProText';
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 24px;
+  letter-spacing: 0px;
+  text-align: left;
 }
 </style>

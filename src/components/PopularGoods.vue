@@ -36,7 +36,7 @@ const lengthArray = () => {
 const currentSliderIndex = ref(0); 
 
 
-
+console.log(dataCards)
 
 const nextSlide = () => { 
     currentSliderIndex.value = (currentSliderIndex.value + 1) % length.value; 

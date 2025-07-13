@@ -61,13 +61,14 @@ const updateTotalPrice = (quantity: string) => {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  gap: 16px;
+  gap: 18px;
   max-width: 270px;
   min-width: 243px;
   padding: 8px;
+  max-height: 392px;
   background-color: var(--white);
   border-radius: 5px;
-  
+
 }
 
 .image-good {

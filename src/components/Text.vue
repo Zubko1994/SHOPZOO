@@ -28,6 +28,12 @@ type Kind =
   | 'title-backcall'
   | 'personal'
   | 'waiting'
+  | 'crumbs-black'
+  | 'crumbs-grey'
+  | 'title_catalog'
+  | 'check-box'
+  | 'filter-title'
+  | 'brand-name'
 
 const props = defineProps<{
   title?: string
@@ -226,6 +232,56 @@ const computedClass = computed(() => {
     letter-spacing: 0px;
     text-align: center;
   }
+
+  &-crumbs-black {
+    color: var(--text-default);
+    font-family: 'SFProText';
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 20px;
+    letter-spacing: 0px;
+    text-align: left;
+  }
+
+  &-crumbs-grey {
+    color: var(--text-gray);
+    font-family: 'SFProText';
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 20px;
+    letter-spacing: 0px;
+    text-align: left;
+  }
+
+  &-check-box {
+    color: var(--text-default);
+    font-family: 'SFProText';
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    letter-spacing: 0px;
+    text-align: left;
+  }
+
+  &-filter-title {
+    color: var(--text-default);
+    font-family: 'SFProText';
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 24px;
+    letter-spacing: 0px;
+    text-align: left;
+  }
+
+  &-brand-name {
+    color: var(--text-default);
+    font-family: 'SFProText';
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 20px;
+    letter-spacing: 0px;
+    text-align: left;
+  }
 }
 
 .h1 {
@@ -236,6 +292,15 @@ const computedClass = computed(() => {
   font-size: 42px;
   font-weight: 700;
   line-height: 120%;
+  &-title_catalog {
+    color: var(--text-default);
+    font-family: 'SFProDisplay';
+    font-size: 42px;
+    font-weight: 700;
+    line-height: 44px;
+    letter-spacing: 0px;
+    text-align: left;
+  }
 }
 
 .h2 {
