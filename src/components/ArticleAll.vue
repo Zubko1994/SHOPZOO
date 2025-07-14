@@ -120,7 +120,7 @@ const prevSlide = () => {
     display: flex;
     gap: 30px;
     flex-wrap: wrap;
-    justify-content: center;
+    justify-content: space-between;
     margin-bottom: 24px;
 
 }
@@ -142,7 +142,7 @@ const prevSlide = () => {
 }
 
 .article-information {
-    padding: 32px 10px 33px 10px;
+    padding: 24px 10px 33px 10px;
 }
 
 .wrapper_button {

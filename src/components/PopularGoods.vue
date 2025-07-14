@@ -85,7 +85,7 @@ const prevSlide = () => {
 
 <style lang="scss" scoped>
 .goods-popular_wrapper {
-  padding: 4px 5px 56px 5px;
+  padding: 4px 5px 20px 5px;
   background: var(--bg-default);
 }
 

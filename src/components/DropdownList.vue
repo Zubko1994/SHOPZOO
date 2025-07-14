@@ -88,7 +88,7 @@ span {
 
 .wrapper_sorting {
  width: 270px;
-
+z-index: 50;
   
 }
 

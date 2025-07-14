@@ -4,6 +4,8 @@ import Layout from '../layout/Layout.vue'
 import CardsAnimal from '../components/CardsAnimal.vue'
 import MenuCrumbs from '../components/MenuCrumbs.vue'
 import Catalog from '../components/Catalog.vue'
+import PopularGoods from '../components/PopularGoods.vue'
+import ArticleAll from '../components/ArticleAll.vue'
 </script>
 
 <template>
@@ -11,6 +13,9 @@ import Catalog from '../components/Catalog.vue'
   <MenuCrumbs/>
   <CardsAnimal />
   <Catalog/>
+  <PopularGoods/>
+  <ArticleAll/>
+
  </Layout>
 </template>
 

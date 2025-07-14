@@ -8,6 +8,8 @@ import BrendsNamesFiltersAll from '../components/BrendsNamesFiltersAll.vue'
 import Button from './Button.vue'
 import Text from './Text.vue'
 import Card from './Card.vue'
+import SliderPageCatalog from './SliderPageCatalog.vue'
+
 import { ref } from 'vue'
 
 interface Cards {
@@ -53,6 +55,7 @@ fetch('https://oliver1ck.pythonanywhere.com/api/get_products_list/')
           <div class="wrapper-cards">
         <Card  v-for="(card, index) in dataCards?.results" :key="index" :image_prev="card.image_prev" :title="card.title" :price="card.price" :countitemproduct_set="card.countitemproduct_set"   />
       </div>
+      <SliderPageCatalog/>
     </div>
           
           

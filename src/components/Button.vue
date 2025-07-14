@@ -131,7 +131,6 @@ function btnHandler(e: Event) {
     top: 5px;
     &:hover {
       background-color: var(--highlight);
-      
     }
   }
   &_indicator-right {
@@ -149,7 +148,6 @@ function btnHandler(e: Event) {
     justify-content: center;
     &:hover {
       background-color: var(--highlight);
-      
     }
   }
   &_backcall {
@@ -160,6 +158,44 @@ function btnHandler(e: Event) {
     padding: 0px;
     border: none;
     background-color: var(--bg-default);
+  }
+  &_slider {
+    color: var(--highlight);
+    font-family: 'SFProText';
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    letter-spacing: 0px;
+    text-align: center;
+    border: none;
+    background: none;
+  }
+
+  &_slider-number {
+    color: var(--highlight);
+    font-family: 'SFProText';
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 24px;
+    letter-spacing: 0px;
+    text-align: center;
+    border: none;
+    background: none;
+    &:hover {
+      color: var(--text-gray);
+    }
+  }
+
+  &_slider-number-active {
+    color: var(--text-gray);
+    font-family: 'SFProText';
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 24px;
+    letter-spacing: 0px;
+    text-align: center;
+    border: none;
+    background: none;
   }
 }
 </style>
