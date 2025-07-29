@@ -68,7 +68,7 @@ const updateTotalPrice = (quantity: string) => {
   max-height: 392px;
   background-color: var(--white);
   border-radius: 5px;
-
+  align-self: auto;
 }
 
 .image-good {
