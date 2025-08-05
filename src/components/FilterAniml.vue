@@ -2,7 +2,7 @@
 import { reactive } from 'vue'
 import Text from '../components/Text.vue'
 import RadioButton from './RadioButton.vue';
-
+import { ref, computed } from 'vue'
 // interface Animal  {
 //   id: number
 //   title: string
@@ -21,12 +21,12 @@ import RadioButton from './RadioButton.vue';
 //   countitemproduct_set: string
 // }
 
-// interface Brand {
-//   id: number
-//   name: string | null
-//   image: string | null
-//   key: number
-// }
+interface animal {
+  id: number
+  name: string | null
+ title: string | null
+  key?: number
+}
 
 
 
@@ -45,39 +45,73 @@ import RadioButton from './RadioButton.vue';
 
 let animal = [
     {
-        id: "1",
+        id: 1,
         title: "Собаки",
         name: "animal"
     },
 
     {
-        id: "2",
+        id: 2,
         title: "Кошки",
         name: "animal"
     },
 
     {
-        id: "3",
+        id: 3,
         title: "Грызуны",
         name: "animal"
     },
 
     {
-        id: "4",
+        id: 4,
         title: "Птицы",
         name: "animal"
     },
 
     {
-        id: "5",
+        id: 5,
         title: "Рыбки",
         name: "animal"
     },
     
   ]
 
+  const props = defineProps<{
+  id?: number
+  title: string
+  name: string
+  list?: string[]
+}>()
 
+
+// interface Animal {
+//   id: number
+//   type: string
+//   image: string
+// }
+
+// interface AnimalObj {
+//   count: number
+//   next: string | null
+//   previous: string | null
+//   results: Animal[]
+// }
   const reactArray = reactive(animal)
+
+  const selectedItem = ref<number | null>(null)
+
+const emit = defineEmits(['upCategory']);
+
+function categoruHandler(item: animal) {
+  if (selectedItem.value === item.id) {
+    selectedItem.value = null;
+    emit('upCategory', null);
+  } else {
+    selectedItem.value = item.id;
+    emit('upCategory', item); // Передаем объект целиком
+  }
+}
+  console.log(selectedItem.value)
 
 
 </script>
@@ -91,7 +125,7 @@ let animal = [
         class="title-filter"
     />
   <div class="filter-animal">
-    <RadioButton  v-for="animal in reactArray" :name="animal.name" :key="animal.id" :title="animal.title"  />
+    <RadioButton @giveCategory="categoruHandler(animal)"  v-for="animal in reactArray" :name="animal.name" :id="animal.id" :title="animal.title" />
   </div>
 </div>
 </template>

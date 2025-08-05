@@ -1,18 +1,22 @@
 <!-- @format -->
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import Quantity from './Quantity.vue'
 import ImageCard from './ImageCard.vue'
 import Text from './Text.vue'
 import Button from './Button.vue'
 
 const props = defineProps<{
+
   image_prev: string
   title: string
   countitemproduct_set: string[]
   price: number
+  currentCategory?: number 
+  animal: string[]
 }>()
+
 
 const selectedQuantity = ref<string | null>(null)
 console.log(selectedQuantity.value)
@@ -28,7 +32,13 @@ const updateTotalPrice = (quantity: string) => {
   console.log(selectedQuantity.value)
 }
 
+// const emit = defineEmits(['updateCategory'])
 
+
+
+// function handleCategoryUpdate() {
+//   emit('updateCategory', props.countitemproduct_set)
+// }
 
 </script>
 
@@ -62,7 +72,7 @@ const updateTotalPrice = (quantity: string) => {
   flex-direction: column;
   justify-content: space-between;
   gap: 18px;
-  max-width: 270px;
+  width: 270px;
   min-width: 243px;
   padding: 8px;
   max-height: 392px;
@@ -73,6 +83,14 @@ const updateTotalPrice = (quantity: string) => {
 
 .image-good {
   text-align: center;
+}
+
+.card_title {
+  -webkit-line-clamp: 3;
+  position: relative;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
 }
 
 .card_title:hover {

@@ -55,6 +55,7 @@ const text = props.text.split("<p>").join("").split("</p>").join(" ").split("<br
     display: flex;
     flex-direction: column;
     gap: 6px;
+    flex-wrap: wrap;
 }
 
 .time {

@@ -22,6 +22,25 @@ fetch('https://oliver1ck.pythonanywhere.com/api/get_brands_list/')
   .then(data => dataBrend.value = data)
 
 
+
+  const selectedItems = ref<number[]>([])
+
+const emit = defineEmits(['upBrand']);
+
+function quantityHandler(item: number, isChecked: boolean) {
+  if (isChecked) {
+    if(!selectedItems.value.includes(item)){
+      selectedItems.value.push(item)
+    }
+  } else {
+    selectedItems.value = selectedItems.value.filter(id => id !== item);
+    emit('upBrand', null);
+   
+  }
+  emit('upBrand', [...selectedItems.value])
+}
+
+
 </script>
 
 <template>
@@ -33,7 +52,7 @@ fetch('https://oliver1ck.pythonanywhere.com/api/get_brands_list/')
         class="title-filter"
     />
     <div class="brand-list">
-    <BrendNameFilter name="brand" v-for="brand in dataBrend?.results" :id="brand.id" :title="brand.name"/>
+    <BrendNameFilter @customClick="quantityHandler" :isChecked="selectedItems.includes(brand.id)" name="brand" v-for="brand in dataBrend?.results" :key="brand.id" :title="brand.name" :brand="brand.id" :id="brand.id"/>
     
   </div>
   </div>

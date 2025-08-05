@@ -2,13 +2,15 @@
 
 <template>
   <div class="logo">
+    <RouterLink class="block" to="/">
     <img src="../assets/svg/logoFooter.svg" alt="иконка логотипа" />
     <p class="logo-title">Территория <span>ZOO</span></p>
+  </RouterLink>
   </div>
 </template>
 
 <style lang="scss" scoped>
-.logo {
+.block {
   display: flex;
   gap: 6px;
   align-items: center;

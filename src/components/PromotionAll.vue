@@ -13,7 +13,8 @@ import Button from './Button.vue'
     <div class="wrapper-info">
       <Text class="promotion_title" tag="h4" print="title" title="Скидка 25% на первый заказ любого товара на сумму от 50BYN" />
       <div>
-      <Button kind="'btn'">Перейти к выбору товара</Button>
+        <Button kind="'btn'"><RouterLink to="/catalog" class="link_button" :class="['item']"
+          >Перейти к выбору товара</RouterLink></Button>
     </div>
     </div>
     <div>
@@ -24,7 +25,8 @@ import Button from './Button.vue'
     <div class="wrapper-info">
       <Text class="promotion_title" tag="h4" print="title" title="Получите игрушку в подарок при сумме заказа от 200BYN" />
       <div>
-      <Button kind="'btn'">Перейти к выбору товара</Button>
+        <Button kind="'btn'"><RouterLink to="/catalog" class="link_button" :class="['item']"
+          >Перейти к выбору товара</RouterLink></Button>
     </div>
     </div>
     <div>
@@ -38,6 +40,10 @@ import Button from './Button.vue'
 </template>
 
 <style lang="scss" scoped>
+
+.link_button {
+  color: var(--text-default);
+}
 .promotion-wrapper {
   background: var(--bg-default);
   padding: 56px 5px 56px 5px;

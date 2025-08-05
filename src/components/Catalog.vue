@@ -1,4 +1,4 @@
-<!-- @format -->
+@format
 
 <script setup lang="ts">
 import DropdownList from '../components/DropdownList.vue'
@@ -8,9 +8,11 @@ import BrendsNamesFiltersAll from '../components/BrendsNamesFiltersAll.vue'
 import Button from './Button.vue'
 import Text from './Text.vue'
 import Card from './Card.vue'
-import SliderPageCatalog from './SliderPageCatalog.vue'
+import CardsAnimal from '../components/CardsAnimal.vue'
+import MenuCrumbs from '../components/MenuCrumbs.vue'
 
-import { ref } from 'vue'
+
+import { ref, computed, watch } from 'vue'
 
 interface Cards {
   id: number
@@ -18,6 +20,9 @@ interface Cards {
   title: string
   price: number
   countitemproduct_set: string[]
+  animal: { id: number; title: string }[]
+  brand:  {id: number; name: string; image: string}
+
 }
 
 interface CardsObj {
@@ -27,291 +32,167 @@ interface CardsObj {
   results: Cards[]
 }
 
-// const dataCards = ref<CardsObj | null>(null)
-// fetch('https://oliver1ck.pythonanywhere.com/api/get_products_list/')
-//   .then((resp) => resp.json())
-//   .then((data) => (dataCards.value = data))
-
-const dataCardsOne = ref<CardsObj | null>(null)
-fetch(
-  'https://oliver1ck.pythonanywhere.com/api/get_products_filter/?order=date_create'
-)
-  .then((resp) => resp.json())
-  .then((data) => (dataCardsOne.value = data))
-
-const dataCardsTwo = ref<CardsObj | null>(null)
-fetch(
-  'https://oliver1ck.pythonanywhere.com/api/get_products_filter/?order=date_create&page=2'
-)
-  .then((resp) => resp.json())
-  .then((data) => (dataCardsTwo.value = data))
-
-const dataCardsThree = ref<CardsObj | null>(null)
-fetch(
-  'https://oliver1ck.pythonanywhere.com/api/get_products_filter/?order=date_create&page=3'
-)
-  .then((resp) => resp.json())
-  .then((data) => (dataCardsThree.value = data))
-
-const dataCardsFour = ref<CardsObj | null>(null)
-fetch(
-  'https://oliver1ck.pythonanywhere.com/api/get_products_filter/?order=date_create&page=4'
-)
-  .then((resp) => resp.json())
-  .then((data) => (dataCardsFour.value = data))
-
-const dataCardsFive = ref<CardsObj | null>(null)
-fetch(
-  'https://oliver1ck.pythonanywhere.com/api/get_products_filter/?order=date_create&page=5'
-)
-  .then((resp) => resp.json())
-  .then((data) => (dataCardsFive.value = data))
-
-const dataCardsSix = ref<CardsObj | null>(null)
-fetch(
-  'https://oliver1ck.pythonanywhere.com/api/get_products_filter/?order=date_create&page=6'
-)
-  .then((resp) => resp.json())
-  .then((data) => (dataCardsSix.value = data))
-
-const dataCardsSeven = ref<CardsObj | null>(null)
-fetch(
+const pageUrls = [
+  'https://oliver1ck.pythonanywhere.com/api/get_products_filter/?order=date_create',
+  'https://oliver1ck.pythonanywhere.com/api/get_products_filter/?order=date_create&page=2',
+  'https://oliver1ck.pythonanywhere.com/api/get_products_filter/?order=date_create&page=3',
+  'https://oliver1ck.pythonanywhere.com/api/get_products_filter/?order=date_create&page=4',
+  'https://oliver1ck.pythonanywhere.com/api/get_products_filter/?order=date_create&page=5',
+  'https://oliver1ck.pythonanywhere.com/api/get_products_filter/?order=date_create&page=6',
   'https://oliver1ck.pythonanywhere.com/api/get_products_filter/?order=date_create&page=7'
-)
-  .then((resp) => resp.json())
-  .then((data) => (dataCardsSeven.value = data))
+];
 
-const pageNumber = ref(1)
+const dataCards = ref<CardsObj[] | null>(null)
 
-const onePage = ref(true)
-const twoPage = ref(false)
-const threePage = ref(false)
-const fourPage = ref(false)
-const fivePage = ref(false)
-const sixPage = ref(false)
-const sevenPage = ref(false)
-
-const showOne = () => {
-  pageNumber.value == 1
-  onePage.value = true
-  twoPage.value = false
-  threePage.value = false
-  fourPage.value = false
-  fivePage.value = false
-  sixPage.value = false
-  sevenPage.value = false
+interface CardsObj {
+  results: Cards[]
 }
 
-const showTwo = () => {
-  pageNumber.value == 2
-  onePage.value = false
-  twoPage.value = true
-  threePage.value = false
-  fourPage.value = false
-  fivePage.value = false
-  sixPage.value = false
-  sevenPage.value = false
-}
+const error = ref<string | null>(null);
 
-const showThree = () => {
-  pageNumber.value == 3
-  onePage.value = false
-  twoPage.value = false
-  threePage.value = true
-  fourPage.value = false
-  fivePage.value = false
-  sixPage.value = false
-  sevenPage.value = false
-}
 
-const showFour = () => {
-  pageNumber.value == 4
-  onePage.value = false
-  twoPage.value = false
-  threePage.value = false
-  fourPage.value = true
-  fivePage.value = false
-  sixPage.value = false
-  sevenPage.value = false
-}
+const allCards = computed(() => {
+  return dataCards.value?.flatMap(page => page.results) || [];
+});
+console.log(allCards)
 
-const showFive = () => {
-  pageNumber.value == 5
-  onePage.value = false
-  twoPage.value = false
-  threePage.value = false
-  fourPage.value = false
-  fivePage.value = true
-  sixPage.value = false
-  sevenPage.value = false
-}
+Promise.all(pageUrls.map(url => 
+  fetch(url)
+    .then(res => res.json())
+    .catch(e => { 
+      error.value = `Ошибка загрузки: ${e.message}`;
+      return { results: [] }; 
+    })
+))
+.then(pages => {
+  dataCards.value = pages;
+})
+.catch(e => {
+  error.value = `Критическая ошибка: ${e.message}`;
+});
 
-const showSix = () => {
-  pageNumber.value == 6
-  onePage.value = false
-  twoPage.value = false
-  threePage.value = false
-  fourPage.value = false
-  fivePage.value = false
-  sixPage.value = true
-  sevenPage.value = false
-}
+console.log(allCards)
 
-const showSeven = () => {
-  pageNumber.value == 7
-  onePage.value = false
-  twoPage.value = false
-  threePage.value = false
-  fourPage.value = false
-  fivePage.value = false
-  sixPage.value = false
-  sevenPage.value = true
-}
+const pageNumber = ref(0);
+
+  const props = withDefaults(defineProps<{
+    size?: number,
+    count?: number,
+    id?: Number
+    brand?: object
+    
+}>(), {
+    size: 15,
+    count: 1
+});
+
+
+
+const pageCount = computed(() => {
+    return Math.ceil(filteredCards.value.length / props.size);
+});
+
+
+const paginatedData = computed(() => {
+    const start = pageNumber.value * props.size;
+    const end = start + props.size;
+    return filteredCards.value.slice(start, end);
+});
+console.log(paginatedData)
 
 const showPrevPage = () => {
-  pageNumber.value--
-  if (pageNumber.value == 7) {
-    onePage.value = false
-    twoPage.value = false
-    threePage.value = false
-    fourPage.value = false
-    fivePage.value = false
-    sixPage.value = false
-    sevenPage.value = true
-  } else if (pageNumber.value == 6) {
-    onePage.value = false
-    twoPage.value = false
-    threePage.value = false
-    fourPage.value = false
-    fivePage.value = false
-    sixPage.value = true
-    sevenPage.value = false
-  } else if (pageNumber.value == 5) {
-    onePage.value = false
-    twoPage.value = false
-    threePage.value = false
-    fourPage.value = false
-    fivePage.value = true
-    sixPage.value = false
-    sevenPage.value = false
-  } else if (pageNumber.value == 4) {
-    onePage.value = false
-    twoPage.value = false
-    threePage.value = false
-    fourPage.value = true
-    fivePage.value = false
-    sixPage.value = false
-    sevenPage.value = false
-  } else if (pageNumber.value == 3) {
-    onePage.value = false
-    twoPage.value = false
-    threePage.value = true
-    fourPage.value = false
-    fivePage.value = false
-    sixPage.value = false
-    sevenPage.value = false
-  } else if (pageNumber.value == 2) {
-    onePage.value = false
-    twoPage.value = true
-    threePage.value = false
-    fourPage.value = false
-    fivePage.value = false
-    sixPage.value = false
-    sevenPage.value = false
-  } else if (pageNumber.value == 1) {
-    onePage.value = true
-    twoPage.value = false
-    threePage.value = false
-    fourPage.value = false
-    fivePage.value = false
-    sixPage.value = false
-    sevenPage.value = false
-  } else if (pageNumber.value == 0) {
-    pageNumber.value = 7
-    onePage.value = false
-    twoPage.value = false
-    threePage.value = false
-    fourPage.value = false
-    fivePage.value = false
-    sixPage.value = false
-    sevenPage.value = true
-  }
-  console.log(pageNumber.value)
-}
+    if (pageNumber.value > 0) pageNumber.value--;
+};
 
 const showNextPage = () => {
-  pageNumber.value++
-  if (pageNumber.value == 7) {
-    onePage.value = false
-    twoPage.value = false
-    threePage.value = false
-    fourPage.value = false
-    fivePage.value = false
-    sixPage.value = false
-    sevenPage.value = true
-  } else if (pageNumber.value == 6) {
-    onePage.value = false
-    twoPage.value = false
-    threePage.value = false
-    fourPage.value = false
-    fivePage.value = false
-    sixPage.value = true
-    sevenPage.value = false
-  } else if (pageNumber.value == 5) {
-    onePage.value = false
-    twoPage.value = false
-    threePage.value = false
-    fourPage.value = false
-    fivePage.value = true
-    sixPage.value = false
-    sevenPage.value = false
-  } else if (pageNumber.value == 4) {
-    onePage.value = false
-    twoPage.value = false
-    threePage.value = false
-    fourPage.value = true
-    fivePage.value = false
-    sixPage.value = false
-    sevenPage.value = false
-  } else if (pageNumber.value == 3) {
-    onePage.value = false
-    twoPage.value = false
-    threePage.value = true
-    fourPage.value = false
-    fivePage.value = false
-    sixPage.value = false
-    sevenPage.value = false
-  } else if (pageNumber.value == 2) {
-    onePage.value = false
-    twoPage.value = true
-    threePage.value = false
-    fourPage.value = false
-    fivePage.value = false
-    sixPage.value = false
-    sevenPage.value = false
-  } else if (pageNumber.value == 1) {
-    onePage.value = true
-    twoPage.value = false
-    threePage.value = false
-    fourPage.value = false
-    fivePage.value = false
-    sixPage.value = false
-    sevenPage.value = false
-  } else if (pageNumber.value == 8) {
-    pageNumber.value = 1
-    onePage.value = true
-    twoPage.value = false
-    threePage.value = false
-    fourPage.value = false
-    fivePage.value = false
-    sixPage.value = false
-    sevenPage.value = false
-  }
-  console.log(pageNumber.value)
+    if (pageNumber.value < pageCount.value - 1) pageNumber.value++;
+};
+
+
+const goToPage = (page: number) => {
+    pageNumber.value = page;
+};
+
+const selectedCategory = ref<number | null>(null)
+  const updateCategory = (category: number) => {
+  selectedCategory.value = category
+  console.log(category)
+  pageNumber.value = 0;
 }
+
+const choiceCategory = ref<number | null>(null)
+const upCategory = (categ: { id: number } | null)   => {
+  choiceCategory.value = categ? categ.id : null
+  console.log(categ)
+  pageNumber.value = 0;
+}
+
+const choiceBrand = ref<number[]>([])
+
+const upBrand = (brands: number[])    => {
+  choiceBrand.value = brands
+  pageNumber.value = 0;
+  // console.log("Brand filter:", id);
+}
+
+console.log(selectedCategory)
+console.log(choiceCategory)
+console.log(choiceBrand)
+
+
+watch([choiceCategory, selectedCategory, choiceBrand], () => {
+  pageNumber.value = 0;
+});
+
+
+watch(choiceCategory, (newVal) => {
+  if (newVal) selectedCategory.value = null;
+});
+
+
+watch(selectedCategory, (newVal) => {
+  if (newVal) choiceCategory.value = null;
+});
+
+
+const filteredCards = computed(() => {
+  let result = allCards.value
+  console.log(result)
+  if (choiceCategory.value) {
+    selectedCategory.value = null
+    result = result.filter(card => 
+      card.animal.some(anim => anim.id === choiceCategory.value)
+    ) 
+  }
+   if (selectedCategory.value) {
+    choiceCategory.value = null
+    result = result.filter(card => 
+      card.animal.some(anim => anim.id === selectedCategory.value)
+  ) 
+  } 
+  if (choiceBrand.value.length > 0) {
+
+    result = result.filter(card => choiceBrand.value.includes(card.brand.id))
+  
+  }
+  console.log(result)
+   return result 
+}
+)
+
+
+watch(paginatedData, (cards) => {
+  if (cards.length > 0) {
+    console.log('Бренды первой карточки:', cards[0].brand);
+    console.log('ID выбранного бренда:', choiceBrand.value);
+  }
+}, { immediate: true, deep: true });
+
 </script>
 
 <template>
+  <MenuCrumbs/>
+  <CardsAnimal @updateCategory="updateCategory" />
   <section class="catalog">
     <div class="container">
       <div class="catalog__wrapper">
@@ -326,96 +207,76 @@ const showNextPage = () => {
             <div class="goods__action">
               <Checkbox />
             </div>
-            <FilterAniml />
-            <BrendsNamesFiltersAll />
+            <FilterAniml @upCategory="upCategory" />
+            <BrendsNamesFiltersAll @upBrand="upBrand" />
           </div>
           <div>
+            <div class="cards-section">
             <div class="wrapper-cards">
               <Card
-                v-if="onePage"
-                v-for="(card, index) in dataCardsOne?.results"
+                v-for="(card, index) in paginatedData"
                 :key="index"
                 :image_prev="card.image_prev"
                 :title="card.title"
                 :price="card.price"
-                :countitemproduct_set="card.countitemproduct_set"
+                :countitemproduct_set="card.countitemproduct_set" 
+                :animal="card.animal"
+                :brand="card.brand"
+                :id="id"
+                @updateCategory="updateCategory"
+                @upCategory="upCategory"
+                @upBrand="upBrand"
               />
-              <Card
-                v-if="twoPage"
-                v-for="(card, index) in dataCardsTwo?.results"
-                :key="index"
-                :image_prev="card.image_prev"
-                :title="card.title"
-                :price="card.price"
-                :countitemproduct_set="card.countitemproduct_set"
-              />
-              <Card
-                v-if="threePage"
-                v-for="(card, index) in dataCardsThree?.results"
-                :key="index"
-                :image_prev="card.image_prev"
-                :title="card.title"
-                :price="card.price"
-                :countitemproduct_set="card.countitemproduct_set"
-              />
-              <Card
-                v-if="fourPage"
-                v-for="(card, index) in dataCardsFour?.results"
-                :key="index"
-                :image_prev="card.image_prev"
-                :title="card.title"
-                :price="card.price"
-                :countitemproduct_set="card.countitemproduct_set"
-              />
-              <Card
-                v-if="fivePage"
-                v-for="(card, index) in dataCardsFive?.results"
-                :key="index"
-                :image_prev="card.image_prev"
-                :title="card.title"
-                :price="card.price"
-                :countitemproduct_set="card.countitemproduct_set"
-              />
-              <Card
-                v-if="sixPage"
-                v-for="(card, index) in dataCardsSix?.results"
-                :key="index"
-                :image_prev="card.image_prev"
-                :title="card.title"
-                :price="card.price"
-                :countitemproduct_set="card.countitemproduct_set"
-              />
-              <Card
-                v-if="sevenPage"
-                v-show="(pageNumber = 7)"
-                v-for="(card, index) in dataCardsSeven?.results"
-                :key="index"
-                :image_prev="card.image_prev"
-                :title="card.title"
-                :price="card.price"
-                :countitemproduct_set="card.countitemproduct_set"
-              />
+              
             </div>
-            <SliderPageCatalog
-              @prev="showPrevPage"
-              @next="showNextPage"
-              @page-one="showOne"
-              @page-two="showTwo"
-              @page-three="showThree"
-              @page-four="showFour"
-              @page-five="showFive"
-              @page-six="showSix"
-              @page-seven="showSeven"
-            />
+            <div class="slider-wrapper">
+    <div class="indicator-left" :class="{ disabled: pageNumber === 0 }"
+    @click="showPrevPage">
+  <img class="strela" src="../assets/svg/highlightPointer.svg" alt="указатель влево">
+    <Button kind="slider">Предыдущая</Button>
+    </div>
+    <ul class="indicator-number">
+      <li 
+        v-for="page in pageCount" 
+        :key="page"
+        class="slider-number"
+        :class="{ active: pageNumber === page - 1 }"
+        @click="goToPage(page - 1)"
+      >
+        {{ page }}
+      </li>
+    </ul>
+    <div class="indicator-right" :class="{ disabled: pageNumber === pageCount - 1 }"
+    @click="showNextPage">
+      <Button kind="slider">Следующая</Button>
+      <img class="strela" src="../assets/svg/highlightPointerRight.svg" alt="указатель вправо">
+</div>
+</div>
+</div>
           </div>
         </div>
       </div>
     </div>
-    e
+    
   </section>
 </template>
 
 <style lang="scss" scoped>
+
+.slider-number {
+    color: var(--highlight);
+    font-family: 'SFProText';
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 24px;
+    letter-spacing: 0px;
+    text-align: center;
+    border: none;
+    background: none;
+    &:hover {
+      color: var(--text-gray);
+    }
+  }
 .catalog {
   background-color: var(--bg-default);
   padding: 0px 5px 56px 5px;
@@ -461,7 +322,7 @@ const showNextPage = () => {
 
 .wrapper__goods {
   display: flex;
-  gap: 15px;
+  gap: 30px;
   justify-content: space-between;
 }
 
@@ -474,6 +335,63 @@ const showNextPage = () => {
   justify-content: space-between;
   overflow: hidden;
   transform: translateX(0);
-  height: 2050px;
+  // height: 1980px;
+  // align-items: start;
+}
+
+.cards-section {
+  height: 2100px;
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+}
+
+.indicator-left {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+  text-wrap: nowrap;
+  padding-left: 5px;
+  cursor: pointer;
+}
+
+.strela {
+  display: block ;
+}
+
+.indicator-number {
+  display: flex;
+  gap: 32px;
+  cursor: pointer;
+}
+
+.indicator-right {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+  text-wrap: nowrap;
+  padding-right: 5px;
+  cursor: pointer;
+}
+
+.slider-wrapper {
+  display: flex;
+  gap: 10px;
+  justify-content: space-between;
+  align-items: baseline;
+  
+}
+
+.slider-number.active {
+  color: #6D7175;
+  font-weight: bold;
+}
+
+.indicator-left.disabled,
+.indicator-right.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 </style>
+
+

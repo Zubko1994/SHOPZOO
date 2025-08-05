@@ -40,26 +40,7 @@ const nextPage = () => {
 </script>
 
 <template>
-  <div class="slider-wrapper">
-    <div class="indicator-left">
-  <img class="strela" src="../assets/svg/highlightPointer.svg" alt="указатель влево">
-    <Button kind="slider" @click="prevPage">Предыдущая</Button>
-    </div>
-    <div class="indicator-number">
-      <Button kind="slider-number" @click="sliderOne">1</Button>
-      <Button kind="slider-number" @click="sliderTwo">2</Button>
-      <Button kind="slider-number" @click="sliderThree">3</Button>
-      <Button kind="slider-number" @click="sliderFour">4</Button>
-      <Button kind="slider-number" @click="sliderFive">5</Button>
-      <Button kind="slider-number" @click="sliderSix">6</Button>
-      <Button kind="slider-number" @click="sliderSeven">7</Button>
-    </div>
-    <div class="indicator-right">
-      <Button kind="slider" @click="nextPage">Следующая</Button>
-      <img class="strela" src="../assets/svg/highlightPointerRight.svg" alt="указатель вправо">
-</div>
-
-  </div>
+ 
 </template>
 
 <style lang="scss" scoped>

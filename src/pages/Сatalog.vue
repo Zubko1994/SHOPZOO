@@ -10,8 +10,8 @@ import ArticleAll from '../components/ArticleAll.vue'
 
 <template>
  <Layout>
-  <MenuCrumbs/>
-  <CardsAnimal />
+  <!-- <MenuCrumbs/>
+  <CardsAnimal /> -->
   <Catalog/>
   <PopularGoods/>
   <ArticleAll/>

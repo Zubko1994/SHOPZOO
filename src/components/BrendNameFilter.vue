@@ -2,17 +2,28 @@
 
 <script setup lang="ts">
 import Text from '../components/Text.vue'
+import { ref } from 'vue'
 
 const props = defineProps<{
   title: string
   id: number
+  brand: number
+  isChecked: boolean
 }>()
+const isChecked = ref(false)
+const emit = defineEmits(['customClick'])
+
+function handleClick() {
+  const newValue = !props.isChecked;
+  emit('customClick', props.brand, newValue);
+}
+
 </script>
 
 <template>
-  <div class="action">
-    <input class="brand" type="checkbox" id="brand" />
-    <label for="brand"><Text tag="p" print="brand-name" :title="props.title" /></label>
+  <div class="action" >
+    <input @click="handleClick" class="brand" type="checkbox" :id="'brand-' + id" :checked="isChecked"/>
+    <label :for="'brand-' + id"><Text tag="p" print="brand-name" :title="props.title" /></label>
   </div>
 </template>
 

@@ -5,18 +5,28 @@ import Text from '../components/Text.vue'
 
 const props = defineProps<{
   title: string
+  id: number
 }>()
+
+const emit = defineEmits(['giveCategory']);
+
+ function handleClick() {
+   emit('giveCategory', props.id); // Передаем ID вместо строки
+   console.log(props.id)
+ }
+ 
 </script>
 
 <template>
-  <div class="kind-animal">
-    <input class="radio" type="radio" name="animal" id="radio" />
-    <label for="radio"
+  <div class="kind-animal" @click="handleClick" :key="props.id">
+    <input class="radio" type="radio" name="animal" :id="`radio-${props.id}`"  />
+    <label :for="`radio-${props.id}`"
       ><Text
         tag="p"
         print="crumbs-black"
         class="crumbs-black"
         :title="props.title"
+        :key="props.id"
     /></label>
   </div>
 </template>

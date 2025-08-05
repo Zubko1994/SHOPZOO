@@ -1,8 +1,10 @@
-<script setup lang="ts">
-import CardAnimal from './CardAnimal.vue';
-import { ref } from 'vue'
+<!-- @format -->
 
-interface Animal  {
+<script setup lang="ts">
+import CardAnimal from './CardAnimal.vue'
+import { ref, computed } from 'vue'
+
+interface Animal {
   id: number
   type: string
   image: string
@@ -17,10 +19,42 @@ interface AnimalObj {
 
 const dataAnimal = ref<AnimalObj | null>(null)
 fetch('https://oliver1ck.pythonanywhere.com/api/get_animals_list/')
-  .then(resp => resp.json())
-  .then(data => dataAnimal.value = data)
-  console.log(dataAnimal)
+  .then((resp) => resp.json())
+  .then((data) => (dataAnimal.value = data))
 
+
+const selectedItem = ref<object | null>(null)
+
+
+
+const emit = defineEmits(['updateAnimal', 'updateCategory']);
+
+
+// function quantityHandler (item: Animal){
+//   if (selectedItem.value?.id === item.id) {
+//     selectedItem.value = null;
+//     emit('updateAnimal', null);
+//     emit('updateCategory', null); // Эмитим сброс категории
+//   } else {
+//     selectedItem.value = item;
+//     emit('updateAnimal', item);
+//     emit('updateCategory', item.type); // Эмитим выбранную категорию
+//   }
+// }
+
+
+function quantityHandler(item: Animal) {
+  if (selectedItem.value?.id === item.id) {
+    selectedItem.value = null;
+    emit('updateAnimal', null);
+    emit('updateCategory', null);
+  } else {
+    selectedItem.value = item;
+    emit('updateAnimal', item);
+    emit('updateCategory', item.id); 
+  }
+  console.log(item.id)
+}
 
 </script>
 
@@ -29,11 +63,18 @@ fetch('https://oliver1ck.pythonanywhere.com/api/get_animals_list/')
     <div class="animal-wrapper">
       <div class="container">
         <div class="wrapper-card">
-        <CardAnimal v-for="cardAnimal in dataAnimal?.results" :key="cardAnimal.id" :image="cardAnimal.image" :type="cardAnimal.type" />
-       </div>
+          <CardAnimal 
+            @customClick="quantityHandler(cardAnimal)" :isActive="selectedItem?.id === cardAnimal.id"
+            :notIsActive="selectedItem !== null && selectedItem.id !== cardAnimal.id"
+            :id="cardAnimal.id"
+            v-for="cardAnimal in dataAnimal?.results"
+            :key="cardAnimal.id"
+            :image="cardAnimal.image"
+            :type="cardAnimal.type"
+          />
+        </div>
       </div>
     </div>
-
   </section>
 </template>
 
@@ -54,18 +95,17 @@ fetch('https://oliver1ck.pythonanywhere.com/api/get_animals_list/')
   overflow-x: scroll;
 }
 
-.wrapper-card::-webkit-scrollbar {width:0px;}
-
+.wrapper-card::-webkit-scrollbar {
+  width: 0px;
+}
 
 @media (max-width: 992px) {
-
-.container {
+  .container {
     max-width: 992px;
-}
+  }
 
-.animal-wrapper {
-  padding: 70px 5px 16px 5px;
+  .animal-wrapper {
+    padding: 70px 5px 16px 5px;
+  }
 }
-}
-
 </style>

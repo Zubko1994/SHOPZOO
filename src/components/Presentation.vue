@@ -21,7 +21,9 @@ import Button from './Button.vue';
           </div>
           </div>
           <div>
-          <Button kind="primary">Выбрать товар</Button>
+            <Button kind="primary"><RouterLink to="/catalog" class="link_button" :class="['item']"
+          >Выбрать товар</RouterLink></Button>
+         
         </div>
         </div>
         <div class="presentation-image">
@@ -35,6 +37,10 @@ import Button from './Button.vue';
 </template>
 
 <style lang="scss" scoped>
+
+.link_button {
+  color: var(--white);
+}
 
 .presentation-wrapper {
   padding: 33px 5px 40px 5px;
