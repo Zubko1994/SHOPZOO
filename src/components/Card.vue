@@ -1,7 +1,7 @@
 <!-- @format -->
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import Quantity from './Quantity.vue'
 import ImageCard from './ImageCard.vue'
 import Text from './Text.vue'
@@ -20,7 +20,7 @@ const props = defineProps<{
 
 const selectedQuantity = ref<string | null>(null)
 console.log(selectedQuantity.value)
-const totalPrice = ref(props.price)
+const totalPrice = props.price
 
 const updateTotalPrice = (quantity: string) => {
   selectedQuantity.value = quantity
@@ -29,6 +29,11 @@ const updateTotalPrice = (quantity: string) => {
   const info = JSON.parse(JSON.stringify(quantity))
   console.log(info.value)
   totalPrice.value = (props.price * info.value).toFixed(2)
+  watch(totalPrice, (newVal) => {
+    if(newVal){
+    newVal = totalPrice
+    }
+  })
   console.log(selectedQuantity.value)
 }
 
@@ -39,6 +44,7 @@ const updateTotalPrice = (quantity: string) => {
 // function handleCategoryUpdate() {
 //   emit('updateCategory', props.countitemproduct_set)
 // }
+
 
 </script>
 

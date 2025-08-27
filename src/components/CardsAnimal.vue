@@ -2,7 +2,7 @@
 
 <script setup lang="ts">
 import CardAnimal from './CardAnimal.vue'
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 
 interface Animal {
   id: number
@@ -16,6 +16,13 @@ interface AnimalObj {
   previous: string | null
   results: Animal[]
 }
+
+const props = defineProps<{
+  selectedId?: number | null, 
+  selectedCategory?: number | null
+}>();
+
+
 
 const dataAnimal = ref<AnimalObj | null>(null)
 fetch('https://oliver1ck.pythonanywhere.com/api/get_animals_list/')
@@ -42,16 +49,41 @@ const emit = defineEmits(['updateAnimal', 'updateCategory']);
 //   }
 // }
 
+watch(() => props.selectedCategory, (newVal) => {
+  if (newVal && dataAnimal.value) {
+    const animal = dataAnimal.value.results.find(a => a.id === newVal)
+    selectedItem.value = animal || null
+  } else {
+    selectedItem.value = null
+  }
+}, { immediate: true })
+
+watch(() => props.selectedId, (newId) => {
+  if (newId && dataAnimal.value) {
+    const animal = dataAnimal.value.results.find(a => a.id === newId);
+    if (animal) {
+      selectedItem.value = animal;
+      emit('updateAnimal', animal);
+      emit('updateCategory', animal.id);
+    }
+  } else {
+    selectedItem.value = null;
+    emit('updateAnimal', null);
+    emit('updateCategory', null);
+  }
+});
 
 function quantityHandler(item: Animal) {
   if (selectedItem.value?.id === item.id) {
     selectedItem.value = null;
     emit('updateAnimal', null);
     emit('updateCategory', null);
+    console.log(selectedItem.value)
   } else {
     selectedItem.value = item;
     emit('updateAnimal', item);
     emit('updateCategory', item.id); 
+    console.log(item)
   }
   console.log(item.id)
 }

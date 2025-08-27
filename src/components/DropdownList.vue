@@ -12,26 +12,36 @@ import { customRef, ref } from 'vue'
 
 const toggleClassName = ref (false)
 
-
-
 const toggleClass = () => {
  toggleClassName.value = !toggleClassName.value
 }
 
-
 const showContent = ref('дате добавления');
 
-
-// const selectedItem = ref<string | null>(null)
-//   const emit = defineEmits(['custom-click'])
-//   function quantityHandler (item: string){
-//   selectedItem.value = item
-//   console.log(item)
-//   emit('custom-click', item);
-// }
+const emit = defineEmits (['sort-change'])
 
 
+const getSortDisplayName = (value: string) => {
+  const displayNames: { [key: string]: string } = {
+    'date_create': 'дате добавления',
+    'title_asc': 'названию: «от А до Я»',
+    'title_desc': 'названию: «от Я до А»',
+    'price_asc': 'цене по возр.',
+    'price_desc': 'цене по убыв.',
+    'popularity': 'популярности'
+  }
+  console.log(value)
+  return displayNames[value] || value
+}
 
+const changeSort = (sortValue: String) => {
+  showContent.value = getSortDisplayName(sortValue)
+  emit('sort-change', sortValue)
+  toggleClassName.value = false
+  console.log(sortValue)
+}
+
+console.log(changeSort)
 
 
 const changeValue = () => {
@@ -71,12 +81,12 @@ console.log(showContent)
       :class="['arrow-down', { 'arrow-down-active': toggleClassName }]"></div>
     </div>
     <ul class="wrapper_item" v-if="toggleClassName">
-      <li class="elem"@click="changeValueDate">дате добавления</li>
-      <li class="elem" @click="changeValueName" >названию: «от А до Я»</li>
-      <li class="elem" @click="changeValue">названию: «от Я до А»</li>
-      <li class="elem" @click="changeValuePrice">цене по возр.</li>
-      <li class="elem" @click="changeValuePriceDown">цене по убыв.</li>
-      <li class="elem" @click="changeValuePopular">популярности</li>
+      <li class="elem"@click="changeSort('date_create')">дате добавления</li>
+      <li class="elem" @click="changeSort('title_asc')">названию: «от А до Я»</li>
+      <li class="elem" @click="changeSort('title_desc')">названию: «от Я до А»</li>
+      <li class="elem" @click="changeSort('price_asc')">цене по возр.</li>
+      <li class="elem" @click="changeSort('price_desc')">цене по убыв.</li>
+      <li class="elem" @click="changeSort('popularity')">популярности</li>
     </ul>
   </div>
 </template>

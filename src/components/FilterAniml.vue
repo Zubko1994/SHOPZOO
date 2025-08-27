@@ -2,7 +2,7 @@
 import { reactive } from 'vue'
 import Text from '../components/Text.vue'
 import RadioButton from './RadioButton.vue';
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 // interface Animal  {
 //   id: number
 //   title: string
@@ -20,6 +20,8 @@ import { ref, computed } from 'vue'
 //   sales_counter: number
 //   countitemproduct_set: string
 // }
+
+
 
 interface animal {
   id: number
@@ -47,31 +49,36 @@ let animal = [
     {
         id: 1,
         title: "Собаки",
-        name: "animal"
+        name: "animal", 
+        
     },
 
     {
         id: 2,
         title: "Кошки",
-        name: "animal"
+        name: "animal",
+        
     },
 
     {
         id: 3,
         title: "Грызуны",
-        name: "animal"
+        name: "animal",
+       
     },
 
     {
         id: 4,
         title: "Птицы",
-        name: "animal"
+        name: "animal",
+        
     },
 
     {
         id: 5,
         title: "Рыбки",
-        name: "animal"
+        name: "animal",
+      
     },
     
   ]
@@ -81,6 +88,8 @@ let animal = [
   title: string
   name: string
   list?: string[]
+  checked: boolean,
+  selectedCategory?: number | null
 }>()
 
 
@@ -98,9 +107,13 @@ let animal = [
 // }
   const reactArray = reactive(animal)
 
-  const selectedItem = ref<number | null>(null)
+  const selectedItem = ref<number | null>(props.selectedCategory || null)
 
-const emit = defineEmits(['upCategory']);
+const emit = defineEmits(['upCategory', 'selectAnimal']);
+watch(() => props.selectedCategory, (newVal) => {
+  selectedItem.value = newVal
+})
+
 
 function categoruHandler(item: animal) {
   if (selectedItem.value === item.id) {
@@ -108,10 +121,14 @@ function categoruHandler(item: animal) {
     emit('upCategory', null);
   } else {
     selectedItem.value = item.id;
-    emit('upCategory', item); // Передаем объект целиком
+    emit('upCategory', item);
+    emit('selectAnimal', item.id);
+    // emit('upCategory', item)
+    // props.checked == !props.checked
   }
 }
   console.log(selectedItem.value)
+  console.log(props.checked)
 
 
 </script>
@@ -125,7 +142,7 @@ function categoruHandler(item: animal) {
         class="title-filter"
     />
   <div class="filter-animal">
-    <RadioButton @giveCategory="categoruHandler(animal)"  v-for="animal in reactArray" :name="animal.name" :id="animal.id" :title="animal.title" />
+    <RadioButton @giveCategory="categoruHandler(animal)" :checked="selectedItem === animal.id"  v-for="animal in reactArray" :name="animal.name" :id="animal.id" :title="animal.title"  />
   </div>
 </div>
 </template>

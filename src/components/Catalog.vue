@@ -1,6 +1,369 @@
 @format
 
 <script setup lang="ts">
+// import { ref, computed, watch, onMounted } from 'vue'
+// import DropdownList from '../components/DropdownList.vue'
+// import Checkbox from '../components/Checkbox.vue'
+// import FilterAniml from '../components/FilterAniml.vue'
+// import BrendsNamesFiltersAll from '../components/BrendsNamesFiltersAll.vue'
+// import Button from './Button.vue'
+// import Text from './Text.vue'
+// import Card from './Card.vue'
+// import CardsAnimal from '../components/CardsAnimal.vue'
+// import MenuCrumbs from '../components/MenuCrumbs.vue'
+// import FilterTypeGoods from '../components/FilterTypeGoods.vue'
+
+
+
+
+
+// const sortOrder = ref('price_asc')
+// const currentPage = ref(1)
+// const totalPages = ref(0)
+// const isLoading = ref(false)
+
+// // Обработчик изменения сортировки
+// const handleSortChange = (newSort: string) => {
+//   sortOrder.value = newSort
+//   pageNumber.value = 0
+
+
+// }
+
+// // // Функция загрузки продуктов с сервера
+// // const loadProducts = async () => {
+// //   isLoading.value = true
+// //   try {
+// //     const params = new URLSearchParams()
+// //     params.append('order', sortOrder.value)
+// //     params.append('page', currentPage.value.toString())
+    
+// //     // Добавьте другие параметры фильтрации
+// //     if (selectedAnimalId.value) {
+// //       params.append('animal', selectedAnimalId.value.toString())
+// //     }
+// //     if (choiceBrand.value.length > 0) {
+// //       params.append('brands', choiceBrand.value.join(','))
+// //     }
+// //     if (selectedGoodsCategories.value) {
+// //       params.append('categories', selectedGoodsCategories.value.join(','))
+// //     }
+    
+// //     const response = await fetch(`https://oliver1ck.pythonanywhere.com/api/get_products_filter/?order=price_desc`)
+// //     const data = await response.json()
+    
+// //     dataCards.value = data.results
+// //     console.log(dataCards)
+// //     totalPages.value = Math.ceil(data.count / props.size)
+// //   } catch (e) {
+// //     error.value = `Ошибка загрузки: ${e.message}`
+// //   } finally {
+// //     isLoading.value = false
+// //   }
+// // }
+
+// // Загрузите данные при монтировании
+// // onMounted(loadProducts)
+
+
+
+// const selectedAnimalId = ref<number | null>(null);
+
+
+// function handleAnimalSelect(id: number) {
+//   selectedAnimalId.value = id;
+// }
+
+// interface Cards {
+//   id: number
+//   image_prev: string
+//   title: string
+//   price: string
+//   countitemproduct_set: string[]
+//   animal: { id: number; title: string }[]
+//   brand:  {id: number; name: string; image: string}
+//   category: { id: number; name: string; parent: number}
+
+// }
+
+// interface CardsObj {
+//   count: number
+//   next: string | null
+//   previous: string | null
+//   results: Cards[]
+  
+// }
+
+const pageUrls = [
+  `https://oliver1ck.pythonanywhere.com/api/get_products_filter/?order=date_create`,
+  'https://oliver1ck.pythonanywhere.com/api/get_products_filter/?order=date_create&page=2',
+  'https://oliver1ck.pythonanywhere.com/api/get_products_filter/?order=date_create&page=3',
+  'https://oliver1ck.pythonanywhere.com/api/get_products_filter/?order=date_create&page=4',
+  'https://oliver1ck.pythonanywhere.com/api/get_products_filter/?order=date_create&page=5',
+  'https://oliver1ck.pythonanywhere.com/api/get_products_filter/?order=date_create&page=6',
+  'https://oliver1ck.pythonanywhere.com/api/get_products_filter/?order=date_create&page=7'
+];
+
+// const dataCards = ref<CardsObj[] | null>(null)
+
+// interface CardsObj {
+//   results: Cards[]
+// }
+
+// const error = ref<string | null>(null);
+
+
+// const allCards = computed(() => {
+//   return dataCards.value?.flatMap(page => page.results) || [];
+// });
+// console.log(allCards)
+
+// Promise.all(pageUrls.map(url => 
+//   fetch(url)
+//     .then(res => res.json())
+//     .catch(e => { 
+//       error.value = `Ошибка загрузки: ${e.message}`;
+//       return { results: [] }; 
+//     })
+// ))
+// .then(pages => {
+//   dataCards.value = pages;
+// })
+// .catch(e => {
+//   error.value = `Критическая ошибка: ${e.message}`;
+// });
+
+// console.log(allCards)
+
+// const pageNumber = ref(0);
+
+//   const props = withDefaults(defineProps<{
+//     size?: number,
+//     count?: number,
+//     id?: Number
+//     brand?: object
+//     category?: object
+    
+// }>(), {
+//     size: 15,
+//     count: 1
+// });
+
+
+
+// const pageCount = computed(() => {
+//     return Math.ceil(filteredCards.value.length / props.size);
+// });
+
+
+// const paginatedData = computed(() => {
+//   const start = pageNumber.value * props.size;
+//   const end = start + props.size;
+//   return filteredCards.value.slice(start, end);
+// });
+// console.log(paginatedData)
+
+
+// const showNextPage = () => {
+//   if (currentPage.value < totalPages.value) {
+//     currentPage.value++
+    
+//   }
+// }
+
+// const showPrevPage = () => {
+//   if (currentPage.value > 1) {
+//     currentPage.value--
+    
+//   }
+// }
+
+// const goToPage = (page: number) => {
+//   currentPage.value = page
+  
+// }
+
+// // const showPrevPage = () => {
+// //     if (pageNumber.value > 0) pageNumber.value--;
+// // };
+
+// // const showNextPage = () => {
+// //     if (pageNumber.value < pageCount.value - 1) pageNumber.value++;
+// // };
+
+
+// // const goToPage = (page: number) => {
+// //     pageNumber.value = page;
+// // };
+
+
+
+// const selectedCategory = ref<number | null>(null)
+//   const updateCategory = (categoryId: number | null) => {
+//   selectedAnimalId.value = categoryId
+//   choiceCategory.value = categoryId // синхронизируем с фильтром
+// }
+
+// const choiceCategory = ref<number | null>(null)
+// const upCategory = (animal: { id: number } | null) => {
+//   const categoryId = animal?.id || null
+//   selectedAnimalId.value = categoryId
+//   choiceCategory.value = categoryId // синхронизируем с фильтром
+// }
+
+
+// const choiceBrand = ref<number[]>([])
+
+// const upBrand = (brands: number[])    => {
+//   choiceBrand.value = brands
+//   pageNumber.value = 0;
+//   // console.log("Brand filter:", id);
+// }
+
+
+// const selectedGoodsCategories = ref<number[] | null>(null);
+
+
+// function handleGoodsCategories(categories: number[] | null) {
+//   console.log("Received categories:", categories); // Добавьте лог
+//   selectedGoodsCategories.value = categories;
+//   pageNumber.value = 0; // Сбрасываем пагинацию
+// }
+
+// console.log(selectedCategory)
+// console.log(choiceCategory)
+// console.log(choiceBrand)
+
+
+// watch([choiceCategory, selectedCategory, choiceBrand, selectedGoodsCategories], () => {
+//   pageNumber.value = 0;
+// });
+
+
+// watch(choiceCategory, (newVal) => {
+//   if (newVal) selectedCategory.value = null;
+// });
+
+
+// watch(selectedCategory, (newVal) => {
+//   if (newVal) choiceCategory.value = null;
+// });
+
+// // watch(selectedGoodsCategories, (newVal) => {
+//   //   if (newVal) selectedGoodsCategories.value = null;
+// // });
+
+// console.log(selectedCategory.value)
+
+
+// const categoryGoods = ref<number[] | null> (null)
+
+
+// const selectedTypeGoods = (category: number[] | null) => {
+//   categoryGoods.value = category
+//   pageNumber.value = 0;
+// }
+
+// const filteredCards = computed(() => {
+//   let result = allCards.value
+//   console.log(result)
+//   if (choiceCategory.value) {
+//     selectedCategory.value = null
+//     result = result.filter(card => 
+//       card.animal.some(anim => anim.id === choiceCategory.value)
+//     ) 
+//   }
+//    if (selectedCategory.value) {
+//     choiceCategory.value = null
+//     result = result.filter(card => 
+//       card.animal.some(anim => anim.id === selectedCategory.value)
+//   ) 
+//   } 
+//   if (choiceBrand.value.length > 0) {
+
+//     result = result.filter(card => choiceBrand.value.includes(card.brand.id))
+    
+//   }
+  
+//   if (selectedGoodsCategories.value && selectedGoodsCategories.value.length) {
+//     result = result.filter(card => selectedGoodsCategories.value?.includes(card.category.id))
+    
+//   }
+//   if (sortOrder.value === 'price_asc') {
+//     result = result.slice().sort((a, b) => {
+//       const priceA = parseFloat(a.price.replace(',', '.'))
+//       const priceB = parseFloat(b.price.replace(',', '.'))
+//       return priceA - priceB
+//     })
+//   }
+//   else if (sortOrder.value === 'price_desc') {
+//     result = result.slice().sort((a, b) => {
+//       const priceA = parseFloat(a.price.replace(',', '.'))
+//       const priceB = parseFloat(b.price.replace(',', '.'))
+//       return priceB - priceA
+//     })
+//   }
+//    return result
+// })
+//     // {
+//       //   // Проверяем прямое соответствие категории
+//       //   if (selectedGoodsCategories.value!.includes(card.category.id)) {
+//         //     return true;
+//         //   }
+        
+//         // Проверяем соответствие родительской категории
+//         // Убрали проверку на null, так как в данных товаров parent всегда число
+//   //     if (selectedGoodsCategories.value!.includes(card.category.parent)) {
+//   //       console.log(card.category.parent)
+//   //       return true;
+//   //     }
+      
+//   //     return false;
+//   //   });
+  
+//   watch([selectedAnimalId, choiceBrand, selectedGoodsCategories], () => {
+//     currentPage.value = 1
+
+//   })
+
+
+//   // // console.log(selectedGoodsCategories.value)
+//   //  return result 
+
+
+
+// watch(paginatedData, (cards) => {
+//   if (cards.length > 0) {
+//     console.log('Бренды первой карточки:', cards[0].brand);
+//     console.log('ID выбранного бренда:', choiceBrand.value);
+//     console.log('Id категории товара', categoryGoods.value)
+//   }
+// }, { immediate: true, deep: true });
+
+// // Временно добавьте эту функцию для тестирования
+// const testSorting = async () => {
+//   const options = ['price_asc', 'price_desc', 'title_asc', 'title_desc', 'date_create', 'popularity'];
+//   console.log(options)
+//   const page = [2,3,4,5,6,7]
+  
+//   for (const option of options) {
+//     try {
+//       const response = await fetch(`https://oliver1ck.pythonanywhere.com/api/get_products_filter/?order=${option}&page=2, https://oliver1ck.pythonanywhere.com/api/get_products_filter/?order=${option}&page=3, https://oliver1ck.pythonanywhere.com/api/get_products_filter/?order=${option}&page=4`, 
+//     );
+//     console.log(response)
+//       const data = await response.json();
+//       console.log(`Sorting by ${option}:`, data.results.slice(0, 20)); // Первые 3 элемента
+//     } catch (error) {
+//       console.error(`Failed with ${option}:`, error);
+//     }
+//   }
+// };
+
+// // Вызовите эту функцию при монтировании компонента
+// onMounted(() => {
+//   testSorting();
+// });
+import { ref, computed, watch, onMounted } from 'vue'
 import DropdownList from '../components/DropdownList.vue'
 import Checkbox from '../components/Checkbox.vue'
 import FilterAniml from '../components/FilterAniml.vue'
@@ -10,19 +373,34 @@ import Text from './Text.vue'
 import Card from './Card.vue'
 import CardsAnimal from '../components/CardsAnimal.vue'
 import MenuCrumbs from '../components/MenuCrumbs.vue'
+import FilterTypeGoods from '../components/FilterTypeGoods.vue'
 
+const sortOrder = ref('date_create')
+const currentPage = ref(1)
+const totalPages = ref(0)
+const isLoading = ref(false)
 
-import { ref, computed, watch } from 'vue'
+// Обработчик изменения сортировки
+const handleSortChange = (newSort: string) => {
+  sortOrder.value = newSort
+  pageNumber.value = 0
+}
+
+const selectedAnimalId = ref<number | null>(null)
+
+function handleAnimalSelect(id: number) {
+  selectedAnimalId.value = id
+}
 
 interface Cards {
   id: number
   image_prev: string
   title: string
-  price: number
+  price: string
   countitemproduct_set: string[]
   animal: { id: number; title: string }[]
-  brand:  {id: number; name: string; image: string}
-
+  brand: { id: number; name: string; image: string }
+  category: { id: number; name: string; parent: number }
 }
 
 interface CardsObj {
@@ -32,174 +410,189 @@ interface CardsObj {
   results: Cards[]
 }
 
-const pageUrls = [
-  'https://oliver1ck.pythonanywhere.com/api/get_products_filter/?order=date_create',
-  'https://oliver1ck.pythonanywhere.com/api/get_products_filter/?order=date_create&page=2',
-  'https://oliver1ck.pythonanywhere.com/api/get_products_filter/?order=date_create&page=3',
-  'https://oliver1ck.pythonanywhere.com/api/get_products_filter/?order=date_create&page=4',
-  'https://oliver1ck.pythonanywhere.com/api/get_products_filter/?order=date_create&page=5',
-  'https://oliver1ck.pythonanywhere.com/api/get_products_filter/?order=date_create&page=6',
-  'https://oliver1ck.pythonanywhere.com/api/get_products_filter/?order=date_create&page=7'
-];
+// Загружаем данные без сортировки на сервере
+// const pageUrls = [
+//   'https://oliver1ck.pythonanywhere.com/api/get_products_filter/',
+//   'https://oliver1ck.pythonanywhere.com/api/get_products_filter/?page=2',
+//   'https://oliver1ck.pythonanywhere.com/api/get_products_filter/?page=3',
+//   'https://oliver1ck.pythonanywhere.com/api/get_products_filter/?page=4',
+//   'https://oliver1ck.pythonanywhere.com/api/get_products_filter/?page=5',
+//   'https://oliver1ck.pythonanywhere.com/api/get_products_filter/?page=6',
+//   'https://oliver1ck.pythonanywhere.com/api/get_products_filter/?page=7'
+// ]
 
 const dataCards = ref<CardsObj[] | null>(null)
-
-interface CardsObj {
-  results: Cards[]
-}
-
-const error = ref<string | null>(null);
-
+const error = ref<string | null>(null)
 
 const allCards = computed(() => {
-  return dataCards.value?.flatMap(page => page.results) || [];
-});
-console.log(allCards)
-
-Promise.all(pageUrls.map(url => 
-  fetch(url)
-    .then(res => res.json())
-    .catch(e => { 
-      error.value = `Ошибка загрузки: ${e.message}`;
-      return { results: [] }; 
-    })
-))
-.then(pages => {
-  dataCards.value = pages;
+  return dataCards.value?.flatMap(page => page.results) || []
 })
-.catch(e => {
-  error.value = `Критическая ошибка: ${e.message}`;
-});
 
-console.log(allCards)
+// Загружаем данные при монтировании
+onMounted(() => {
+  Promise.all(pageUrls.map(url => 
+    fetch(url)
+      .then(res => res.json())
+      .catch(e => { 
+        error.value = `Ошибка загрузки: ${e.message}`
+        return { results: [] }
+      })
+  ))
+  .then(pages => {
+    dataCards.value = pages
+  })
+  .catch(e => {
+    error.value = `Критическая ошибка: ${e.message}`
+  })
+})
 
-const pageNumber = ref(0);
+const pageNumber = ref(0)
 
-  const props = withDefaults(defineProps<{
-    size?: number,
-    count?: number,
-    id?: Number
-    brand?: object
-    
+const props = withDefaults(defineProps<{
+  size?: number,
+  count?: number,
+  id?: Number
+  brand?: object
+  category?: object
 }>(), {
-    size: 15,
-    count: 1
-});
-
-
+  size: 15,
+  count: 1
+})
 
 const pageCount = computed(() => {
-    return Math.ceil(filteredCards.value.length / props.size);
-});
-
+  return Math.ceil(filteredCards.value.length / props.size)
+})
 
 const paginatedData = computed(() => {
-    const start = pageNumber.value * props.size;
-    const end = start + props.size;
-    return filteredCards.value.slice(start, end);
-});
-console.log(paginatedData)
-
-const showPrevPage = () => {
-    if (pageNumber.value > 0) pageNumber.value--;
-};
+  const start = pageNumber.value * props.size
+  const end = start + props.size
+  return filteredCards.value.slice(start, end)
+})
 
 const showNextPage = () => {
-    if (pageNumber.value < pageCount.value - 1) pageNumber.value++;
-};
+  if (pageNumber.value < pageCount.value - 1) {
+    pageNumber.value++
+  }
+}
 
+const showPrevPage = () => {
+  if (pageNumber.value > 0) {
+    pageNumber.value--
+  }
+}
 
 const goToPage = (page: number) => {
-    pageNumber.value = page;
-};
+  pageNumber.value = page
+}
 
 const selectedCategory = ref<number | null>(null)
-  const updateCategory = (category: number) => {
-  selectedCategory.value = category
-  console.log(category)
-  pageNumber.value = 0;
+const updateCategory = (categoryId: number | null) => {
+  selectedAnimalId.value = categoryId
+  choiceCategory.value = categoryId
 }
 
 const choiceCategory = ref<number | null>(null)
-const upCategory = (categ: { id: number } | null)   => {
-  choiceCategory.value = categ? categ.id : null
-  console.log(categ)
-  pageNumber.value = 0;
+const upCategory = (animal: { id: number } | null) => {
+  const categoryId = animal?.id || null
+  selectedAnimalId.value = categoryId
+  choiceCategory.value = categoryId
 }
 
 const choiceBrand = ref<number[]>([])
-
-const upBrand = (brands: number[])    => {
+const upBrand = (brands: number[]) => {
   choiceBrand.value = brands
-  pageNumber.value = 0;
-  // console.log("Brand filter:", id);
+  pageNumber.value = 0
 }
 
-console.log(selectedCategory)
-console.log(choiceCategory)
-console.log(choiceBrand)
+const selectedGoodsCategories = ref<number[] | null>(null)
+function handleGoodsCategories(categories: number[] | null) {
+  selectedGoodsCategories.value = categories
+  pageNumber.value = 0
+}
+
+const categoryGoods = ref<number[] | null>(null)
+const selectedTypeGoods = (category: number[] | null) => {
+  categoryGoods.value = category
+  pageNumber.value = 0
+}
 
 
-watch([choiceCategory, selectedCategory, choiceBrand], () => {
-  pageNumber.value = 0;
-});
-
-
-watch(choiceCategory, (newVal) => {
-  if (newVal) selectedCategory.value = null;
-});
-
-
-watch(selectedCategory, (newVal) => {
-  if (newVal) choiceCategory.value = null;
-});
-
-
+// Основная функция фильтрации и сортировки
 const filteredCards = computed(() => {
   let result = allCards.value
-  console.log(result)
+  
+  // Применяем фильтры
   if (choiceCategory.value) {
-    selectedCategory.value = null
     result = result.filter(card => 
       card.animal.some(anim => anim.id === choiceCategory.value)
     ) 
   }
-   if (selectedCategory.value) {
-    choiceCategory.value = null
+  else if (selectedCategory.value) {
     result = result.filter(card => 
       card.animal.some(anim => anim.id === selectedCategory.value)
-  ) 
+    ) 
   } 
-  if (choiceBrand.value.length > 0) {
-
-    result = result.filter(card => choiceBrand.value.includes(card.brand.id))
   
+  if (choiceBrand.value.length > 0) {
+    result = result.filter(card => choiceBrand.value.includes(card.brand.id))
   }
-  console.log(result)
-   return result 
-}
-)
-
-
-watch(paginatedData, (cards) => {
-  if (cards.length > 0) {
-    console.log('Бренды первой карточки:', cards[0].brand);
-    console.log('ID выбранного бренда:', choiceBrand.value);
+  
+  if (selectedGoodsCategories.value && selectedGoodsCategories.value.length) {
+    result = result.filter(card => 
+      selectedGoodsCategories.value?.includes(card.category.id)
+    )
   }
-}, { immediate: true, deep: true });
+  
+  // Применяем сортировку
+  if (sortOrder.value === 'price_asc') {
+    result = result.slice().sort((a, b) => {
+      const priceA = parseFloat(a.price.replace(',', '.').replace(/\s/g, ''));
+      const priceB = parseFloat(b.price.replace(',', '.').replace(/\s/g, ''));
+      return priceA - priceB;
+    });
+  }
+  else if (sortOrder.value === 'price_desc') {
+    result = result.slice().sort((a, b) => {
+      const priceA = parseFloat(a.price.replace(',', '.').replace(/\s/g, ''));
+      const priceB = parseFloat(b.price.replace(',', '.').replace(/\s/g, ''));
+      return priceB - priceA;
+    });
+  }
+  else if(sortOrder.value === 'popularity'){
+    result = result.reverse()
+  }
+  
+  return result
+})
 
+// Наблюдатели для сброса пагинации при изменении фильтров
+watch([choiceCategory, selectedCategory, choiceBrand, selectedGoodsCategories], () => {
+  pageNumber.value = 0
+})
+
+watch(choiceCategory, (newVal) => {
+  if (newVal) selectedCategory.value = null
+})
+
+watch(selectedCategory, (newVal) => {
+  if (newVal) choiceCategory.value = null
+})
+// Добавляем наблюдатель для сортировки
+watch(sortOrder, () => {
+  pageNumber.value = 0
+})
 </script>
 
 <template>
   <MenuCrumbs/>
-  <CardsAnimal @updateCategory="updateCategory" />
+  <CardsAnimal @updateCategory="updateCategory" :selectedId="selectedAnimalId" :selectedCategory="selectedAnimalId" @selectedTypeGoods="handleGoodsCategories" />
   <section class="catalog">
     <div class="container">
       <div class="catalog__wrapper">
         <div class="catalog__info">
           <Text tag="h1" print="title_catalog" title="Каталог товаров" />
           <div class="wrapper-sort">
-            <span class="name-sort">Сортировать по:</span><DropdownList />
+            <span class="name-sort">Сортировать по:</span><DropdownList @sort-change="handleSortChange" />
           </div>
         </div>
         <div class="wrapper__goods">
@@ -207,7 +600,8 @@ watch(paginatedData, (cards) => {
             <div class="goods__action">
               <Checkbox />
             </div>
-            <FilterAniml @upCategory="upCategory" />
+            <FilterAniml v-if="selectedAnimalId == null" @selectType="showType" @upCategory="upCategory" @selectAnimal="handleAnimalSelect" :selectedCategory="selectedAnimalId" />
+            <FilterTypeGoods  v-if="selectedAnimalId !== null"  @selectedTypeGoods="handleGoodsCategories"></FilterTypeGoods>
             <BrendsNamesFiltersAll @upBrand="upBrand" />
           </div>
           <div>
@@ -215,17 +609,19 @@ watch(paginatedData, (cards) => {
             <div class="wrapper-cards">
               <Card
                 v-for="(card, index) in paginatedData"
-                :key="index"
+                :key="sortOrder"
                 :image_prev="card.image_prev"
                 :title="card.title"
                 :price="card.price"
                 :countitemproduct_set="card.countitemproduct_set" 
                 :animal="card.animal"
                 :brand="card.brand"
+                :category="card.category"
                 :id="id"
                 @updateCategory="updateCategory"
                 @upCategory="upCategory"
                 @upBrand="upBrand"
+                @selectedTypeGoods="selectedTypeGoods"
               />
               
             </div>

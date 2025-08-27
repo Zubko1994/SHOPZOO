@@ -6,12 +6,15 @@ import Text from '../components/Text.vue'
 const props = defineProps<{
   title: string
   id: number
+  checked?: boolean,
 }>()
 
-const emit = defineEmits(['giveCategory']);
+const emit = defineEmits(['giveCategory', 'giveType', 'upTypeCategory']);
 
  function handleClick() {
-   emit('giveCategory', props.id); // Передаем ID вместо строки
+   emit('giveCategory', props.id, props.checked); 
+   emit('giveType', props.id); 
+   emit('upTypeCategory', props.id)
    console.log(props.id)
  }
  
@@ -19,7 +22,7 @@ const emit = defineEmits(['giveCategory']);
 
 <template>
   <div class="kind-animal" @click="handleClick" :key="props.id">
-    <input class="radio" type="radio" name="animal" :id="`radio-${props.id}`"  />
+    <input class="radio" type="radio" name="animal" :id="`radio-${props.id}`" :checked="props.checked"  />
     <label :for="`radio-${props.id}`"
       ><Text
         tag="p"

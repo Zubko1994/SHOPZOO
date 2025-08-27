@@ -16,7 +16,7 @@ const props = defineProps<{
 
 const emit = defineEmits(['customClick'])
 
-
+console.log(props.isActive)
 // const selectedItem = ref<string | null>(null)
 
 
