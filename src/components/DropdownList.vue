@@ -1,7 +1,7 @@
 <!-- @format -->
 
 <script setup lang="ts">
-import { customRef, ref } from 'vue'
+import { customRef, ref, onMounted, onUnmounted } from 'vue'
 
 // const props = defineProps<{
 //   id: Number
@@ -11,14 +11,27 @@ import { customRef, ref } from 'vue'
 
 
 const toggleClassName = ref (false)
+const isOpen = ref(false)
+const dropdownRef = ref<HTMLElement | null>(null)
 
+const handleClickOutside = (event: MouseEvent) => {
+  if (dropdownRef.value && !dropdownRef.value.contains(event.target as Node)) {
+    isOpen.value = false
+  }
+}
 const toggleClass = () => {
  toggleClassName.value = !toggleClassName.value
 }
+onMounted(() => {
+  document.addEventListener('click', handleClickOutside)
+})
 
+onUnmounted(() => {
+  document.removeEventListener('click', handleClickOutside)
+})
 const showContent = ref('дате добавления');
 
-const emit = defineEmits (['sort-change'])
+const emit = defineEmits (['sort-change', 'closeList'])
 
 
 const getSortDisplayName = (value: string) => {
@@ -38,7 +51,12 @@ const changeSort = (sortValue: String) => {
   showContent.value = getSortDisplayName(sortValue)
   emit('sort-change', sortValue)
   toggleClassName.value = false
+  isOpen.value = false
   console.log(sortValue)
+}
+
+const toggleDropdown = () => {
+  isOpen.value = !isOpen.value
 }
 
 console.log(changeSort)
@@ -72,15 +90,16 @@ const changeValuePopular= () => {
 console.log(showContent)
 </script>
 
-<template>
+<template @click="toggleClass">
   <!-- <span class="name-sort">Сортировать по:</span> -->
-  <div class="wrapper_sorting" @click="toggleClass">
-    <div class="sorting">
+ 
+  <div class="wrapper_sorting" ref="dropdownRef"  >
+    <div class="sorting" @click="toggleDropdown">
       <span>{{ showContent }}</span>
       <div class="arrow-down" 
-      :class="['arrow-down', { 'arrow-down-active': toggleClassName }]"></div>
+      :class="['arrow-down', { 'arrow-down-active': isOpen }]"></div>
     </div>
-    <ul class="wrapper_item" v-if="toggleClassName">
+    <ul class="wrapper_item" v-if="isOpen">
       <li class="elem"@click="changeSort('date_create')">дате добавления</li>
       <li class="elem" @click="changeSort('title_asc')">названию: «от А до Я»</li>
       <li class="elem" @click="changeSort('title_desc')">названию: «от Я до А»</li>
@@ -89,6 +108,7 @@ console.log(showContent)
       <li class="elem" @click="changeSort('popularity')">популярности</li>
     </ul>
   </div>
+
 </template>
 
 <style lang="scss" scoped>
@@ -97,10 +117,13 @@ span {
 }
 
 .wrapper_sorting {
- width: 270px;
+
+min-width: 270px;
+
 z-index: 50;
-  
 }
+
+
 
 // .name-sort {
 //   color: var(--text-default);
@@ -131,6 +154,7 @@ border-radius: 4px;
 box-shadow: 0px 1px 0px 0px rgba(0, 0, 0, 0.05);
 border: 	1px solid rgb(186, 191, 195);
 margin-bottom: 5px;
+max-width: 600px;
 }
 
 .wrapper_item {
@@ -188,7 +212,26 @@ border-radius: 4px;
 
 }
 
+@media (max-width: 992px) {
+
+.container {
+    max-width: 992px;
+}
+
+.wrapper_item {
+  min-width: 340px;
+}
 
 
+.wrapper_sorting {
+  
+  min-width: 340px;
+}
+
+.sorting {
+  width: 100%;
+
+}
+}
 
 </style>

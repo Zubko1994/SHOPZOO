@@ -137,7 +137,7 @@ function quantityHandler(item: Animal) {
   }
 
   .animal-wrapper {
-    padding: 70px 5px 16px 5px;
+    padding: 60px 5px 16px 5px;
   }
 }
 </style>

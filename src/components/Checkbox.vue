@@ -1,12 +1,18 @@
 <script setup lang="ts">
 import Text from '../components/Text.vue'
 
+const emit = defineEmits (['promotionProducts'])
+
+ function handleClick() {
+   emit('promotionProducts'); 
+   console.log('клик есть')
+ }
 
 </script>
 
 <template>
   <div class="action">
-  <input class="checkbox" type="checkbox" id="checkbox"  />
+  <input class="checkbox" type="checkbox" id="checkbox" @click="handleClick"  />
   <label for="checkbox"></label><Text tag="p" print="check-box"  class="check-box_title" title="Только акционные товары" />
 </div>
 </template>

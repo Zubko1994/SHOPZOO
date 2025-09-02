@@ -89,7 +89,7 @@ function btnHandler(e: Event) {
     background-position: center;
     border: 1px solid #babfc3;
     border-radius: 4px;
-    margin-right: 10px;
+    
     &:hover {
       box-shadow: 0px 1px 0px 0px rgba(0, 0, 0, 0.05);
       background: rgb(246, 246, 247);
@@ -114,7 +114,7 @@ function btnHandler(e: Event) {
     background-position: center;
     border: 1px solid #babfc3;
     box-shadow: 0px 1px 0px 0px #0000000d;
-    margin-right: 10px;
+  
   }
 
   &_indicator-left {

@@ -362,6 +362,14 @@ const computedClass = computed(() => {
     max-width: 992px;
   }
 
+  .h1 {
+    font-size: 24px;
+    font-weight: 400;
+    line-height: 28px;
+    letter-spacing: 0px;
+    text-align: left;
+  }
+
   .h2 {
     font-size: 21px;
     font-weight: 700;
