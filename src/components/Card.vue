@@ -27,7 +27,7 @@ const props = withDefaults(
 const selectedQuantity = ref<string | null>(null)
 console.log(selectedQuantity.value)
 const totalPrice = ref(props.price)
-const fullCost = ref()
+
 const updateTotalPrice = (quantity: string) => {
   selectedQuantity.value = quantity
   console.log(quantity)
@@ -38,18 +38,31 @@ const updateTotalPrice = (quantity: string) => {
   
   watch(totalPrice, (newVal) => {
     if(newVal){
-    newVal = totalPrice
+    totalPrice.value = newVal
     }
   })
 }
 
-// const emit = defineEmits(['updateCategory'])
+watch(() => props.price, () => {
+  selectedQuantity.value = null
+  return props.price
+})
+
+// watch(props.price, (newVal) => {
+//     if(newVal){
+//     newVal = props.price
+//     }
+//   })
 
 
 
-// function handleCategoryUpdate() {
-//   emit('updateCategory', props.countitemproduct_set)
-// }
+const emit = defineEmits(['updateCategory'])
+
+
+
+function handleCategoryUpdate() {
+  emit('updateCategory', props.countitemproduct_set)
+}
 
 
 </script>

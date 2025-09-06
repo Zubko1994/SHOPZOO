@@ -164,4 +164,30 @@ max-width: 270px;
 .title-filter {
   margin-bottom: 18px;
 }
+
+@media (max-width: 576px) {
+
+// .goods__action{
+//   min-width: 550px;
+// }
+
+.wrapper-sort {
+flex-direction: column;
+align-items: center;
+}
+
+.line-active {
+display: block;
+z-index: 200;
+margin-top: 2px;
+margin-bottom: 2px;
+}
+
+.wrapper-filter {
+min-width: 340px;
+text-align: center;
+margin: 0 auto;
+padding: 10px;
+}
+}
 </style>

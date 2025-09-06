@@ -2,10 +2,17 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
+
+const emit = defineEmits(['customclick'])
+
+
+function filterClick () {
+  emit('customclick');
+}
 </script>
 
 <template>
-  <div class="sorting">
+  <div @click="filterClick" class="sorting">
     <img src="../assets/svg/filterMajor.svg" alt="Иконка фильтров" />
     <span class="title">Фильтры</span>
   </div>
@@ -15,6 +22,7 @@ import { ref, onMounted, onUnmounted } from 'vue'
 span {
   display: block;
   margin: 0 auto;
+
 }
 
 .title {
@@ -29,19 +37,8 @@ span {
 
 .wrapper_sorting {
   min-width: 270px;
-
   z-index: 50;
 }
-
-// .name-sort {
-//   color: var(--text-default);
-// font-family: 'SFProText';
-// font-size: 14px;
-// font-weight: 500;
-// line-height: 20px;
-// letter-spacing: 0px;
-// text-align: right;
-// }
 
 .sorting {
   text-align: center;
@@ -65,6 +62,7 @@ span {
   border: 1px solid rgb(186, 191, 195);
   margin-bottom: 5px;
   max-width: 600px;
+  display: none;
 }
 
 .wrapper_item {
@@ -133,8 +131,28 @@ span {
     min-width: 340px;
   }
 
+ 
+}
+
+
+// @media (max-width: 768px) {
+
+//   .sorting {
+//     display: block;
+//     width: 340px;
+//     display: flex;
+//   }
+// }
+
+@media (max-width: 576px) {
+  .container {
+    max-width: 576px;
+  }
+
   .sorting {
+    display: block;
     width: 340px;
+    display: flex;
   }
 }
 </style>

@@ -37,6 +37,7 @@ const closeAccept = () => {
   showAcceptWindow.value = false
 }
 
+
 </script>
 
 <template>

@@ -34,6 +34,7 @@ type Kind =
   | 'check-box'
   | 'filter-title'
   | 'brand-name'
+  | 'noresult'
 
 const props = defineProps<{
   title?: string
@@ -73,6 +74,16 @@ const computedClass = computed(() => {
     overflow: hidden;
     display: -webkit-box;
     -webkit-box-orient: vertical;
+  }
+
+  &-noresult {
+    color: var(--Text/Default, rgba(32, 34, 35, 1));
+    font-family: 'SFProText';
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 130%;
+    letter-spacing: 0px;
+    text-align: center;
   }
 
   &-adress {
@@ -368,6 +379,9 @@ const computedClass = computed(() => {
     line-height: 28px;
     letter-spacing: 0px;
     text-align: left;
+    // &-title_catalog {
+    //   text-align: left;
+    // }
   }
 
   .h2 {

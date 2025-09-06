@@ -1,17 +1,68 @@
 <script setup lang="ts">
 import LogoFooter from './LogoFooter.vue'
 import Button from './Button.vue'
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import BurgerActive from './BurgerActive.vue';
+import { inject } from 'vue';
 
+
+const props = defineProps<{
+  isActive?: boolean
+}>();
+
+const isActiveInternal = ref(props.isActive || false);
 const isActive = ref(false);
+const closeCatalogFilters = inject('closeCatalogFilters');
+
+// const toggleClass = () => {
+//   isActive.value = !isActive.value;
+//   isActiveInternal.value = !isActiveInternal.value;
+  
+// };
+
+// const themeClass = computed(() => (isActive.value ? 'burger-active' : 'burger__menu'));
+// const showMenu = computed(() => (isActive.value ? 'showMenu' : 'hideMenu'));
+
+// const  themeClassOther = computed(() => (isActiveInternal.value ? 'burger-active' : 'burger__menu'));
+// const showMenuOther = computed(() => (isActiveInternal.value ? 'showMenu' : 'hideMenu'));
+
+
+
+
+// // Следим за изменениями props.isActive
+// watch(() => props.isActive, (newVal) => {
+//   isActiveInternal.value = newVal;
+// });
+
+watch(() => props.isActive, (newVal) => {
+  isActiveInternal.value = newVal || false;
+});
 
 const toggleClass = () => {
-  isActive.value = !isActive.value;
+  isActiveInternal.value = !isActiveInternal.value;
+  emit('update:isActive', isActiveInternal.value);
+  // Отправляем событие о клике на крестик
 };
 
-const themeClass = computed(() => (isActive.value ? 'burger-active' : 'burger__menu'));
-const showMenu = computed(() => (isActive.value ? 'showMenu' : 'hideMenu'));
+const themeClass = computed(() => (isActiveInternal.value ? 'burger-active' : 'burger__menu'));
+const showMenu = computed(() => (isActiveInternal.value ? 'showMenu' : 'hideMenu'));
+
+
+
+function closeFilters (isActiveWindowFilters: boolean){
+  isActive.value = isActiveWindowFilters
+  isActiveInternal.value = isActiveWindowFilters;
+  toggleClass()
+}
+
+const emit = defineEmits(['update:isActive']);
+
+const openFilters = ref(false)
+
+
+watch(() => props.isActive, (newVal) => {
+  isActiveInternal.value = newVal || false;
+});
 
 
 
@@ -31,14 +82,14 @@ const showMenu = computed(() => (isActive.value ? 'showMenu' : 'hideMenu'));
               <span>0</span>
             </div>
           </Button>
-          <div class="burger">
-            <button class="burger__menu" :class="themeClass" @click="toggleClass">
+          <div class="burger" @click="closeFilterWindow">
+            <button class="burger__menu" @isFiltersOpen="toggleClass()" :class="themeClass" @click="toggleClass" @isActive='closeFilters'>
               <span></span>
             </button>
           </div>
         </div>
       </div>
-      <BurgerActive class="hideMenu" :class="showMenu"/>
+      <BurgerActive class="hideMenu" :class="showMenu" />
 
 
         </div>

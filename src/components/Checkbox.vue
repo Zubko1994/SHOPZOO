@@ -58,5 +58,14 @@ input:checked + label {
   align-items: center;
 }
 
+@media (max-width: 576px) {
 
+.action {
+  min-width: 340px;
+  max-width: 0 auto;
+  width: 100%;
+}
+
+
+}
 </style>

@@ -120,7 +120,7 @@ span {
 
 min-width: 270px;
 
-z-index: 50;
+z-index: 500;
 }
 
 
@@ -174,7 +174,7 @@ border-radius: 4px;
 .wrapper_item-active {
   display: block;
   padding: 8px 4px;
-  z-index: 5;
+  z-index: 2000;
   position: absolute;
   width: 100%;
 }

@@ -6,11 +6,25 @@ import MenuCrumbs from '../components/MenuCrumbs.vue'
 import Catalog from '../components/Catalog.vue'
 import PopularGoods from '../components/PopularGoods.vue'
 import ArticleAll from '../components/ArticleAll.vue'
+import { ref } from 'vue';
+
+const isFiltersOpen = ref(false);
+
+const handleFiltersActive = (isActive: boolean) => {
+  isFiltersOpen.value = isActive;
+};
+
+// Функция для обработки клика на крестик
+const handleCrossClick = (isActive: boolean) => {
+  isFiltersOpen.value = isActive;
+};
+
 </script>
 
 <template>
- <Layout>
-  <Catalog/>
+ <Layout :isActive="isFiltersOpen"  @update:isActive="isFiltersOpen = $event"
+ @crossClick="handleCrossClick">
+  <Catalog @isActive="handleFiltersActive" :isFiltersOpen="isFiltersOpen"/>
   <PopularGoods/>
   <ArticleAll/>
 
