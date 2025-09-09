@@ -140,4 +140,6 @@ function quantityHandler(item: Animal) {
     padding: 60px 5px 16px 5px;
   }
 }
+
+
 </style>

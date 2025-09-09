@@ -229,9 +229,31 @@ const handleCrossClick = (isActive: boolean) => {
 
 const themeClass = computed(() => (showFilters.value ? 'filters-active' : 'filters'));
 
+const hasResults = computed(() => {
+  return filteredCards.value.length > 0;
+});
+
+const filtersApplied = computed(() => {
+  return choiceCategory.value !== null || 
+         selectedCategory.value !== null || 
+         choiceBrand.value.length > 0 || 
+         (selectedGoodsCategories.value && selectedGoodsCategories.value.length > 0) || 
+         selectedPromotion.value ||
+         searchBrandQuery.value.trim() !== '';
+});
+
+const resetFilters = () => {
+  choiceCategory.value = null;
+  selectedCategory.value = null;
+  choiceBrand.value = [];
+  selectedGoodsCategories.value = null;
+  selectedPromotion.value = false;
+  searchBrandQuery.value = '';
+  pageNumber.value = 0;
+};
+
 const filteredCards = computed(() => {
   let result = allCards.value
-
   // Применяем фильтры
   if (choiceCategory.value) {
     result = result.filter((card) =>
@@ -282,7 +304,7 @@ const filteredCards = computed(() => {
   } else if (sortOrder.value === 'title_desc') {
     result = result.slice().sort((a, b) => b.title.localeCompare(a.title, 'ru'))
   }
-
+  
   return result
 })
 
@@ -320,7 +342,7 @@ watch(() => props.isFiltersOpen, (newVal) => {
 
 <template>
   <div @click="isOpen = false">
-    <MenuCrumbs class="crumbs-menu" />
+    <MenuCrumbs link="catalog" to='/catalog' title="Каталог" class="crumbs-menu" />
     <CardsAnimal
       @updateCategory="updateCategory"
       :selectedId="selectedAnimalId"
@@ -403,8 +425,26 @@ watch(() => props.isFiltersOpen, (newVal) => {
                         @selectedTypeGoods="selectedTypeGoods"
                         @promotionProducts="promotionProducts"
                       />
+                      <div v-if="!hasResults && filtersApplied" class="no-results">
+                        <div class="no-results__content">
+        <img src="../assets/image/catnoresult.png" alt="Нет результатов" class="no-results__image">
+        <Text
+        class="no-results_description"
+        tag="p"
+        print="noresultfilters"
+        title="По вашему запросу ничего не найдено. Cбросьте фильтр и попробуйте снова"
+    />
+        <Button 
+          kind="primary" 
+          @click="resetFilters"
+          class="no-results__button"
+        >
+          Сбросить фильтры
+        </Button>
+      </div>
+                      </div>
                     </div>
-                    <div class="slider-wrapper">
+                    <div  v-if="hasResults" class="slider-wrapper">
                       <div
                         class="indicator-left"
                         :class="{ disabled: pageNumber === 0 }"
@@ -466,12 +506,20 @@ watch(() => props.isFiltersOpen, (newVal) => {
 
 <style lang="scss" scoped>
 
-// * {
-//   box-sizing: border-box;
-// }
+* {
+  box-sizing: border-box;
+}
+
+
 
 .filter-amimal {
   display: none;
+}
+
+.wrapper-filter { 
+  // align-self: flex-start;
+  min-width: 270px;
+ align-self: self-start;
 }
 
 .show-goods {
@@ -537,7 +585,7 @@ watch(() => props.isFiltersOpen, (newVal) => {
 }
 
 .goods__action {
-  padding: 18px 16px;
+  padding: 18px 16px 18px 16px;
   background-color: var(--white);
   border-radius: 5px;
   max-width: 270px;
@@ -555,26 +603,36 @@ watch(() => props.isFiltersOpen, (newVal) => {
 }
 
 .wrapper__goods {
-  display: flex;
+  display: grid;
+  grid-template-columns: 270px 1fr;
   gap: 30px;
   justify-content: space-between;
-  align-items: start;
+  align-items: baseline;
+
+  width: 100%;
 }
 
 .wrapper-cards {
   display: grid;
-  grid-template-columns: repeat(3, 1fr); /* 3 колонки по умолчанию */
-  gap: 30px;
+  grid-template-columns: repeat(3, 1fr); 
+  gap: 15px;
   margin-bottom: 24px;
   width: 100%;
-  min-height: 2120px;
+  // min-height: 0;
+  justify-content: space-around;
+  justify-items: center;
+ 
+  flex-grow: 1;
 }
 
 .cards-section {
-  min-height: 500px;
+  min-height: 2120px;
   display: flex;
-  justify-content: space-between;
   flex-direction: column;
+  flex-wrap: wrap;
+  width: 100%;
+  align-items: center; /* Центрируем всю секцию */
+  max-width: 870px;
 }
 
 .indicator-left {
@@ -623,10 +681,62 @@ watch(() => props.isFiltersOpen, (newVal) => {
   cursor: not-allowed;
 }
 
+
+.no-results {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 60px 20px;
+  text-align: center;
+  align-self: self-start;
+  margin: 0 auto;
+}
+
+.no-results__content {
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  align-items:  center;
+  justify-content: center;
+}
+
+.no-results__image {
+  margin-bottom: 24px;
+  max-width: 200px;
+  height: auto;
+}
+
+.no-results__title {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: var(--text-default);
+}
+
+.no-results__text {
+  font-size: 16px;
+  margin-bottom: 24px;
+  color: var(--text-gray);
+}
+
+.no-results__button {
+  margin: 0 auto;
+}
+
+
+.no-results__image{
+background-color: var(--bg-default);
+mix-blend-mode: multiply;
+}
+
+
 @media (max-width: 1200px) {
   .wrapper-cards {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
+    grid-template-columns: repeat(2, 1fr); 
+    gap: 10px;
+    align-self: center;
   }
 
   .crumbs-menu {
@@ -644,7 +754,8 @@ watch(() => props.isFiltersOpen, (newVal) => {
 
 @media (max-width: 1124px) {
   .wrapper-cards {
-    gap: 15px;
+    gap: 100px;
+    align-self: center;
   }
 }
 
@@ -652,7 +763,7 @@ watch(() => props.isFiltersOpen, (newVal) => {
   .wrapper-cards {
     grid-template-columns: repeat(3, 1fr);
     gap: 15px;
-    justify-items: center;
+    // justify-content: center;
     width: 100%;
   }
 }
@@ -661,9 +772,10 @@ watch(() => props.isFiltersOpen, (newVal) => {
   .wrapper-cards {
     grid-template-columns: repeat(3, 1fr);
     gap: 10px;
-    justify-content: space-between;
+    justify-content: center;
     width: 100%;
-    padding: 10px;
+    padding: 0 10px 10px 10px;
+    justify-content: center;
   }
 }
 
@@ -671,13 +783,13 @@ watch(() => props.isFiltersOpen, (newVal) => {
   .wrapper-cards {
     grid-template-columns: repeat(2, 1fr);
     gap: 20px;
-    justify-content: flex-start;
+    justify-content: center;
     width: 100%;
   }
 
   .wrapper__goods {
     gap: 50px;
-    justify-self: start;
+    // justify-self: start;
   }
 }
 
@@ -692,8 +804,8 @@ watch(() => props.isFiltersOpen, (newVal) => {
   }
 
   .wrapper__goods {
-    gap: 10px;
-    justify-content: center;
+    gap: 50px;
+    // justify-content: center;
   }
 
   .crumbs-menu {
@@ -709,15 +821,14 @@ watch(() => props.isFiltersOpen, (newVal) => {
   }
 
   .wrapper-cards {
-    grid-template-columns: repeat(2, 1fr); /* 2 колонки на планшетах */
+    grid-template-columns: repeat(270px, 1fr);
     gap: 20px;
-    justify-content: center; /* Центрируем содержимое */
   }
 
-  .filters {
-    // order: 2;
-    margin-top: 10px;
-  }
+  // .filters {
+  //   // order: 2;
+  //   margin-top: 10px;
+  // }
 }
 
 @media (max-width: 873px) {
@@ -727,7 +838,8 @@ watch(() => props.isFiltersOpen, (newVal) => {
   }
 
   .wrapper__goods {
-    gap: 10px;
+    gap: 5px;
+    
   }
 }
 
@@ -740,7 +852,7 @@ watch(() => props.isFiltersOpen, (newVal) => {
   .catalog__info {
     flex-direction: column;
     align-items: start;
-    width: 500px;
+    // width: 500px;
   }
 
   .catalog__info {
@@ -748,7 +860,7 @@ watch(() => props.isFiltersOpen, (newVal) => {
   }
 
   .wrapper__goods {
-    gap: 40px;
+    gap: 20px;
   }
 }
 
@@ -807,7 +919,7 @@ watch(() => props.isFiltersOpen, (newVal) => {
   .wrapper__goods {
     flex-direction: column;
     align-items: baseline;
-    align-items: center;
+  
     justify-content: baseline;
   }
 
@@ -845,12 +957,13 @@ watch(() => props.isFiltersOpen, (newVal) => {
   .wrapper-cards {
     grid-template-columns: 1fr;
     gap: 15px;
+    justify-content: center;
     justify-items: center;
   }
 
   .wrapper-cards > * {
-    width: 100%;
-    max-width: 340px;
+    width: 340px;
+    // max-width: 340px;
   }
 
   .slider-wrapper {
@@ -875,9 +988,9 @@ watch(() => props.isFiltersOpen, (newVal) => {
   }
 
   .wrapper__goods {
-    align-items: center;
+    // align-items: center;
     margin: 0 auto;
-    width: 100vw;
+    // width: 100vw;
     // Центрируем дочерние элементы
   }
 
@@ -946,6 +1059,17 @@ watch(() => props.isFiltersOpen, (newVal) => {
     width: 100%; // Линия на всю ширину
   }
 
+
+  .wrapper__goods {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 30px;
+  // justify-content: space-between;
+  // align-items: baseline;
+  justify-content: center;
+  // align-content: center;
+  width: 100%;
+}
 
 }
 

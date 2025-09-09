@@ -158,9 +158,9 @@ emit('searchBrand', '');
   // max-height: 350px;
 }
 
-.title-filter {
-  margin-bottom: 16px;
-}
+// .title-filter {
+//   margin-bottom: 16px;
+// }
 
 .brand-list {
   display: flex;

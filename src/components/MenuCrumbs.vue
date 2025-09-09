@@ -2,6 +2,12 @@
 
 <script setup lang="ts">
 
+const props = defineProps<{
+link: string
+to: string
+title: string
+}>()
+
 import Link from './Link.vue'
 </script>
 
@@ -15,8 +21,8 @@ import Link from './Link.vue'
         <div class="wrapper-arrow">
           <img class="arrow" src="../assets/svg/PrimaryFill.svg" />
         </div>
-        <Link class="link-item" :is-link="true" to="/catalog" link="catalog" kind="crumbs-grey" >
-        Каталог
+        <Link class="link-item" :is-link="true" :to="to" :link="link" kind="crumbs-grey" >
+        {{title}}
         </Link>
       </div>
     </div>

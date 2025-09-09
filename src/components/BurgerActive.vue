@@ -50,12 +50,15 @@ const closeAccept = () => {
     <img class="magnifier" src="../assets/image/Search.png" alt="иконка лупы">
   </div>
         <Navigation class="navigation" color="black" direction="vertical"/>
+        <RouterLink to="/basket" :class="['item', `item-${color}`]"
+        >
         <Button class="basket" kind="basket-big">
           <div class="wrapper-basket">
             <img class="basket_image" src="../assets/svg/basket.svg" alt="иконка корзины" />
             <span>Корзина</span>
           </div>
         </Button>
+        </RouterLink>
         <div class="info__wrapper">
           <div class="menu__info">
             <div class="menu__adress">

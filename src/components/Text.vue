@@ -35,6 +35,9 @@ type Kind =
   | 'filter-title'
   | 'brand-name'
   | 'noresult'
+  | 'noresultfilters'
+  | 'basket-title'
+  | 'basket-title-product'
 
 const props = defineProps<{
   title?: string
@@ -82,6 +85,16 @@ const computedClass = computed(() => {
     font-size: 16px;
     font-weight: 400;
     line-height: 130%;
+    letter-spacing: 0px;
+    text-align: center;
+  }
+
+  &-noresultfilters {
+    color: var(--text-default);
+    font-family: 'SFProDisplay';
+    font-size: 20px;
+    font-weight: 400;
+    line-height: 28px;
     letter-spacing: 0px;
     text-align: center;
   }
@@ -326,6 +339,15 @@ const computedClass = computed(() => {
   &-title {
     font-size: 28px;
   }
+
+  &-basket-title {
+    color: var(--text-default);
+    font-size: 28px;
+    font-weight: 400;
+    line-height: 130%;
+    letter-spacing: 0px;
+    text-align: left;
+  }
 }
 
 .h3 {
@@ -347,6 +369,16 @@ const computedClass = computed(() => {
 
   &-title_time {
     line-height: 24px;
+  }
+
+  &-basket-title-product {
+    color: var(--text-default);
+    font-family: 'SFProText';
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 130%;
+    letter-spacing: 0px;
+    text-align: left;
   }
 }
 

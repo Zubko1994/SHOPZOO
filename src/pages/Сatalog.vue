@@ -27,7 +27,7 @@ const handleCrossClick = (isActive: boolean) => {
   <Catalog @isActive="handleFiltersActive" :isFiltersOpen="isFiltersOpen"/>
   <PopularGoods/>
   <ArticleAll/>
-
+  
  </Layout>
 </template>
 

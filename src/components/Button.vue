@@ -74,6 +74,19 @@ function btnHandler(e: Event) {
       color: var(--white);
     }
   }
+
+  &_quantity-basket {
+    background: var(--surface-neutral);
+    color: var(--text-default);
+    border: none;
+    border-radius: 2px;
+    padding: 2px 8px;
+    
+    &:hover {
+      background: var(--highlight-active);
+      color: var(--white);
+    }
+  }
   &_quantity-active {
     background: var(--highlight-active);
     color: var(--white);

@@ -6,6 +6,7 @@ import BurgerActive from './BurgerActive.vue';
 import { inject } from 'vue';
 
 
+
 const props = defineProps<{
   isActive?: boolean
 }>();
@@ -76,12 +77,16 @@ watch(() => props.isActive, (newVal) => {
           <LogoFooter class="logo-active" />
           <div class="wrapper-element">
           <img class="magnifier" src="../assets/image/Search.png" alt="иконка лупы">
+          <RouterLink to="/basket" :class="['item', `item-${color}`]"
+        >
           <Button class="basket-button" kind="basket">
             <div class="wrapper-basket">
               <img src="../assets/svg/basket.svg" alt="иконка корзины" />
               <span>0</span>
             </div>
           </Button>
+          </RouterLink>
+        
           <div class="burger" @click="closeFilterWindow">
             <button class="burger__menu" @isFiltersOpen="toggleClass()" :class="themeClass" @click="toggleClass" @isActive='closeFilters'>
               <span></span>

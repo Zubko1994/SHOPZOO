@@ -88,10 +88,13 @@ const closeAccept = () => {
           <Input />
           <Navigation color="white" />
           <Button kind="basket">
+            <RouterLink to="/basket" :class="['item', `item-${color}`]"
+          >
             <div class="wrapper-basket">
               <img src="../assets/svg/basket.svg" alt="иконка корзины" />
               <span>0</span>
             </div>
+            </RouterLink>
           </Button>
           <div class="burger">
             <button class="burger__menu">
