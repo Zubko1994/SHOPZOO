@@ -1,31 +1,167 @@
 <!-- @format -->
 
 <script setup lang="ts">
+// import Text from './Text.vue'
+// import CardBasket from './CardBasket.vue'
+// import Quantity from './Quantity.vue'
+// import { ref, computed, watch, onMounted } from 'vue'
+
+// interface Cards {
+//   id: number
+//   image_prev: string
+//   title: string
+//   price: number
+// }
+
+// interface CardsObj {
+//   count: number
+//   next: string | null
+//   previous: string | null
+//   results: Cards[]
+// }
+
+// const dataCards = ref<CardsObj | null>(null)
+// fetch('https://oliver1ck.pythonanywhere.com/api/get_products_list/')
+//   .then((resp) => resp.json())
+//   .then((data) => (dataCards.value = data))
+
+// const cost = ref(542)
+
+
+
+// interface CartItem {
+//   id: number
+//   image_prev: string
+//   title: string
+//   price: number
+//   quantity: number
+//   variant: string
+// }
+
+// const cartItems = ref<CartItem[]>([])
+
+// // Функция загрузки корзины из Local Storage
+// const loadCart = () => {
+//   const cartData = localStorage.getItem('cart')
+//   cartItems.value = cartData ? JSON.parse(cartData) : []
+// }
+
+// // Функция обновления количества товара
+// const updateQuantity = (id: number, variant: string, newQuantity: number) => {
+//   if (newQuantity < 1) return
+  
+//   const updatedCart = cartItems.value.map(item => 
+//     item.id === id && item.variant === variant 
+//       ? { ...item, quantity: newQuantity } 
+//       : item
+//   )
+  
+//   cartItems.value = updatedCart
+//   localStorage.setItem('cart', JSON.stringify(updatedCart))
+// }
+
+// // Функция удаления товара
+// const removeItem = (id: number, variant: string) => {
+//   const updatedCart = cartItems.value.filter(
+//     item => !(item.id === id && item.variant === variant)
+//   )
+  
+//   cartItems.value = updatedCart
+//   localStorage.setItem('cart', JSON.stringify(updatedCart))
+// }
+
+// // Вычисляемые свойства для общей стоимости и количества
+// const totalCost = computed(() => {
+//   return cartItems.value.reduce((total, item) => total + (item.price * item.quantity), 0)
+// })
+
+// const totalItems = computed(() => {
+//   return cartItems.value.reduce((total, item) => total + item.quantity, 0)
+// })
+
+// // Загружаем корзину при монтировании и подписываемся на обновления
+// onMounted(() => {
+//   loadCart()
+//   window.addEventListener('cartUpdated', loadCart)
+// })
+
+// onMounted(() => {
+//   window.removeEventListener('cartUpdated', loadCart)
+// })
+
 import Text from './Text.vue'
 import CardBasket from './CardBasket.vue'
-import Quantity from './Quantity.vue'
-import { ref, computed, watch, onMounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 
-interface Cards {
+interface CartItem {
   id: number
   image_prev: string
   title: string
   price: number
+  quantity: number
+  variant: string
 }
 
-interface CardsObj {
-  count: number
-  next: string | null
-  previous: string | null
-  results: Cards[]
+const cartItems = ref<CartItem[]>([])
+
+// Функция загрузки корзины из Local Storage
+const loadCart = () => {
+  try {
+    const cartData = localStorage.getItem('cart')
+    cartItems.value = cartData ? JSON.parse(cartData) : []
+    console.log('Cart loaded:', cartItems.value)
+  } catch (error) {
+    console.error('Error loading cart:', error)
+    cartItems.value = []
+  }
 }
 
-const dataCards = ref<CardsObj | null>(null)
-fetch('https://oliver1ck.pythonanywhere.com/api/get_products_list/')
-  .then((resp) => resp.json())
-  .then((data) => (dataCards.value = data))
+// Функция обновления количества товара
+const updateQuantity = (id: number, variant: string, newQuantity: number) => {
+  if (newQuantity < 1) return
+  
+  const updatedCart = cartItems.value.map(item => 
+    item.id === id && item.variant === variant 
+      ? { ...item, quantity: newQuantity } 
+      : item
+  )
+  
+  cartItems.value = updatedCart
+  localStorage.setItem('cart', JSON.stringify(updatedCart))
+  window.dispatchEvent(new CustomEvent('cartUpdated'))
+}
 
-const cost = ref(542)
+// Функция удаления товара
+const removeItem = (id: number, variant: string) => {
+  const updatedCart = cartItems.value.filter(
+    item => !(item.id === id && item.variant === variant)
+  )
+  
+  cartItems.value = updatedCart
+  localStorage.setItem('cart', JSON.stringify(updatedCart))
+  window.dispatchEvent(new CustomEvent('cartUpdated'))
+}
+
+// Вычисляемые свойства для общей стоимости и количества
+const totalCost = computed(() => {
+  return cartItems.value.reduce((total, item) => 
+    total + (item.price * item.quantity), 0
+  ).toFixed(2)
+})
+
+const totalItems = computed(() => {
+  return cartItems.value.reduce((total, item) => total + item.quantity, 0)
+})
+
+// Загружаем корзину при монтировании и подписываемся на обновления
+onMounted(() => {
+  loadCart()
+  window.addEventListener('cartUpdated', loadCart)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('cartUpdated', loadCart)
+})
 </script>
 
 <template>
@@ -36,19 +172,26 @@ const cost = ref(542)
         <div class="goods_choice">
           <div class="goods_choice-basket">
             <CardBasket
-              v-for="card in dataCards?.results"
-              :key="card.id"
-              :countitemproduct_set="card.countitemproduct_set"
-              :title="card.title"
-              :image_prev="card.image_prev"
-              :price="card.price"
+              v-for="item in cartItems"
+              :key="`${item.id}-${item.variant}`"
+              :quantity="item.quantity"
+              :title="item.title"
+              :image_prev="item.image_prev"
+              :price="item.price"
+              :id="item.id"
+              :variant="item.variant"
+              @update-quantity="(newQty) => updateQuantity(item.id, item.variant, newQty)"
+              @remove-item="removeItem(item.id, item.variant)"
             />
+            <div v-if="cartItems.length === 0" class="empty-cart">
+              Корзина пуста
+            </div>
           </div>
           <div class="order-info">
             <div class="wrapper_order">
-              <span class="cost">{{ cost }} BYN</span>
+              <span class="cost">{{ totalCost }} BYN</span>
               <span class="count-order"
-                >Количесво товаров: {{ dataCards?.results.length }}</span
+                >Количесво товаров: {{ totalItems }}</span
               >
             </div>
             <div class="delivery-method">
@@ -81,6 +224,12 @@ const cost = ref(542)
 
 .title {
   margin-bottom: 24px;
+}
+.empty-cart {
+  padding: 24px;
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 18px;
 }
 
 .goods_choice-basket {

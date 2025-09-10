@@ -10,6 +10,7 @@ import Button from './Button.vue'
 
 const props = withDefaults( 
   defineProps<{
+  id: number, 
   image_prev: string
   title: string
   countitemproduct_set: string[]
@@ -56,13 +57,34 @@ watch(() => props.price, () => {
 
 
 
-const emit = defineEmits(['updateCategory'])
+const emit = defineEmits(['updateCategory', 'addInBasket'])
 
 
 
 function handleCategoryUpdate() {
   emit('updateCategory', props.countitemproduct_set)
 }
+
+
+
+function addProduct(){
+  emit('addInBasket');
+  console.log('клик на корзину есть')
+  const product = {
+    id: props.id, 
+    image_prev: props.image_prev, 
+  title: props.title,
+  price: props.price, 
+  quantity: selectedQuantity.value? parseInt(selectedQuantity.value): 1,
+  variant: selectedQuantity.value,
+  }
+}
+
+const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+
+
+
+
 
 
 </script>
@@ -91,7 +113,7 @@ function handleCategoryUpdate() {
       <div v-if="props.sale && props.sale.percent > 0" class="total-price">{{(+totalPrice + +(totalPrice*props.sale.percent/100)).toFixed(2)}}BYN</div>
         <span class="cost">{{ totalPrice }} BYN </span>
         </div>
-        <Button title="" kind="basket-adding" />
+        <Button @click="addProduct" title="" class="basket" kind="basket-adding" />
       </div>
       <Button kind="buying">Купить в 1 клик</Button>
     </div>

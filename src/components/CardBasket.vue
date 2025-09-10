@@ -3,7 +3,7 @@
 !
 <script setup lang="ts">
 import Text from './Text.vue'
-import Quantity from './QuantityBasket.vue'
+import Quantity from './Quantity.vue'
 import { ref, computed, watch } from 'vue'
 
 const props = withDefaults(
@@ -34,7 +34,7 @@ function increaseCount() {
     console.log(countProduct)
   }
 
-
+  const emit = defineEmits(['update-quantity', 'remove-item'])
 
 function decreaseCount() {
   if (countProduct.value != 0) {
@@ -42,6 +42,10 @@ function decreaseCount() {
     console.log(countProduct)
   }
   return countProduct.value
+}
+
+const removeItem = () => {
+  emit('remove-item')
 }
 </script>
 
@@ -62,7 +66,7 @@ function decreaseCount() {
         />
         <div class="product-info_quantity">
           <Quantity
-            :list="props.countitemproduct_set || []"
+            :list="countitemproduct_set || []"
             @updateQuantity="updateTotalPrice"
           />
         </div>
@@ -81,7 +85,7 @@ function decreaseCount() {
         </div>
         <div class="cost">{{ 12 }} BYN</div>
       </div>
-      <button class="trash-can">
+      <button @click="removeItem" class="trash-can">
         <img src="../assets/svg/Delete.svg" alt="удалить товар" />
       </button>
     </div>
