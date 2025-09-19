@@ -6,47 +6,106 @@ import Text from './Text.vue'
 import Quantity from './Quantity.vue'
 import { ref, computed, watch } from 'vue'
 
-const props = withDefaults(
-  defineProps<{
-    image_prev: string
-    title: string
-    countitemproduct_set: string[]
-    price: number
-    currentCategory?: number
-    animal: string[]
-    sale: { id: number; image: string; percent: number; title: string }
-    promotion: string
-  }>(),
-  {
-    promotion: 'Акция',
+const props = withDefaults(defineProps<{
+  id: number
+  image_prev: string
+  countitemproduct_set: string[]  
+  title: string
+  price: number
+  quantity: number  
+  variant: string   
+}>(),
+{
+    quantity: 1,
   }
 )
+
+
 const selectedQuantity = ref<string | null>(null)
+const totalPrice = ref(props.price)
+const countProduct = ref(1) // ← Используем переданное количество
+
+const emit = defineEmits(['remove-item', 'quantityitem'])
 
 const updateTotalPrice = (quantity: string) => {
   selectedQuantity.value = quantity
-  console.log(quantity)
+  const selectedQty = Number(quantity) || 1
+  console.log(quantity.value)
+  
+  // Пересчитываем totalPrice с учетом выбранного количества и текущего количества товаров
+  totalPrice.value = Number((props.price * quantity.value * countProduct.value).toFixed(2))
+  console.log(props.price)
+  console.log(selectedQty)
+  console.log(countProduct.value)
+
+  
+  updateCount(countProduct.value)
 }
-const countProduct = ref(1);
+// Функция для обновления количества и сохранения
+function updateCount(newQuantity: number) {
+  // totalCost = цена * выбранноеКоличество * количество товаров
+  const selectedQty = Number(selectedQuantity.value) || 1
+  const totalCostValue = (Number(props.price) * selectedQty * newQuantity).toFixed(2)
+  
+  const cart = JSON.parse(localStorage.getItem('cart') || '[]')
+  const updatedCart = cart.map(item => {
+    if (item.id === props.id && item.variant === props.variant && item.title === props.title) {
+      return { 
+        ...item, 
+        quantity: newQuantity, 
+        totalCost: totalCostValue,
+        selectedQuantity: selectedQuantity.value
+      }
+    }
+    return item
+  })
+  
+  localStorage.setItem('cart', JSON.stringify(updatedCart))
+  window.dispatchEvent(new CustomEvent('cartUpdated'))
+}
 
 function increaseCount() {
-    countProduct.value++
-    console.log(countProduct)
-  }
+  const newQuantity = countProduct.value + 1
+  countProduct.value = newQuantity
+  
+  // Пересчитываем totalPrice с учетом выбранного количества
+  const selectedQty = Number(selectedQuantity.value) || 1
+  totalPrice.value = Number((props.price * selectedQty * newQuantity).toFixed(2))
+  
+  updateCount(newQuantity)
 
-  const emit = defineEmits(['update-quantity', 'remove-item'])
+}
+
 
 function decreaseCount() {
-  if (countProduct.value != 0) {
-    countProduct.value--
-    console.log(countProduct)
+  if (countProduct.value > 1) {
+    const newQuantity = countProduct.value - 1
+    countProduct.value = newQuantity
+    
+    // Пересчитываем totalPrice с учетом выбранного количества
+    const selectedQty = Number(selectedQuantity.value) || 1
+    totalPrice.value = Number((props.price * selectedQty * newQuantity).toFixed(2))
+    
+    updateCount(newQuantity)
   }
-  return countProduct.value
 }
 
+
+  watch(selectedQuantity, (newVal) => {
+    if(newVal){
+    selectedQuantity.value = newVal
+    }
+  })
+
+
 const removeItem = () => {
-  emit('remove-item')
+  emit('remove-item', props.id, props.variant, props.title)
 }
+
+watch(totalPrice, (newVal) => {
+  console.log('Цена обновлена:', newVal)
+})
+
 </script>
 
 <template>
@@ -65,8 +124,9 @@ const removeItem = () => {
           :title="props.title"
         />
         <div class="product-info_quantity">
-          <Quantity
-            :list="countitemproduct_set || []"
+           <Quantity
+           
+            :list="props.countitemproduct_set || []"
             @updateQuantity="updateTotalPrice"
           />
         </div>
@@ -83,7 +143,7 @@ const removeItem = () => {
             <img src="../assets/image/plus_minor.svg" alt="плюс" />
           </button>
         </div>
-        <div class="cost">{{ 12 }} BYN</div>
+        <div class="cost">{{ totalPrice }} BYN</div>
       </div>
       <button @click="removeItem" class="trash-can">
         <img src="../assets/svg/Delete.svg" alt="удалить товар" />
@@ -154,7 +214,7 @@ justify-content: center;
   display: flex;
   gap: 16px;
   justify-content: space-between;
-  max-width: 738px;
+  min-width: 770px;
   width: 100%;
   padding: 24px 16px 24px 16px;
 }
@@ -188,28 +248,26 @@ justify-content: center;
   text-align: left;
 }
 
-@media (max-width: 873px) {
-  .wrapper-card{
-    flex-direction: column;
-    gap: 16px;
-    align-items: flex-start;
-    max-width: 640px;
-    padding: 24px 16px 0px 16px;
+
+@media (max-width: 820px) {
+
+  .wrapper-card {
+    min-width: 600px;
   }
 
 }
 
-@media (max-width: 667px) {
-  .wrapper-card{
-    max-width: 340px;
-  }
 
+@media (max-width: 684px) {
+ .wrapper-card{
+    min-width: 340px;
+    padding: 24px 16px 0px 16px;
+    flex-direction: column;
+  }
   .wrapper-card_left {
   flex-direction: column;
   align-items: flex-start;
 }
 
-
 }
-
 </style>

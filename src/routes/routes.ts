@@ -4,6 +4,8 @@ export const RoutePath = {
   Home: '/',
   Catalog: '/catalog',
   Basket: '/basket',
+  OrderRegistration: '/order',
+  Articles: '/articles',
   
 
 } as const
@@ -27,6 +29,18 @@ export const router = createRouter({
       path: RoutePath.Basket,
       name: 'basket',
       component: () => import('../pages/Basket.vue'),
-    }
+    },
+
+    {
+      path: RoutePath.OrderRegistration,
+      name: 'order',
+      component: () => import('../pages/OrderRegistration.vue'),
+    },
+
+    {
+      path: RoutePath.Articles,
+      name: 'articles',
+      component: () => import('../pages/Articles.vue'),
+    },
   ],
 })

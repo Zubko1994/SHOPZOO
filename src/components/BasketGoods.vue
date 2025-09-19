@@ -88,70 +88,137 @@
 // onMounted(() => {
 //   window.removeEventListener('cartUpdated', loadCart)
 // })
-
 import Text from './Text.vue'
 import CardBasket from './CardBasket.vue'
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import Button from './Button.vue'
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
+import Quantity from './Quantity.vue'
 
 interface CartItem {
   id: number
   image_prev: string
   title: string
   price: number
-  quantity: number
+  quantity: string
   variant: string
+  countitemproduct_set: string[],
+  totalCost: number
+  
 }
 
+const selectedQuantity = ref<number | null>(null)
 const cartItems = ref<CartItem[]>([])
+
+
+const forceUpdate = ref(0)
 
 // Функция загрузки корзины из Local Storage
 const loadCart = () => {
   try {
     const cartData = localStorage.getItem('cart')
     cartItems.value = cartData ? JSON.parse(cartData) : []
-    console.log('Cart loaded:', cartItems.value)
+    // Сохраняем общую стоимость в localStorage
+    localStorage.setItem('totalCost', totalCost.value)
   } catch (error) {
     console.error('Error loading cart:', error)
     cartItems.value = []
   }
 }
 
-// Функция обновления количества товара
-const updateQuantity = (id: number, variant: string, newQuantity: number) => {
-  if (newQuantity < 1) return
-  
-  const updatedCart = cartItems.value.map(item => 
-    item.id === id && item.variant === variant 
-      ? { ...item, quantity: newQuantity } 
-      : item
-  )
-  
-  cartItems.value = updatedCart
-  localStorage.setItem('cart', JSON.stringify(updatedCart))
-  window.dispatchEvent(new CustomEvent('cartUpdated'))
+function updateQuantityItem(quantityitem: number) {
+selectedQuantity.value = quantityitem
+console.log(selectedQuantity.value)
+console.log(quantityitem)
+console.log(quantityitem.value)
+
 }
 
+const totalCost = computed(() => {
+  return cartItems.value.reduce((total, item) => {
+    try {
+      const quantity = Number(item.quantity) || 1
+      const price = Number(item.price) || 0
+      
+      // Надежное получение selectedQuantity
+      let selectedQty = 1
+      
+      // Проверяем, есть ли selectedQuantity и оно валидно
+      if (item.selectedQuantity && 
+          item.selectedQuantity !== 'null' && 
+          item.selectedQuantity !== 'undefined' &&
+          !isNaN(Number(item.selectedQuantity.value))) {
+        selectedQty = Number(item.selectedQuantity.value)
+      } 
+      // Если нет, используем первое значение из countitemproduct_set
+      else if (item.countitemproduct_set.length > 0) {
+        const firstQty = item.countitemproduct_set[0]
+        console.log(item.countitemproduct_set[0])
+        if (firstQty && !isNaN(Number(firstQty))) {
+          selectedQty = Number(firstQty)
+          // Автоматически исправляем данные
+          item.selectedQuantity= firstQty
+        }
+      }
+      
+      const itemTotalCost = price * selectedQty * quantity
+      
+      console.log(`Товар: ${item.title}, Цена: ${price}, Весовка: ${selectedQty}, Количество: ${quantity}, Итого: ${itemTotalCost}`)
+      
+      return total + itemTotalCost
+    } catch (error) {
+      console.error('Ошибка расчета для товара:', item, error)
+      return total
+    }
+  }, 0).toFixed(2)
+})
+// Функция обновления количества товара
+// const updateQuantity = (id: number, variant: string, newQuantity: number) => {
+//   if (newQuantity < 1) return
+  
+//   const updatedCart = cartItems.value.map(item => 
+//     item.id === id && item.variant === variant 
+//       ? { ...item, quantity: newQuantity } 
+//       : item
+//   )
+  
+//   cartItems.value = updatedCart
+//   localStorage.setItem('cart', JSON.stringify(updatedCart))
+//   window.dispatchEvent(new CustomEvent('cartUpdated'))
+// }
+
+
 // Функция удаления товара
-const removeItem = (id: number, variant: string) => {
+const removeItem = (id: number, variant: string, title: string) => {
   const updatedCart = cartItems.value.filter(
-    item => !(item.id === id && item.variant === variant)
+    item => !(item.id === id && item.variant === variant && item.title === title)
   )
   
   cartItems.value = updatedCart
   localStorage.setItem('cart', JSON.stringify(updatedCart))
-  window.dispatchEvent(new CustomEvent('cartUpdated'))
+  forceUpdate.value++ // ← ВАЖНО: добавляем принудительное обновление
 }
 
 // Вычисляемые свойства для общей стоимости и количества
-const totalCost = computed(() => {
-  return cartItems.value.reduce((total, item) => 
-    total + (item.price * item.quantity), 0
-  ).toFixed(2)
-})
+
+// const totalCost = computed(() => {
+//   forceUpdate.value 
+  
+//   return cartItems.value.reduce((total, item) => {
+//     const quantity = Number(item.quantity) || 1
+//     const price = Number(item.price) || 0
+//     return total + (price * quantity)
+//   }, 0).toFixed(2)
+// })
+
+
 
 const totalItems = computed(() => {
-  return cartItems.value.reduce((total, item) => total + item.quantity, 0)
+  return cartItems.value.reduce((total, item) => 
+    total + (Number(item.quantity) || 1), 0
+  )
 })
+
+
 
 // Загружаем корзину при монтировании и подписываемся на обновления
 onMounted(() => {
@@ -162,15 +229,72 @@ onMounted(() => {
 onUnmounted(() => {
   window.removeEventListener('cartUpdated', loadCart)
 })
+
+ // Следим за изменениями общей стоимости
+watch(totalCost, (newCost) => {
+  localStorage.setItem('totalCost', newCost)
+  window.dispatchEvent(new CustomEvent('totalCostUpdated', {
+    detail: newCost 
+  }))
+})
+
+  const fixAllTotalCosts = () => {
+  const cart = JSON.parse(localStorage.getItem('cart') || '[]')
+  const fixedCart = cart.map(item => {
+    const quantity = Number(item.quantity) || 1
+    const price = Number(item.price) || 0
+    const selectedQty = item.selectedQuantity // ← Используем selectedQuantity
+    
+    return {
+      ...item,
+      totalCost: (price * selectedQty * quantity).toFixed(2)
+    }
+  })
+  
+  localStorage.setItem('cart', JSON.stringify(fixedCart))
+  loadCart() // Перезагружаем корзину
+}
+
+// Вызовите эту функцию один раз для исправления существующих данных
+onMounted(() => {
+  fixAllTotalCosts()
+})
+
+watch(cartItems, (newItems) => {
+  const totalCount = newItems.reduce((sum, item) => sum + item.quantity, 0)
+  
+  // Сохраняем в localStorage
+  localStorage.setItem('cartCount', totalCount.toString())
+  
+  // Отправляем событие
+  window.dispatchEvent(new CustomEvent('cartCountUpdated', {
+    detail: { count: totalCount }
+  }))
+}, { deep: true })
+
+
+
+// При загрузке компонента
+onMounted(() => {
+  const count = cartItems.value.reduce((sum, item) => sum + item.quantity, 0)
+  console.log(count)
+  localStorage.setItem('cartCount', count.toString())
+  window.dispatchEvent(new CustomEvent('cartCountUpdated', {
+    detail: { count }
+  }))
+})
+ 
 </script>
 
 <template>
   <section>
     <div class="wrapper-basket">
       <div class="container">
+        <div v-if="cartItems.length !== 0">
         <Text class="title" tag="h2" print="basket-title" title="Моя корзина" />
-        <div class="goods_choice">
-          <div class="goods_choice-basket">
+        <div  class="goods_choice">
+          <div>
+          <div  class="goods_choice-basket">
             <CardBasket
               v-for="item in cartItems"
               :key="`${item.id}-${item.variant}`"
@@ -180,18 +304,21 @@ onUnmounted(() => {
               :price="item.price"
               :id="item.id"
               :variant="item.variant"
-              @update-quantity="(newQty) => updateQuantity(item.id, item.variant, newQty)"
-              @remove-item="removeItem(item.id, item.variant)"
+             :countitemproduct_set="item.countitemproduct_set"
+              @remove-item="removeItem(item.id, item.variant, item.title)"
+              @addInBasket="loadCart"
+              :totalCosts="item.totalCost"
+@quantityitem="updateQuantityItem"
+:arrayLength="arrayLength"
             />
-            <div v-if="cartItems.length === 0" class="empty-cart">
-              Корзина пуста
             </div>
           </div>
+          <div>
           <div class="order-info">
             <div class="wrapper_order">
               <span class="cost">{{ totalCost }} BYN</span>
               <span class="count-order"
-                >Количесво товаров: {{ totalItems }}</span
+                >Товаров: {{ cartItems.length }}</span
               >
             </div>
             <div class="delivery-method">
@@ -208,9 +335,22 @@ onUnmounted(() => {
                 </span>
               </div>
             </div>
-            <button class="order-registration">Оформить заказ</button>
+            <button class="order-registration">
+              <RouterLink to="/order" class="order-registration__link"
+          >Оформить заказ
+              </RouterLink></button>
+          </div>
+          </div>
           </div>
         </div>
+        <div v-if="cartItems.length === 0" class="empty-cart">
+              <img class="cat" src="../assets/image/CatBasket.png" alt="изображение кота">
+              <Text class="empty-cart__basket" tag="p" print="empty-basket" title="В корзине нет товаров. Выберите нужные товары в нашем каталоге" />
+              <div>
+              <Button kind="primary"><RouterLink to="/catalog" class="link_button" :class="['item']"
+          >Перейти в каталог товаров</RouterLink></Button>
+              </div>
+            </div>
       </div>
     </div>
   </section>
@@ -226,15 +366,39 @@ onUnmounted(() => {
   margin-bottom: 24px;
 }
 .empty-cart {
-  padding: 24px;
+  padding-top: 56px;
   text-align: center;
-  color: var(--text-secondary);
+  color: var(--text-default);
   font-size: 18px;
+  background-color: var(--bg-default);
+  max-width: 654px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin: 0 auto;
+  gap: 32px;
+}
+
+.link_button{
+  color: var(--white);
+}
+
+.cat {
+  max-width: 369px;
+  display: block;
+  margin: 0 auto;
+  margin-bottom: 8px;
+}
+
+.empty-cart__basket {
+  text-wrap: wrap;
+ 
 }
 
 .goods_choice-basket {
   background-color: var(--white);
   max-width: 770px;
+ width: 100%;
   display: flex;
   flex-direction: column;
   gap: 24px;
@@ -248,18 +412,22 @@ onUnmounted(() => {
   padding: 16px 24px 16px 24px;
   background-color: rgba(0, 128, 96, 1);
   max-width: 371px;
-  max-height: 210px;
   border-radius: 8px;
   width: 100%;
   flex-wrap: nowrap;
+}
+
+.order-registration__link {
+  color: var(--text-default);
 }
 
 .goods_choice {
   display: flex;
   gap: 30px;
   align-content: flex-start;
-  justify-content: center;
+  justify-content: space-between;
   flex-wrap: wrap;
+  width: 100%;
 }
 
 .order-registration {
@@ -341,6 +509,13 @@ onUnmounted(() => {
   gap: 12px;
 }
 
+@media (max-width: 1146px) {
+  .goods_choice {
+    justify-content: center;
+  }
+}
+
+
 @media (max-width: 873px) {
   .title {
     font-weight: 400;
@@ -352,7 +527,8 @@ onUnmounted(() => {
 
   .goods_choice-basket {
     gap: 16px;
-    // padding: 24px 16px 0px 16px;
+ width: auto;
+
   }
 }
 
@@ -360,5 +536,14 @@ onUnmounted(() => {
   .order-info {
     width: 340px;
   }
+  
+  .cat {
+  width: 268px;
+}
+
+.empty-cart__basket {
+  font-size: 24px;
+}
+
 }
 </style>

@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import LogoFooter from './LogoFooter.vue'
 import Button from './Button.vue'
-import { ref, computed, watch } from 'vue';
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue';
 import BurgerActive from './BurgerActive.vue';
 import { inject } from 'vue';
+
 
 
 
@@ -65,7 +66,30 @@ watch(() => props.isActive, (newVal) => {
   isActiveInternal.value = newVal || false;
 });
 
+const cartCount = ref(0)
 
+const updateCartCount = () => {
+  const count = localStorage.getItem('cartCount') || '0'
+  cartCount.value = parseInt(count)
+  console.log('Cart count updated to:', cartCount.value)
+}
+
+// Слушаем события обновления корзины
+const handleCartUpdate = () => {
+  console.log('Cart update event received')
+  updateCartCount()
+}
+
+onMounted(() => {
+  updateCartCount()
+  window.addEventListener('cartCountUpdated', handleCartUpdate)
+  window.addEventListener('cartUpdated', handleCartUpdate)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('cartCountUpdated', handleCartUpdate)
+  window.removeEventListener('cartUpdated', handleCartUpdate)
+})
 
 </script>
 
@@ -82,7 +106,7 @@ watch(() => props.isActive, (newVal) => {
           <Button class="basket-button" kind="basket">
             <div class="wrapper-basket">
               <img src="../assets/svg/basket.svg" alt="иконка корзины" />
-              <span>0</span>
+              <span>{{ cartCount }}</span>
             </div>
           </Button>
           </RouterLink>

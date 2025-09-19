@@ -8,6 +8,7 @@ import Text from './Text.vue'
 import Button from './Button.vue'
 
 
+
 const props = withDefaults( 
   defineProps<{
   id: number, 
@@ -19,6 +20,7 @@ const props = withDefaults(
   animal: string[]
   sale: {id: number; image: string; percent: number; title: string }
   promotion: string
+  
 }>(),
 {
     promotion: "Акция",
@@ -28,6 +30,9 @@ const props = withDefaults(
 const selectedQuantity = ref<string | null>(null)
 console.log(selectedQuantity.value)
 const totalPrice = ref(props.price)
+ const quantity = Number(selectedQuantity.value)
+  const totalCost = (props.price * quantity).toFixed(2)
+
 
 const updateTotalPrice = (quantity: string) => {
   selectedQuantity.value = quantity
@@ -68,24 +73,45 @@ function handleCategoryUpdate() {
 
 
 function addProduct(){
-  emit('addInBasket');
-  console.log('клик на корзину есть')
+  // Проверяем, что выбран вариант количества
+  // if (!selectedQuantity.value) {
+  //   alert('Пожалуйста, выберите количество');
+  //   return;
+  // }
+
   const product = {
-    id: props.id, 
+    id: props.id, // ← Используем ID товара, а не случайный!
     image_prev: props.image_prev, 
-  title: props.title,
-  price: props.price, 
-  quantity: selectedQuantity.value? parseInt(selectedQuantity.value): 1,
-  variant: selectedQuantity.value,
+    countitemproduct_set: props.countitemproduct_set,
+    title: props.title,
+    price: Number(props.price),
+    quantity: Number(selectedQuantity.value) || 1, // ← Преобразуем в число
+    variant: selectedQuantity.value, // ← Это вариант товара
+    totalCost: (Number(props.price) * (Number(selectedQuantity.value) || 1)).toFixed(2)
+  };
+
+  const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+  
+  // Ключ для сравнения товаров (ДОЛЖЕН БЫТЬ УНИКАЛЬНЫМ ДЛЯ КАЖДОЙ КОМБИНАЦИИ)
+  const productKey = `${product.id}-${product.variant}-${product.title}`;
+  
+  // Проверяем, есть ли уже такой товар
+  const existingIndex = cart.findIndex(item => 
+    `${item.id}-${item.variant}-${item.title}` === productKey
+  );
+  
+  if (existingIndex !== -1) {
+    // Если товар уже есть - увеличиваем количество
+    // cart[existingIndex].quantity += product.quantity;
+    // cart[existingIndex].totalCost = (cart[existingIndex].price * cart[existingIndex].quantity).toFixed(2);
+  } else {
+    // Если нет - добавляем новый товар
+    cart.push(product);
   }
+  
+  localStorage.setItem("cart", JSON.stringify(cart));
+  window.dispatchEvent(new CustomEvent('cartUpdated'))
 }
-
-const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-
-
-
-
-
 
 </script>
 
@@ -103,8 +129,9 @@ const cart = JSON.parse(localStorage.getItem('cart') || '[]');
     <div class="wrapper-bottom">
     <div class="wrapper-quantity">
       <Quantity
-        :list="props.countitemproduct_set || []"
+        :list="props.countitemproduct_set"
         @updateQuantity="updateTotalPrice"
+        :selected="selectedQuantity" 
       />
     </div>
     <div class="wrapper-basket">

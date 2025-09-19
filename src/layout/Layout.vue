@@ -23,6 +23,7 @@ const updateHeaderState = (active: boolean) => {
 </script>
 
 <template>
+  
 <Header class="header" />
 <HeaderActive :isActive="isActive || isFiltersOpen" class="header-active"   @update:isActive="updateHeaderState"
 />
@@ -30,9 +31,11 @@ const updateHeaderState = (active: boolean) => {
   <slot :isFiltersOpen="isFiltersOpen" />
 </main>
 <Footer />
+
 </template>
 
 <style lang="scss" scoped>
+
 
 .header-active {
     display: none;

@@ -406,7 +406,9 @@ watch(() => props.isFiltersOpen, (newVal) => {
               <div>
                 <section>
                   <div class="cards-section">
+                    <div>
                     <div class="wrapper-cards">
+                      
                       <Card
                         v-for="(card, index) in paginatedData"
                         :key="card.id"
@@ -425,6 +427,7 @@ watch(() => props.isFiltersOpen, (newVal) => {
                         @selectedTypeGoods="selectedTypeGoods"
                         @promotionProducts="promotionProducts"
                       />
+                      </div>
                       <div v-if="!hasResults && filtersApplied" class="no-results">
                         <div class="no-results__content">
         <img src="../assets/image/catnoresult.png" alt="Нет результатов" class="no-results__image">
@@ -619,7 +622,7 @@ watch(() => props.isFiltersOpen, (newVal) => {
   margin-bottom: 24px;
   width: 100%;
   // min-height: 0;
-  justify-content: space-around;
+  justify-content: space-between;
   justify-items: center;
  
   flex-grow: 1;
@@ -631,7 +634,7 @@ watch(() => props.isFiltersOpen, (newVal) => {
   flex-direction: column;
   flex-wrap: wrap;
   width: 100%;
-  align-items: center; /* Центрируем всю секцию */
+  // align-items: center; /* Центрируем всю секцию */
   max-width: 870px;
 }
 

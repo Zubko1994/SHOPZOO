@@ -38,6 +38,9 @@ type Kind =
   | 'noresultfilters'
   | 'basket-title'
   | 'basket-title-product'
+  | 'empty-basket'
+  | 'order-title'
+  | 'waiting-order-title'
 
 const props = defineProps<{
   title?: string
@@ -306,6 +309,17 @@ const computedClass = computed(() => {
     letter-spacing: 0px;
     text-align: left;
   }
+
+  &-empty-basket {
+    font-family: 'SFProDisplay';
+    font-weight: 600;
+    font-style: Semibold;
+    font-size: 28px;
+    line-height: 130%;
+    letter-spacing: 0px;
+    text-align: center;
+    color: var(--text-default);
+  }
 }
 
 .h1 {
@@ -347,6 +361,16 @@ const computedClass = computed(() => {
     line-height: 130%;
     letter-spacing: 0px;
     text-align: left;
+  }
+
+  &-order-title {
+    font-family: 'SFProDisplay';
+    font-weight: 600;
+    font-size: 28px;
+    line-height: 130%;
+    letter-spacing: 0px;
+    text-align: center;
+    color: var(--text-default);
   }
 }
 
@@ -397,6 +421,16 @@ const computedClass = computed(() => {
 
   &-title-backcall {
     line-height: 28px;
+  }
+
+  &-waiting-order-title {
+    color: var(--text-default);
+font-family: 'Inter';
+font-size: 24px;
+font-weight: 700;
+line-height: 130%;
+letter-spacing: 0%;
+text-align: center;
   }
 }
 

@@ -10,15 +10,18 @@ const props = defineProps<{
   value: number,
   unit: string[],
   price: number,
-
+selected?: string | null
 }>()
 
 const emit = defineEmits(['updateQuantity']);
+
+
 
 function quantityHandler (item: string){
   selectedItem.value = item
   console.log(item)
   emit('updateQuantity', item);
+  
 }
 </script>
 

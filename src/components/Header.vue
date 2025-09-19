@@ -9,7 +9,7 @@ import Navigation from './Navigation.vue'
 import Input from './Input.vue'
 import FormBackCall from '../components/FormBackCall.vue'
 import AcceptRequest from './AcceptRequest.vue'
-import { ref } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue'
 
 const showModalWindow = ref(false);
 const showAcceptWindow = ref(false);
@@ -31,6 +31,33 @@ const openAccept = () => {
 const closeAccept = () => {
   showAcceptWindow.value = false
 }
+
+const cartCount = ref(0)
+
+const updateCartCount = () => {
+  const count = localStorage.getItem('cartCount') || '0'
+  cartCount.value = parseInt(count)
+  console.log('Cart count updated to:', cartCount.value)
+}
+
+// Слушаем события обновления корзины
+const handleCartUpdate = () => {
+  console.log('Cart update event received')
+  updateCartCount()
+}
+
+onMounted(() => {
+  updateCartCount()
+  window.addEventListener('cartCountUpdated', handleCartUpdate)
+  window.addEventListener('cartUpdated', handleCartUpdate)
+  updateCartCount()
+})
+
+onUnmounted(() => {
+  window.removeEventListener('cartCountUpdated', handleCartUpdate)
+  window.removeEventListener('cartUpdated', handleCartUpdate)
+  updateCartCount()
+})
 </script>
 
 <template>
@@ -92,7 +119,7 @@ const closeAccept = () => {
           >
             <div class="wrapper-basket">
               <img src="../assets/svg/basket.svg" alt="иконка корзины" />
-              <span>0</span>
+              <span>{{ cartCount }}</span>
             </div>
             </RouterLink>
           </Button>
