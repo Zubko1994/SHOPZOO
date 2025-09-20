@@ -41,6 +41,8 @@ type Kind =
   | 'empty-basket'
   | 'order-title'
   | 'waiting-order-title'
+  | 'article-title'
+  | 'article-subtitle'
 
 const props = defineProps<{
   title?: string
@@ -320,6 +322,16 @@ const computedClass = computed(() => {
     text-align: center;
     color: var(--text-default);
   }
+
+  &-article-subtitle {
+    color: var(--text-default);
+    font-family: 'SFProText';
+    font-size: 20px;
+    font-weight: 400;
+    line-height: 145%;
+    letter-spacing: 0px;
+    text-align: left;
+  }
 }
 
 .h1 {
@@ -331,10 +343,6 @@ const computedClass = computed(() => {
   font-weight: 700;
   line-height: 120%;
   &-title_catalog {
-    color: var(--text-default);
-    font-family: 'SFProDisplay';
-    font-size: 42px;
-    font-weight: 700;
     line-height: 44px;
     letter-spacing: 0px;
     text-align: left;
@@ -359,6 +367,16 @@ const computedClass = computed(() => {
     font-size: 28px;
     font-weight: 400;
     line-height: 130%;
+    letter-spacing: 0px;
+    text-align: left;
+  }
+
+  &-article-title {
+    color: var(--text-default);
+    font-family: 'SFProDisplay';
+    font-size: 42px;
+    font-weight: 700;
+    line-height: 44px;
     letter-spacing: 0px;
     text-align: left;
   }
@@ -425,12 +443,12 @@ const computedClass = computed(() => {
 
   &-waiting-order-title {
     color: var(--text-default);
-font-family: 'Inter';
-font-size: 24px;
-font-weight: 700;
-line-height: 130%;
-letter-spacing: 0%;
-text-align: center;
+    font-family: 'Inter';
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 130%;
+    letter-spacing: 0%;
+    text-align: center;
   }
 }
 

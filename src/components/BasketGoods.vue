@@ -344,7 +344,7 @@ onMounted(() => {
           </div>
         </div>
         <div v-if="cartItems.length === 0" class="empty-cart">
-              <img class="cat" src="../assets/image/CatBasket.png" alt="изображение кота">
+              <img class="cat" src="../assets/image/CatinBasket.png" alt="изображение кота">
               <Text class="empty-cart__basket" tag="p" print="empty-basket" title="В корзине нет товаров. Выберите нужные товары в нашем каталоге" />
               <div>
               <Button kind="primary"><RouterLink to="/catalog" class="link_button" :class="['item']"

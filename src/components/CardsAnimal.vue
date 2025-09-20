@@ -83,7 +83,7 @@ function quantityHandler(item: Animal) {
     selectedItem.value = item;
     emit('updateAnimal', item);
     emit('updateCategory', item.id); 
-    console.log(item)
+    console.log(item.id)
   }
   console.log(item.id)
 }
