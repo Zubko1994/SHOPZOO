@@ -91,6 +91,14 @@ const closeAccept = () => {
 </template>
 
 <style lang="scss" scoped>
+
+// .footer{
+//   position: fixed;
+//   bottom: 0;
+//   left: 0;
+//   right: 0;
+//   z-index: 10000;
+// }
 .footer__wrapper {
   padding: 16px 5px 18px 5px;
 }

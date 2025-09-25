@@ -9,11 +9,11 @@ import Navigation from './Navigation.vue'
 import Input from './Input.vue'
 import FormBackCall from '../components/FormBackCall.vue'
 import AcceptRequest from './AcceptRequest.vue'
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted, computed } from 'vue'
 
 const showModalWindow = ref(false);
 const showAcceptWindow = ref(false);
-
+const products = ref([]); // Добавляем список продуктов для поиска
 
 const showModalOpen = () => {
   showModalWindow.value = !showModalWindow.value
@@ -40,23 +40,107 @@ const updateCartCount = () => {
   console.log('Cart count updated to:', cartCount.value)
 }
 
+const searchQuery = ref('')
+const emit = defineEmits(['searchProduct','selectProduct']);
+
+const searchProduct = (query: string) => {
+  searchQuery.value = query
+  emit('searchProduct', searchQuery.value);
+  console.log(searchQuery.value)
+}
+
+const selectProduct = (product: any) => {
+  emit('selectProduct', product);
+  // Можно добавить переход на страницу товара
+  console.log('Selected product:', product);
+}
+
+interface Cards {
+  id: number
+  image_prev: string
+  title: string
+  price: string
+  countitemproduct_set: string[]
+  animal: { id: number; title: string }[]
+  brand: { id: number; name: string; image: string }
+  category: { id: number; name: string; parent: number }
+  sale: { id: number; image: string; percent: number; title: string }
+}
+
+interface CardsObj {
+  count: number
+  next: string | null
+  previous: string | null
+  results: Cards[]
+}
+
+const pageUrls = [
+  `https://oliver1ck.pythonanywhere.com/api/get_products_filter/?order=date_create`,
+  'https://oliver1ck.pythonanywhere.com/api/get_products_filter/?order=date_create&page=2',
+  'https://oliver1ck.pythonanywhere.com/api/get_products_filter/?order=date_create&page=3',
+  'https://oliver1ck.pythonanywhere.com/api/get_products_filter/?order=date_create&page=4',
+  'https://oliver1ck.pythonanywhere.com/api/get_products_filter/?order=date_create&page=5',
+  'https://oliver1ck.pythonanywhere.com/api/get_products_filter/?order=date_create&page=6',
+  'https://oliver1ck.pythonanywhere.com/api/get_products_filter/?order=date_create&page=7',
+]
+
+const dataCards = ref<CardsObj[] | null>(null)
+
+const allCards = computed(() => {
+  return dataCards.value?.flatMap((page) => page.results) || []
+})
+
+// Функция для загрузки всех страниц
+const loadAllProducts = async () => {
+  try {
+    console.log('Loading products for search...');
+    
+    // Загружаем все страницы параллельно
+    const promises = pageUrls.map(async (url) => {
+      try {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        return await response.json();
+      } catch (error) {
+        console.error(`Error loading page ${url}:`, error);
+        return { results: [] };
+      }
+    });
+
+    const allPages = await Promise.all(promises);
+    console.log(allPages.values)
+    
+    // Объединяем все результаты
+    const allProducts = allPages.flatMap(page => page.results || []);
+    console.log(allProducts)
+    
+    products.value = allProducts;
+    console.log(`Loaded ${allProducts.length} products for search`);
+    
+  } catch (error) {
+    console.error('Error loading products for search:', error);
+    products.value = [];
+  }
+};
+
 // Слушаем события обновления корзины
 const handleCartUpdate = () => {
   console.log('Cart update event received')
   updateCartCount()
 }
 
+// Загрузите продукты при монтировании
 onMounted(() => {
   updateCartCount()
+  loadAllProducts() // Важно: вызываем загрузку продуктов
+  
   window.addEventListener('cartCountUpdated', handleCartUpdate)
   window.addEventListener('cartUpdated', handleCartUpdate)
-  updateCartCount()
 })
 
 onUnmounted(() => {
   window.removeEventListener('cartCountUpdated', handleCartUpdate)
   window.removeEventListener('cartUpdated', handleCartUpdate)
-  updateCartCount()
 })
 </script>
 
@@ -112,7 +196,9 @@ onUnmounted(() => {
       <div class="container">
         <div class="wrapper">
           <LogoHeader/>
-          <Input />
+          <Input class="search" @searchProduct="searchProduct" @selectProduct="selectProduct"
+            :products="products" />
+          
           <Navigation color="white" />
           <Button kind="basket">
             <RouterLink to="/basket" :class="['item', `item-${color}`]"
@@ -250,6 +336,7 @@ span {
   display: flex;
   gap: 5px;
 }
+
 
 
 

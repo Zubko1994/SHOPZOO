@@ -11,7 +11,7 @@ const props = defineProps<{
 
 // const isFiltersOpen = ref(false);
 
-const emit = defineEmits(['update:isActive']);
+const emit = defineEmits(['update:isActive', 'searchProduct', 'selectProduct']);
 
 const isFiltersOpen = ref(props.isActive || false);
 
@@ -20,11 +20,27 @@ const updateHeaderState = (active: boolean) => {
   emit('update:isActive', active);
 };
 
+const searchQuery = ref('')
+
+const searchProduct = (query: string) => {
+  searchQuery.value = query
+  emit('searchProduct', searchQuery.value);
+}
+
+const selectProduct = (product: any) => {
+  emit('selectProduct', product);
+  // Можно добавить логику перехода к товару
+  console.log('Product selected in layout:', product);
+}
+
+
+
 </script>
 
 <template>
   
-<Header class="header" />
+<Header @searchProduct="searchProduct" 
+    @selectProduct="selectProduct" class="header" />
 <HeaderActive :isActive="isActive || isFiltersOpen" class="header-active"   @update:isActive="updateHeaderState"
 />
 <main>

@@ -6,7 +6,9 @@ export const RoutePath = {
   Basket: '/basket',
   OrderRegistration: '/order',
   Articles: '/articles',
-  ArticleReading: '/articlereading'
+  ArticleReading: '/articlereading',
+  Brends: '/brends',
+  Sales: '/sales',
   
 
 } as const
@@ -24,6 +26,9 @@ export const router = createRouter({
       path: RoutePath.Catalog,
       name: 'catalog',
       component: () => import('../pages/Сatalog.vue'),
+      props: (route) => ({
+        query: route.query
+      })
     },
 
     {
@@ -48,6 +53,18 @@ export const router = createRouter({
       path: '/articlereading/:id',
       name: 'articlereading',
       component: () => import('../pages/ArticleReading.vue'),
+    },
+
+    {
+      path: RoutePath.Brends,
+      name: 'brends',
+      component: () => import('../pages/Brends.vue'),
+    },
+
+    {
+      path: RoutePath.Sales,
+      name: 'sales',
+      component: () => import('../pages/Sales.vue'),
     },
   ],
 })

@@ -43,6 +43,7 @@ type Kind =
   | 'waiting-order-title'
   | 'article-title'
   | 'article-subtitle'
+  | 'title-brends'
 
 const props = defineProps<{
   title?: string
@@ -360,6 +361,16 @@ const computedClass = computed(() => {
 
   &-title {
     font-size: 28px;
+  }
+
+  &-title-brends {
+    font-family: 'SFProDisplay';
+    font-weight: 700;
+    font-style: Bold;
+    font-size: 42px;
+    line-height: 44px;
+    letter-spacing: 0px;
+    color: var(--text-default);
   }
 
   &-basket-title {

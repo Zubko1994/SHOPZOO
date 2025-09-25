@@ -17,10 +17,21 @@ const handleCategoryUpdate = (categoryId: number | null) => {
   console.log('Категория обновлена:', categoryId)
 }
 
+
+const searchQuery = ref('')
+const emit = defineEmits(['searchProduct']);
+
+const searchProduct = (query: string) => {
+  searchQuery.value = query
+  emit('searchProduct', searchQuery.value);
+  console.log(searchQuery.value)
+}
+
+
 </script>
 
 <template>
- <Layout>
+ <Layout @searchProduct="searchProduct" :searchQuery="searchQuery">
   <MenuCrumbs class="crumbs-menu" link="articles" to="/articles" title="Статьи"/>
   <CardsAnimal @updateCategory="handleCategoryUpdate"/>
   <ArticleAllWithFilters :selectedCategory="currentCategory" />

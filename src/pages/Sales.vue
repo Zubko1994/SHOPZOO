@@ -1,12 +1,9 @@
 <script setup lang="ts">
 
 import Layout from '../layout/Layout.vue'
-import MenuCrumbsArticle from '../components/MenuCrumbsArticle.vue'
-import Contacts from '../components/Contacts.vue'
-import PopularGoods from '../components/PopularGoods.vue'
-import ArticleAll from '../components/ArticleAll.vue'
-import ArticleWhole from '../components/ArticleWhole.vue'
-import { ref } from 'vue';
+import MenuCrumbs from '../components/MenuCrumbs.vue'
+import SalesAll from '../components/SalesAll.vue'
+import { ref, onMounted } from 'vue';
 
 const searchQuery = ref('')
 const emit = defineEmits(['searchProduct']);
@@ -18,20 +15,18 @@ const searchProduct = (query: string) => {
 }
 
 
+
 </script>
 
 <template>
  <Layout @searchProduct="searchProduct" :searchQuery="searchQuery">
-  <MenuCrumbsArticle class="crumbs-menu" link="articles" to="/articles" title="Статьи"/>
-  <ArticleWhole/>
-
-  <ArticleAll/>
-  <PopularGoods/>
-  <Contacts/>
+  <MenuCrumbs class="crumbs-menu" link="sales" to="/sales" title="Акции"/>
+  <SalesAll/>
  </Layout>
 </template>
 
 <style lang="scss" scoped>
+
 @media (max-width: 992px) {
 
 .crumbs-menu {
@@ -39,7 +34,8 @@ const searchProduct = (query: string) => {
   position: relative;
   z-index: 100;
   top: 40px;
-  margin-bottom: 24px;
+  margin-bottom: 40px;
 }
 }
+
 </style>

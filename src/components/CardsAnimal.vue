@@ -88,6 +88,8 @@ function quantityHandler(item: Animal) {
   console.log(item.id)
 }
 
+
+
 </script>
 
 <template>
@@ -103,6 +105,7 @@ function quantityHandler(item: Animal) {
             :key="cardAnimal.id"
             :image="cardAnimal.image"
             :type="cardAnimal.type"
+           
           />
         </div>
       </div>

@@ -15,12 +15,38 @@ import CardsAnimal from '../components/CardsAnimal.vue'
 import MenuCrumbs from '../components/MenuCrumbs.vue'
 import FilterTypeGoods from '../components/FilterTypeGoods.vue'
 import FiltersButton from '../components/FiltersButton.vue'
+import { useAnimalStore } from '../store/animalStore.js'
 import { inject } from 'vue';
 
 const sortOrder = ref('date_create')
 const currentPage = ref(1)
 const totalPages = ref(0)
-const isLoading = ref(false)
+
+
+const animalStore = useAnimalStore()
+const isLoading = ref(true)
+
+
+const props = withDefaults(
+  defineProps<{
+    size?: number
+    count?: number
+    id?: Number
+    brand?: object
+    category?: object
+    sale?: object
+    isFiltersOpen?: boolean
+    selectedAnimalId?: number | null 
+    selectedCategory?: number | null
+    searchQuery?: string
+  }>(),
+  {
+    size: 15,
+    count: 1,
+    selectedAnimalId: null
+  }
+)
+
 
 const pageUrls = [
   `https://oliver1ck.pythonanywhere.com/api/get_products_filter/?order=date_create`,
@@ -72,6 +98,7 @@ const allCards = computed(() => {
 
 const searchBrandQuery = ref('')
 
+
 onMounted(() => {
   Promise.all(
     pageUrls.map((url) =>
@@ -92,22 +119,6 @@ onMounted(() => {
 })
 
 const pageNumber = ref(0)
-
-const props = withDefaults(
-  defineProps<{
-    size?: number
-    count?: number
-    id?: Number
-    brand?: object
-    category?: object
-    sale?: object
-    isFiltersOpen?: boolean
-  }>(),
-  {
-    size: 15,
-    count: 1,
-  }
-)
 
 const pageCount = computed(() => {
   return Math.ceil(filteredCards.value.length / props.size)
@@ -134,19 +145,49 @@ const showPrevPage = () => {
 const goToPage = (page: number) => {
   pageNumber.value = page
 }
-
 const selectedCategory = ref<number | null>(null)
-const updateCategory = (categoryId: number | null) => {
-  selectedAnimalId.value = categoryId
-  choiceCategory.value = categoryId
+
+
+const upCategory = (animal: { id: number } | null) => {
+  const categoryId = animal?.id || null;
+  selectedCategory.value = categoryId;
+ 
+  console.log('Category updated from filter:', categoryId);
 }
+
+const updateCategory = (categoryId: number | null) => {
+
+  selectedCategory.value = categoryId;
+  console.log('Category updated:', categoryId);
+}
+
+  const titleKind = computed(() => {
+  if(choiceCategory.value === 1) {
+    console.log(choiceCategory.value)
+   return ' для собак'
+  } else if(choiceCategory.value === 2) {
+    return ' для кошек'
+  } else if(choiceCategory.value === 3) {
+    return ' для грызунов'
+  } else if(choiceCategory.value === 4) {
+    return ' для птиц'
+  } else if(choiceCategory.value === 5) {
+    return ' для рыб'
+  } else if(selectedCategory.value === 1){
+     return ' для собак'
+  } else if(selectedCategory.value === 2) {
+    return ' для кошек'
+  } else if(selectedCategory.value === 3) {
+    return ' для грызунов'
+  } else if(selectedCategory.value === 4) {
+    return ' для птиц'
+  } else if(selectedCategory.value === 5) {
+    return ' для рыб'
+  }
+}
+  )
 
 const choiceCategory = ref<number | null>(null)
-const upCategory = (animal: { id: number } | null) => {
-  const categoryId = animal?.id || null
-  selectedAnimalId.value = categoryId
-  choiceCategory.value = categoryId
-}
 
 const choiceBrand = ref<number[]>([])
 const upBrand = (brands: number[]) => {
@@ -156,7 +197,8 @@ const upBrand = (brands: number[]) => {
 
 const selectedGoodsCategories = ref<number[] | null>(null)
 function handleGoodsCategories(categories: number[] | null) {
-  selectedGoodsCategories.value = categories
+  selectedGoodsCategories.value = categories 
+ 
   pageNumber.value = 0
 }
 
@@ -172,7 +214,7 @@ const promotionProducts = () => {
   console.log(selectedPromotion.value)
 }
 
-const emit = defineEmits(['isActive'])
+const emit = defineEmits(['isActive', 'searchProduct'])
 const isActiveWindowFilters = ref(false)
 
 const showFilters = ref(false)
@@ -202,6 +244,25 @@ const handleSearchBrand = (query: string) => {
   searchBrandQuery.value = query;
   pageNumber.value = 0; // Сбрасываем пагинацию при поиске
 }
+
+const searchQueryCatalog = ref('')
+
+// Функция для обработки поиска
+const handleSearch = (query: string) => {
+  searchQueryCatalog.value = query.toLowerCase().trim();
+  pageNumber.value = 0;
+  console.log('Search query received:', searchQueryCatalog.value);
+}
+
+// Слушаем событие поиска от родителя
+watch(() => props.searchQuery, (newQuery) => {
+  if (newQuery !== undefined) {
+    console.log(props.searchQuery)
+    handleSearch(newQuery);
+  }
+});
+
+
 
 const hasResultBrand = ref(true)
 
@@ -239,7 +300,8 @@ const filtersApplied = computed(() => {
          choiceBrand.value.length > 0 || 
          (selectedGoodsCategories.value && selectedGoodsCategories.value.length > 0) || 
          selectedPromotion.value ||
-         searchBrandQuery.value.trim() !== '';
+         searchBrandQuery.value.trim() !== '' ||
+        searchQueryCatalog.value.trim() !== '';
 });
 
 const resetFilters = () => {
@@ -249,17 +311,30 @@ const resetFilters = () => {
   selectedGoodsCategories.value = null;
   selectedPromotion.value = false;
   searchBrandQuery.value = '';
+  searchQueryCatalog.value = '';
   pageNumber.value = 0;
 };
 
 const filteredCards = computed(() => {
   let result = allCards.value
+
+   if (searchQueryCatalog.value) {
+    const query = searchQueryCatalog.value;
+    result = result.filter((card) => {
+      const titleMatch = card.title.toLowerCase().includes(query);
+         
+      return titleMatch;
+    });
+    console.log(`Search results: ${result.length} items`);
+  }
   // Применяем фильтры
   if (choiceCategory.value) {
+    console.log(choiceCategory.value)
     result = result.filter((card) =>
       card.animal.some((anim) => anim.id === choiceCategory.value)
     )
   } else if (selectedCategory.value) {
+    console.log(selectedCategory.value)
     result = result.filter((card) =>
       card.animal.some((anim) => anim.id === selectedCategory.value)
     )
@@ -308,9 +383,11 @@ const filteredCards = computed(() => {
   return result
 })
 
+const activeAnimalId = ref<number | null>(null)
+
 // Наблюдатели для сброса пагинации при изменении фильтров
 watch(
-  [choiceCategory, selectedCategory, choiceBrand, selectedGoodsCategories],
+  [choiceCategory, selectedCategory, choiceBrand, selectedGoodsCategories, activeAnimalId],
   () => {
     pageNumber.value = 0
   }
@@ -338,6 +415,36 @@ watch(() => props.isFiltersOpen, (newVal) => {
     isActiveWindowFilters.value = newVal;
   }
 });
+
+watch(() => props.selectedAnimalId, (newAnimalId) => {
+  if (newAnimalId) {
+    choiceCategory.value = newAnimalId;
+    selectedCategory.value = newAnimalId;
+    activeAnimalId.value = newAnimalId;
+    console.log('Animal selected from parent:', newAnimalId);
+  }
+}, { immediate: true });
+
+watch(() => props.selectedAnimalId, (newAnimalId) => {
+  console.log('Received selectedAnimalId from parent:', newAnimalId);
+  if (newAnimalId) {
+    selectedCategory.value = newAnimalId;
+    console.log('Animal filter applied to selectedCategory:', newAnimalId);
+  } else {
+    selectedCategory.value = null;
+    console.log('Animal filter cleared');
+  }
+}, { immediate: true });
+
+// Добавьте watch для очистки поиска при смене фильтров:
+watch([choiceCategory, selectedCategory, choiceBrand], () => {
+  if (searchQueryCatalog.value) {
+    searchQueryCatalog.value = '';
+    console.log('Search cleared due to filter change');
+  }
+  pageNumber.value = 0;
+});
+
 </script>
 
 <template>
@@ -345,8 +452,10 @@ watch(() => props.isFiltersOpen, (newVal) => {
     <MenuCrumbs link="catalog" to='/catalog' title="Каталог" class="crumbs-menu" />
     <CardsAnimal
       @updateCategory="updateCategory"
-      :selectedId="selectedAnimalId"
-      :selectedCategory="selectedAnimalId"
+      :selectedId="choiceCategory"
+      :selectedCategory="selectedCategory"
+ 
+      @upCategory="upCategory"
       @selectedTypeGoods="handleGoodsCategories"
     />
     <section class="catalog">
@@ -359,7 +468,7 @@ watch(() => props.isFiltersOpen, (newVal) => {
                 tag="h1"
                 print="title_catalog"
                 title="Каталог товаров"
-              />
+              > {{ titleKind }}</Text>
             </div>
             <div class="wrapper-sort">
               <span class="name-sort">Сортировать по:</span
@@ -378,23 +487,25 @@ watch(() => props.isFiltersOpen, (newVal) => {
                 </div>
                 <div class="line-active"></div>
                 <FilterAniml
-                  v-if="selectedAnimalId == null"
+                  v-if="selectedCategory == null && choiceCategory == null"
                   @selectType="showType"
                   @upCategory="upCategory"
                   @selectAnimal="handleAnimalSelect"
-                  :selectedCategory="selectedAnimalId"
+                  :selectedCategory="selectedCategory"
                 />
-                <FilterAniml class="filter-amimal"
-                  v-if="selectedAnimalId !== null"
+                <!-- <FilterAniml class="filter-amimal"
+                  v-if="selectedCategory == null"
                   @selectType="showType"
                   @upCategory="upCategory"
                   @selectAnimal="handleAnimalSelect"
-                  :selectedCategory="selectedAnimalId"
-                />
+                  :selectedCategory="selectedCategory"
+                /> -->
                 <FilterTypeGoods
-                  v-if="selectedAnimalId !== null"
+                  v-if="selectedCategory !== null || choiceCategory !== null"
+                  
                   @selectedTypeGoods="handleGoodsCategories"
                 ></FilterTypeGoods>
+                
                 <div class="line-active"></div>
                 <BrendsNamesFiltersAll @hasBrandResult="hasResult" @searchBrand="handleSearchBrand"  class="brends" @upBrand="upBrand" />
                 <div class="wrapper-button">

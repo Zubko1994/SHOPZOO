@@ -91,7 +91,7 @@ return dataArticle.value?.results.filter(article => article.animal === props.sel
     <div class="article-all_wrapper">
       <div class="container">
         <div class="article_ceil">
-            <Text class="article_title" tag="h2" print="article-title " kind="article-title" title="Полезные статьи">{{ title }}</Text>
+            <Text class="article_title" tag="h2" print="article-title" kind="article-title" title="Полезные статьи">{{ title }}</Text>
       </div>
       <div class="info_wrapper">
           <Article v-for="article in filteredCards" :animal="article.animal" :key="article.id" :image="article.image" :title="article.title" :text="article.text" :date_create="article.date_create" :read_time="article.read_time" />
