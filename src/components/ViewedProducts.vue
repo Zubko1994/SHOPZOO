@@ -80,15 +80,28 @@ const prevSlide = () => {
             :countitemproduct_set="card.countitemproduct_set"
           />
         </div>
-        <Button @click="lengthArray" class="show-goods" kind="primary">Смотреть больше товаров</Button>
+        <Button class="show-goods" kind="primary"><RouterLink to="/catalog" class="link_button" :class="['item']"
+          >Смотреть больше товаров</RouterLink></Button>
       </div>
     </div>
   </section>
 </template>
 
 <style lang="scss" scoped>
+
+.goods-new {
+  background-color: var(--bg-default);
+}
 .goods-new_wrapper {
   padding: 24px 5px 24px 5px;
+}
+
+.link_button {
+  color: var(--white);
+}
+
+.button-strela {
+  background-color: var(--white);
 }
 
 .goods-new_ceil {
@@ -110,8 +123,8 @@ const prevSlide = () => {
 
 .wrapper-cards {
   display: flex;
-  gap: 30px;
-  flex-wrap: wrap;
+  gap: 10px;
+  flex-wrap: nowrap;
   margin-bottom: 25px;
   justify-content: center;
 }
@@ -126,7 +139,7 @@ const prevSlide = () => {
 }
 
 .button-strela {
-  background-color: var(--bg-default);
+  background-color: var(--white);
   &:hover{
     .strela {
   filter: brightness(0) invert(1);

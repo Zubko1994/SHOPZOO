@@ -11,10 +11,6 @@ interface Cards {
   image_prev: string
   title: string
   price: number
-  guaranteed_analysis: string,
-  key_features: string,
-  nutritional_supplements: string,
-  description: string
 }
 
 interface CardsObj {
@@ -62,7 +58,7 @@ const prevSlide = () => {
     <div class="goods-popular_wrapper">
       <div class="container">
         <div class="goods-popular_ceil">
-          <Text tag="h2" print="title" title="Популярные товары" />
+          <Text tag="h2" print="title" title="Вместе с этим товаром покупают" />
           <div class="wrapper-button">
             <Button @click = "prevSlide"  class="button-strela" kind="indicator-left"
               ><img
@@ -79,10 +75,7 @@ const prevSlide = () => {
           </div>
         </div>
         <div class="wrapper-cards">
-          <Card  v-for="(card, index) in dataCards?.results.slice(0, length)" :key="index" :image_prev="card.image_prev" :description="card.description",
-                        :guaranteed_analysis="card.guaranteed_analysis"
-                        :key_features="card.key_features"
-                        :nutritional_supplements="card.nutritional_supplements" :title="card.title" :price="card.price" :countitemproduct_set="card.countitemproduct_set"  />
+          <Card  v-for="(card, index) in dataCards?.results.reverse().slice(0, length)" :key="index" :image_prev="card.image_prev" :title="card.title" :price="card.price" :countitemproduct_set="card.countitemproduct_set"  />
         </div>
         <Button class="show-goods" kind="primary"><RouterLink to="/catalog" class="link_button" :class="['item']"
           >Смотреть больше товаров</RouterLink></Button>

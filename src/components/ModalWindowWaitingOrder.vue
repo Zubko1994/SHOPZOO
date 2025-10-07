@@ -114,7 +114,7 @@ const closeAccept = () => {
   width: 100%;
   background: rgba(83, 84, 85, 0.5);
   position: fixed;
-  z-index: 100;
+  z-index: 900;
 }
 
 .wrapper__info {

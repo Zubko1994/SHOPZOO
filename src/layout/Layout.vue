@@ -36,25 +36,39 @@ const selectProduct = (product: any) => {
 
 
 </script>
-
 <template>
+<div class="layout-wrapper">
   
 <Header @searchProduct="searchProduct" 
     @selectProduct="selectProduct" class="header" />
 <HeaderActive :isActive="isActive || isFiltersOpen" class="header-active"   @update:isActive="updateHeaderState"
 />
-<main>
+<main class="main-content">
   <slot :isFiltersOpen="isFiltersOpen" />
 </main>
-<Footer />
-
+<Footer class="footer" />
+</div>
 </template>
 
 <style lang="scss" scoped>
 
+.layout-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; 
+}
+
+.main-content {
+  flex: 1 0 auto; // Растягивается чтобы занять доступное пространство
+  width: 100%;
+}
 
 .header-active {
     display: none;
+}
+
+.footer {
+  flex-shrink: 0; // Не сжимается
 }
 
 .header {

@@ -11,6 +11,10 @@ interface Cards {
   image_prev: string
   title: string
   price: number
+  guaranteed_analysis: string,
+  key_features: string,
+  nutritional_supplements: string,
+  description: string
 }
 
 interface CardsObj {
@@ -77,18 +81,29 @@ const prevSlide = () => {
             :image_prev="card.image_prev"
             :title="card.title"
             :price="card.price"
+            :description="card.description",
+                        :guaranteed_analysis="card.guaranteed_analysis"
+                        :key_features="card.key_features"
+                        :nutritional_supplements="card.nutritional_supplements"
             :countitemproduct_set="card.countitemproduct_set"
           />
         </div>
-        <Button @click="lengthArray" class="show-goods" kind="primary">Смотреть больше товаров</Button>
+        <Button class="show-goods" kind="primary"><RouterLink to="/catalog" class="link_button" :class="['item']"
+          >Смотреть больше товаров</RouterLink></Button>
       </div>
     </div>
   </section>
 </template>
 
 <style lang="scss" scoped>
+
+
 .goods-new_wrapper {
   padding: 24px 5px 24px 5px;
+}
+
+.link_button {
+  color: var(--white);
 }
 
 .goods-new_ceil {
@@ -110,8 +125,8 @@ const prevSlide = () => {
 
 .wrapper-cards {
   display: flex;
-  gap: 30px;
-  flex-wrap: wrap;
+  gap: 10px;
+  flex-wrap: nowrap;
   margin-bottom: 25px;
   justify-content: center;
 }
@@ -121,20 +136,20 @@ const prevSlide = () => {
   margin: 0 auto;
 }
 
-.new-goods {
-  background: var(--bg-default);
-}
 
 .button-strela {
   background-color: var(--bg-default);
   &:hover{
     .strela {
-  filter: brightness(0) invert(1);
-}
+      filter: brightness(0) invert(1);
+    }
   }
 }
 
 
+.new-goods {
+  background-color: var(--bg-default);
+}
 @media (max-width: 992px) {
 
 .container {
@@ -154,13 +169,11 @@ justify-content: flex-start;
 
 .wrapper-cards::-webkit-scrollbar {width:0px;}
 
-.new-goods {
-  background: var(--white);
-}
 
 .goods-new_wrapper {
   background: var(--bg-default);
   padding: 0px 10px 33px 10px
 }
+
 }
 </style>

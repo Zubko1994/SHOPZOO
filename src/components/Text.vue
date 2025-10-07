@@ -44,6 +44,16 @@ type Kind =
   | 'article-title'
   | 'article-subtitle'
   | 'title-brends'
+  | 'order-oneclick-subtitle'
+  | 'mistake-number'
+  | 'mistake-title'
+  | 'mistake-subtitle'
+  | 'title-goods'
+  | 'title-packaging'
+  | 'delivery_title'
+  | 'delivery_subtitle'
+  | 'product-info-title'
+  | 'title-description'
 
 const props = defineProps<{
   title?: string
@@ -333,6 +343,66 @@ const computedClass = computed(() => {
     letter-spacing: 0px;
     text-align: left;
   }
+
+  &-order-oneclick-subtitle {
+    font-family: 'Inter';
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 130%;
+    letter-spacing: 0px;
+    text-align: center;
+    color: rgba(109, 113, 117, 1);
+  }
+
+  &-mistake-title {
+    font-family: 'SFProDisplay';
+    font-weight: 600;
+    font-style: Semibold;
+    font-size: 28px;
+    line-height: 32px;
+    letter-spacing: 0px;
+    color: var(--text-default);
+  }
+
+  &-mistake-subtitle {
+    font-family: 'SFProText';
+    font-weight: 400;
+    font-style: Regular;
+    font-size: 16px;
+    line-height: 130%;
+    letter-spacing: 0px;
+    color: rgba(109, 113, 117, 1);
+  }
+
+  &-title-packaging {
+    color: var(--text-default);
+    font-family: 'SFProDisplay';
+    font-size: 20px;
+    font-weight: 400;
+    line-height: 28px;
+    letter-spacing: 0px;
+    text-align: left;
+  }
+
+  &-delivery_title {
+    color: var(--text-default);
+    font-family: 'SFProDisplay';
+    font-size: 20px;
+    font-weight: 400;
+    line-height: 130%;
+    letter-spacing: 0px;
+    text-align: left;
+  }
+
+  .delivery_subtitle {
+    color: rgba(92, 92, 92, 1);
+    font-family: 'SFProText';
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 130%;
+    letter-spacing: 0px;
+    text-align: left;
+  }
 }
 
 .h1 {
@@ -347,6 +417,16 @@ const computedClass = computed(() => {
     line-height: 44px;
     letter-spacing: 0px;
     text-align: left;
+  }
+
+  &-mistake-number {
+    font-family: 'SFProDisplay';
+    font-weight: 700;
+    font-style: Bold;
+    font-size: 146px;
+    line-height: 120%;
+    letter-spacing: 0px;
+    color: rgba(189, 193, 204, 1);
   }
 }
 
@@ -401,6 +481,16 @@ const computedClass = computed(() => {
     text-align: center;
     color: var(--text-default);
   }
+
+  &-title-goods {
+    color: var(--text-default);
+    font-family: 'SFProDisplay';
+    font-size: 28px;
+    font-weight: 400;
+    line-height: 130%;
+    letter-spacing: 0px;
+    text-align: left;
+  }
 }
 
 .h3 {
@@ -433,6 +523,16 @@ const computedClass = computed(() => {
     letter-spacing: 0px;
     text-align: left;
   }
+
+  &-product-info-title {
+    color: var(--text-default);
+    font-family: 'SFProDisplay';
+    font-size: 28px;
+    font-weight: 400;
+    line-height: 32px;
+    letter-spacing: 0px;
+    text-align: left;
+  }
 }
 
 .h4 {
@@ -460,6 +560,16 @@ const computedClass = computed(() => {
     line-height: 130%;
     letter-spacing: 0%;
     text-align: center;
+  }
+
+  &-title-description {
+    color: var(--text-default);
+    font-family: 'SFProText';
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 24px;
+    letter-spacing: 0px;
+    text-align: left;
   }
 }
 

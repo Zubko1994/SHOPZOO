@@ -103,7 +103,7 @@ interface CartItem {
   variant: string
   countitemproduct_set: string[],
   totalCost: number
-  
+  selectedQuantity?: {value: string, unit: string} // Добавляем опциональное поле
 }
 
 const selectedQuantity = ref<number | null>(null)
@@ -133,37 +133,27 @@ console.log(quantityitem.value)
 
 }
 
+// Вычисляемое свойство для общей стоимости
 const totalCost = computed(() => {
+  forceUpdate.value // Принудительное обновление при изменении
+  
   return cartItems.value.reduce((total, item) => {
     try {
       const quantity = Number(item.quantity) || 1
       const price = Number(item.price) || 0
-      
-      // Надежное получение selectedQuantity
       let selectedQty = 1
       
-      // Проверяем, есть ли selectedQuantity и оно валидно
-      if (item.selectedQuantity && 
-          item.selectedQuantity !== 'null' && 
-          item.selectedQuantity !== 'undefined' &&
-          !isNaN(Number(item.selectedQuantity.value))) {
+      // Используем selectedQuantity если он есть
+      if (item.selectedQuantity && !isNaN(Number(item.selectedQuantity.value))) {
         selectedQty = Number(item.selectedQuantity.value)
-      } 
-      // Если нет, используем первое значение из countitemproduct_set
-      else if (item.countitemproduct_set.length > 0) {
+      } else if (item.countitemproduct_set && item.countitemproduct_set.length > 0) {
         const firstQty = item.countitemproduct_set[0]
-        console.log(item.countitemproduct_set[0])
         if (firstQty && !isNaN(Number(firstQty))) {
           selectedQty = Number(firstQty)
-          // Автоматически исправляем данные
-          item.selectedQuantity= firstQty
         }
       }
       
       const itemTotalCost = price * selectedQty * quantity
-      
-      console.log(`Товар: ${item.title}, Цена: ${price}, Весовка: ${selectedQty}, Количество: ${quantity}, Итого: ${itemTotalCost}`)
-      
       return total + itemTotalCost
     } catch (error) {
       console.error('Ошибка расчета для товара:', item, error)
@@ -230,20 +220,22 @@ onUnmounted(() => {
   window.removeEventListener('cartUpdated', loadCart)
 })
 
- // Следим за изменениями общей стоимости
-watch(totalCost, (newCost) => {
-  localStorage.setItem('totalCost', newCost)
-  window.dispatchEvent(new CustomEvent('totalCostUpdated', {
-    detail: newCost 
-  }))
-})
-
-  const fixAllTotalCosts = () => {
+// Функция для исправления totalCost в корзине
+const fixAllTotalCosts = () => {
   const cart = JSON.parse(localStorage.getItem('cart') || '[]')
   const fixedCart = cart.map(item => {
     const quantity = Number(item.quantity) || 1
     const price = Number(item.price) || 0
-    const selectedQty = item.selectedQuantity // ← Используем selectedQuantity
+    let selectedQty = 1
+    
+    if (item.selectedQuantity && !isNaN(Number(item.selectedQuantity.value))) {
+      selectedQty = Number(item.selectedQuantity.value)
+    } else if (item.countitemproduct_set && item.countitemproduct_set.length > 0) {
+      const firstQty = item.countitemproduct_set[0]
+      if (firstQty && !isNaN(Number(firstQty))) {
+        selectedQty = Number(firstQty)
+      }
+    }
     
     return {
       ...item,
@@ -252,7 +244,7 @@ watch(totalCost, (newCost) => {
   })
   
   localStorage.setItem('cart', JSON.stringify(fixedCart))
-  loadCart() // Перезагружаем корзину
+  loadCart()
 }
 
 // Вызовите эту функцию один раз для исправления существующих данных
@@ -272,17 +264,20 @@ watch(cartItems, (newItems) => {
   }))
 }, { deep: true })
 
-
-
 // При загрузке компонента
 onMounted(() => {
   const count = cartItems.value.reduce((sum, item) => sum + item.quantity, 0)
-  console.log(count)
   localStorage.setItem('cartCount', count.toString())
   window.dispatchEvent(new CustomEvent('cartCountUpdated', {
     detail: { count }
   }))
 })
+
+// Обработчик обновления стоимости отдельного товара
+const handleUpdateTotal = () => {
+  // Принудительно обновляем вычисляемое свойство totalCost
+  forceUpdate.value++
+}
  
 </script>
 
@@ -310,6 +305,7 @@ onMounted(() => {
               :totalCosts="item.totalCost"
 @quantityitem="updateQuantityItem"
 :arrayLength="arrayLength"
+@update-total="handleUpdateTotal"
             />
             </div>
           </div>

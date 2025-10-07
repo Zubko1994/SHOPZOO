@@ -11,8 +11,6 @@ const emit = defineEmits(['customClick'])
 function btnHandler(e: Event) {
   emit('customClick', e)
 }
-
-
 </script>
 
 <template>
@@ -63,6 +61,24 @@ function btnHandler(e: Event) {
       color: var(--white);
     }
   }
+  &_buying-click {
+    border: none;
+  background-color: var(--bg-default);
+  color: rgba(44, 110, 203, 1);
+  font-family: 'SFProText';
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 24px;
+  letter-spacing: 0px;
+  text-align: left;
+  padding: 0;
+  max-width: 124px;
+    &:hover {
+      color: rgb(10, 46, 97);
+    }
+  }
+
+
   &_quantity {
     background: var(--surface-neutral);
     color: var(--text-default);
@@ -75,13 +91,35 @@ function btnHandler(e: Event) {
     }
   }
 
+  &_quantity-price {
+    border: none;
+    padding: 6px 16px;
+    background-color: rgba(228, 229, 231, 1);
+    border-radius: 2px;
+    font-family: 'SFProText';
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 120%;
+    letter-spacing: 0px;
+    text-align: left;
+    &:hover {
+      background: rgba(0, 128, 96);
+      color: var(--white);
+      padding: 6px 16px;
+      .quantity-price-price{
+        font-weight: 400;
+        line-height: 110%;
+      }
+    }
+  }  
+
   &_quantity-basket {
     background: var(--surface-neutral);
     color: var(--text-default);
     border: none;
     border-radius: 2px;
     padding: 2px 8px;
-    
+
     &:hover {
       background: var(--highlight-active);
       color: var(--white);
@@ -102,7 +140,7 @@ function btnHandler(e: Event) {
     background-position: center;
     border: 1px solid #babfc3;
     border-radius: 4px;
-    
+
     &:hover {
       box-shadow: 0px 1px 0px 0px rgba(0, 0, 0, 0.05);
       background: rgb(246, 246, 247);
@@ -127,7 +165,6 @@ function btnHandler(e: Event) {
     background-position: center;
     border: 1px solid #babfc3;
     box-shadow: 0px 1px 0px 0px #0000000d;
-  
   }
 
   &_indicator-left {

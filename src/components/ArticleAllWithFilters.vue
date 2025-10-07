@@ -159,7 +159,7 @@ return dataArticle.value?.results.filter(article => article.animal === props.sel
     flex-wrap: wrap;
     justify-content: flex-start;
     margin-bottom: 24px;
-
+    justify-content: center;
 }
 
 .button-strela {

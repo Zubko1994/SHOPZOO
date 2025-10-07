@@ -80,6 +80,10 @@ interface Cards {
   brand: { id: number; name: string; image: string }
   category: { id: number; name: string; parent: number }
   sale: { id: number; image: string; percent: number; title: string }
+  guaranteed_analysis: string,
+  key_features: string,
+  nutritional_supplements: string,
+  description: string
 }
 
 interface CardsObj {
@@ -532,6 +536,10 @@ watch([choiceCategory, selectedCategory, choiceBrand], () => {
                         :category="card.category"
                         :sale="card.sale"
                         :id="id"
+                        :description="card.description",
+                        :guaranteed_analysis="card.guaranteed_analysis"
+                        :key_features="card.key_features"
+                        :nutritional_supplements="card.nutritional_supplements"
                         @updateCategory="updateCategory"
                         @upCategory="upCategory"
                         @upBrand="upBrand"

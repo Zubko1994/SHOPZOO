@@ -1,4 +1,5 @@
 import { createMemoryHistory, createRouter } from 'vue-router'
+import { createWebHistory } from 'vue-router'
 
 export const RoutePath = {
   Home: '/',
@@ -9,6 +10,8 @@ export const RoutePath = {
   ArticleReading: '/articlereading',
   Brends: '/brends',
   Sales: '/sales',
+  Mistake404: '/mistake404',
+  ProductDescription: '/productdescription',
   
 
 } as const
@@ -66,7 +69,34 @@ export const router = createRouter({
       name: 'sales',
       component: () => import('../pages/Sales.vue'),
     },
+
+    {
+      path: '/:pathMatch(.*)*',
+      name: 'NotFound',
+      component: () => import('../pages/Mistake404.vue')
+    },
+
+    {
+      path: '/productdescription/:id',
+      name: 'productdescription',
+      component: () => import('../pages/ProductDescription.vue'),
+    },
+
+    
+
+    
   ],
 })
 
+
+
+
+// Обработка ошибок маршрутизации
+router.onError((error) => {
+  console.error('Router error:', error)
+  // Перенаправляем на страницу 404 при ошибке загрузки компонента
+  router.push('/404')
+})
+
+export default router
 

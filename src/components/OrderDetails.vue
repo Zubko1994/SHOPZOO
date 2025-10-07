@@ -150,8 +150,13 @@ onMounted(() => {
 .order {
   background-color: var(--bg-default);
   padding: 56px 5px 64px 5px;
-  height: 100vh;
+  min-height: calc(100vh - 300px); // или auto
+  display: flex;
+  flex-direction: column;
 }
+
+.order::-webkit-scrollbar {width:0px;}
+
 
 .order__title {
     margin-bottom: 32px;

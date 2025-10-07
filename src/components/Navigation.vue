@@ -19,7 +19,7 @@ const props = defineProps<{
         >
       </li>
       <li>
-        <RouterLink to="/sales" :class="['item', `item-${color}`]">Акции</RouterLink>
+        <RouterLink  to="/sales" :class="['item', `item-${color}`]">Акции</RouterLink>
       </li>
       <li >
         <RouterLink to="/articles" :class="['item', `item-${color}`]">Статьи</RouterLink>

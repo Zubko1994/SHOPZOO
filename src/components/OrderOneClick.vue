@@ -1,10 +1,11 @@
 <!-- @format -->
 
-!
 <script setup lang="ts">
+
 import Text from './Text.vue'
-import Quantity from './Quantity.vue'
-import { ref, computed, watch, onMounted } from 'vue'
+import Button from './Button.vue'
+import { ref, onMounted, onUnmounted, watch, computed } from 'vue'
+import CardBasket from './CardBasket.vue'
 
 const props = withDefaults(defineProps<{
   id: number
@@ -23,9 +24,9 @@ const props = withDefaults(defineProps<{
 
 const selectedQuantity = ref<string | null>(null)
 const totalPrice = ref(props.price)
-const countProduct = ref(props.quantity) // ← Используем переданное количество
+const countProduct = ref(1) // ← Используем переданное количество
 
-const emit = defineEmits(['remove-item', 'quantityitem', 'update-total'])
+const emit = defineEmits(['remove-item', 'quantityitem'])
 
 const updateTotalPrice = (quantity: string) => {
   selectedQuantity.value = quantity
@@ -33,7 +34,7 @@ const updateTotalPrice = (quantity: string) => {
   console.log(quantity.value)
   
   // Пересчитываем totalPrice с учетом выбранного количества и текущего количества товаров
-  totalPrice.value = Number((props.price * selectedQty * countProduct.value).toFixed(2))
+  totalPrice.value = Number((props.price * quantity.value * countProduct.value).toFixed(2))
   console.log(props.price)
   console.log(selectedQty)
   console.log(countProduct.value)
@@ -44,7 +45,6 @@ const updateTotalPrice = (quantity: string) => {
 // Функция для обновления количества и сохранения
 function updateCount(newQuantity: number) {
   // totalCost = цена * выбранноеКоличество * количество товаров
-  countProduct.value = newQuantity
   const selectedQty = Number(selectedQuantity.value) || 1
   const totalCostValue = (Number(props.price) * selectedQty * newQuantity).toFixed(2)
   
@@ -63,11 +63,7 @@ function updateCount(newQuantity: number) {
   
   localStorage.setItem('cart', JSON.stringify(updatedCart))
   window.dispatchEvent(new CustomEvent('cartUpdated'))
-  // Уведомляем родительский компонент об изменении стоимости
-  emit('update-total', totalCostValue)
 }
-
-
 
 function increaseCount() {
   const newQuantity = countProduct.value + 1
@@ -99,7 +95,6 @@ function decreaseCount() {
   watch(selectedQuantity, (newVal) => {
     if(newVal){
     selectedQuantity.value = newVal
-    updateCount(countProduct.value)
     }
   })
 
@@ -108,23 +103,6 @@ const removeItem = () => {
   emit('remove-item', props.id, props.variant, props.title)
 }
 
-onMounted(() => {
-  if (props.countitemproduct_set && props.countitemproduct_set.length > 0) {
-    const firstItem = props.countitemproduct_set[0]
-    if (typeof firstItem === 'string') {
-      const match = firstItem.match(/(\d+)\s*(.*)/)
-      if (match) {
-        selectedQuantity.value = match[1]
-      } else {
-        selectedQuantity.value = firstItem
-      }
-    } else {
-      selectedQuantity.value = firstItem
-    }
-    updateTotalPrice(selectedQuantity.value)
-  }
-})
-
 watch(totalPrice, (newVal) => {
   console.log('Цена обновлена:', newVal)
 })
@@ -132,7 +110,18 @@ watch(totalPrice, (newVal) => {
 </script>
 
 <template>
-  <div class="wrapper-card">
+  <section class="order">
+    <div class="order__wrapper">
+    <div class="cross_block">
+        <img
+          class="cross"
+          @click.self="closeAccept"
+          src="../assets/image/cross.svg"
+          alt="крестик"
+        />
+      </div>
+      <Text tag="h2" print="order-title" title="Оформление заказа в 1 клик" class="order__title" />
+      <div class="wrapper-card">
     <div class="wrapper-card_left">
       <img
         class="card_image"
@@ -148,7 +137,6 @@ watch(totalPrice, (newVal) => {
         />
         <div class="product-info_quantity">
            <Quantity
-           
             :list="props.countitemproduct_set || []"
             @updateQuantity="updateTotalPrice"
           />
@@ -173,9 +161,210 @@ watch(totalPrice, (newVal) => {
       </button>
     </div>
   </div>
+            <div class="line"> 
+           </div>
+               <div class="contacts-info">
+          <div class="customer-name">
+            <label for="name">Имя</label>
+            <input id="name" type="text" placeholder="Иванов Иван Иванович" required/>
+          </div>
+          <div class="customer-phone">
+            <label for="name">Номер телефона</label>
+            <input id="name" type="text" placeholder="+375 ___-__-__" required />
+          </div>
+        </div>
+        <div class="wrapper-bottom-form">
+        <Button @click="showModalWindow" class="button-send" kind="primary" 
+          >Заказать</Button
+        >
+        <Text tag="p" print="personal"
+          >Нажимая на кнопку вы даёте согласие на обработку
+          <span>персональных данных</span></Text
+        >
+        </div>
+            </div>
+  </section>
 </template>
 
 <style lang="scss" scoped>
+
+.cards{
+  max-width: 563px;
+}
+
+.line {
+  border-bottom: 1px solid rgba(140, 145, 150, 1);
+  margin-bottom: 16px;
+}
+
+.goods_choice-basket{
+  margin-bottom: 16px;
+}
+
+.order {
+  padding: 24px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  min-height: 100vh;
+  height: 100%;
+  width: 100%;
+  background: rgba(83, 84, 85, 0.5);
+  position: fixed;
+  z-index: 100;
+}
+
+.cross_block {
+  display: block;
+  text-align: right;
+}
+
+.cross {
+  cursor: pointer;
+}
+
+.order__title {
+    margin-bottom: 16px;
+    font-family: 'SFProDisplay';
+    font-weight: 700;
+    font-style: Bold;
+    font-size: 20px;
+    line-height: 28px;
+    letter-spacing: 0px;
+    text-align: center;
+}
+
+.order__wrapper {
+  background-color: var(--white);
+  max-width: 611px;
+  margin: 0 auto;
+  border-radius: 8px;
+}
+
+label {
+  color: var(--text-default);
+  font-family: 'SFProText';
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 130%;
+  letter-spacing: 0px;
+}
+
+::placeholder {
+  font-family: 'SFProText';
+  font-weight: 400;
+  font-size: 15px;
+  line-height: 20px;
+  letter-spacing: 0px;
+  vertical-align: middle;
+}
+
+.customer-name,
+.customer-phone {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+input {
+  padding: 8px 12px;
+  width: 100%;
+  border: 1px solid #a7acb1;
+  display: block;
+  border-radius: 4px;
+}
+
+.order__wrapper{
+    padding: 24px 32px;
+    max-width: 421px;
+    margin: 0 auto;
+    background-color: var(--white);
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.button-send {
+    margin: 0 auto;
+    margin-top: 8px;
+}
+
+.contacts-info {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.wrapper-bottom-form {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+span {
+  color: var(--blue-text);
+}
+
+.order__info {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding-left: 0;
+    margin-left: 20px;
+}
+
+li {
+    list-style: disc;
+    
+}
+
+.markers li::marker {
+	color: rgba(140, 145, 150, 1);
+}
+
+.order__cost {
+    display: flex;
+    flex-direction: row;
+    gap: 16px;
+    align-items: center;
+}
+
+.list__subtitle {
+    font-family: 'SFProText';
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 20px;
+    letter-spacing: 0px;
+    vertical-align: middle;
+    color: rgba(140, 145, 150, 1);
+}
+
+.cost {
+    font-family: 'SFProText';
+    font-weight: 700;
+    font-style: Bold;
+    font-size: 16px;
+    line-height: 24px;
+    letter-spacing: 0px;
+    color: var(--text-default);
+}
+
+
+@media (max-width: 576px ) {
+    .order {
+  padding-top: 48px;
+}
+
+}
+
+
 .product-info {
   max-width: 470px;
   display: flex;
@@ -237,7 +426,7 @@ justify-content: center;
   display: flex;
   gap: 16px;
   justify-content: space-between;
-  min-width: 770px;
+  max-width: 563px;
   width: 100%;
   padding: 24px 16px 24px 16px;
 }
@@ -272,14 +461,6 @@ justify-content: center;
 }
 
 
-@media (max-width: 820px) {
-
-  .wrapper-card {
-    min-width: 600px;
-  }
-
-}
-
 
 @media (max-width: 684px) {
  .wrapper-card{
@@ -293,4 +474,6 @@ justify-content: center;
 }
 
 }
+
+
 </style>
