@@ -5,6 +5,7 @@
 import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import { useRoute } from 'vue-router'
 import Text from './Text.vue'
+import Button from './Button.vue'
 import QuantityWithPrice from '../components/QuantityWithPrice.vue'
 import Quantity from '../components/Quantity.vue'
 import ModalWindowWaitingOrder from '../components/ModalWindowWaitingOrder.vue'
@@ -30,13 +31,72 @@ const props = withDefaults(
     promotion: "Акция",
   }
 )
-import Button from './Button.vue'
 
 const route = useRoute()
 const countProduct = ref(1)
 const showModal = ref(false)
 const showModalOrder = ref(false)
 const buyOneClickModal = ref(false)
+
+// Добавьте эти переменные после существующих
+const showCustomWeightInput = ref(false)
+const customWeight = ref('')
+const isCustomWeightApplied = ref(false)
+
+// Добавьте вычисляемое свойство после других computed свойств
+const showCustomWeightButton = computed(() => {
+  if (!product.value.title) return false;
+  const title = product.value.title.toLowerCase();
+  return title.includes('корм') || title.includes('консервы');
+});
+
+// Добавьте эти функции после других методов
+const openCustomWeightInput = () => {
+  showCustomWeightInput.value = true;
+  customWeight.value = '';
+  isCustomWeightApplied.value = false;
+};
+
+const applyCustomWeight = () => {
+  if (!customWeight.value || parseFloat(customWeight.value) <= 0) {
+    alert('Пожалуйста, введите корректный вес');
+    return;
+  }
+  
+  isCustomWeightApplied.value = true;
+  showCustomWeightInput.value = false;
+  
+  // Обновляем selectedQuantity с кастомным весом
+  selectedQuantity.value = {
+    value: customWeight.value,
+    unit: 'кг'
+  };
+  
+  // Пересчитываем общую стоимость
+  recalculateTotalPrice();
+};
+
+const resetCustomWeight = () => {
+  isCustomWeightApplied.value = false;
+  customWeight.value = '';
+  showCustomWeightInput.value = false;
+  
+  // Возвращаем первоначальный selectedQuantity если нужно
+  if (product.value.countitemproduct_set && product.value.countitemproduct_set.length > 0) {
+    const firstItem = product.value.countitemproduct_set[0];
+    if (typeof firstItem === 'string') {
+      const match = firstItem.match(/(\d+)\s*(.*)/);
+      if (match) {
+        selectedQuantity.value = {
+          value: match[1],
+          unit: match[2] || '',
+        };
+      }
+    }
+  }
+  
+  recalculateTotalPrice();
+};
 
 const buyOneClick = () => {
 buyOneClickModal.value = !buyOneClickModal.value
@@ -201,17 +261,26 @@ const recalculateTotalPrice = () => {
   }
 }
 
-// Обновляем функцию updateTotalPrice
+// Обновите функцию updateTotalPrice
 const updateTotalPrice = (quantity: any) => {
   selectedQuantity.value = quantity
   console.log('Quantity selected:', quantity)
-  recalculateTotalPrice() // Пересчитываем стоимость при изменении фасовки
+  // Сбрасываем кастомный вес при выборе стандартной фасовки
+  if (!showCustomWeightInput.value) {
+    isCustomWeightApplied.value = false;
+    customWeight.value = '';
+  }
+  recalculateTotalPrice()
 }
 
-// Вычисляемые свойства
+// Обновите computed свойство safeSelectedQuantity
 const safeSelectedQuantity = computed(() => {
+  if (isCustomWeightApplied.value && customWeight.value) {
+    return { value: customWeight.value, unit: 'кг' };
+  }
   return selectedQuantity.value || { value: '', unit: '' }
 })
+
 
 const displayPrice = computed(() => {
   return totalPrice.value.toFixed(2)
@@ -325,6 +394,46 @@ watch(
                 :selected="selectedQuantity"
                 class="wrapper-quantity"
               />
+              <!-- Блок для кастомного веса -->
+<div v-if="showCustomWeightButton" class="custom-weight-section">
+  <!-- Кнопка "Задать свой вес" -->
+  <div v-if="!showCustomWeightInput && !isCustomWeightApplied" class="custom-weight-btn-wrapper">
+    <Button 
+      class="custom-weight-btn" 
+      @click="openCustomWeightInput" 
+      
+    >
+      <div class="wrapper">
+        <div class='quantity_special' @click="openCustomWeightInput">Задать свой вес</div>
+      </div>
+    </Button>
+  </div>
+  
+  <!-- Поле ввода веса -->
+  <div v-if="showCustomWeightInput" class="custom-weight-input">
+    <input 
+      v-model="customWeight" 
+      type="number" 
+      min="0.1" 
+      step="0.1" 
+      placeholder="Введите вес в кг"
+      class="weight-input"
+    />
+    <Button @click="applyCustomWeight" kind="primary" class="apply-weight-btn">
+      Применить
+    </Button>
+  </div>
+  
+  <!-- Отображение примененного кастомного веса -->
+  <div v-if="isCustomWeightApplied && customWeight" class="custom-weight-applied">
+    <div class="applied-weight-info">
+      <span>Выбранный вес: {{ customWeight }} кг</span>
+      <button @click="resetCustomWeight" class="reset-weight-btn">
+        <img src="../assets/image/cross.svg" alt="Сбросить" />
+      </button>
+    </div>
+  </div>
+</div>
             </div>
             <div class="delivery">
               <img
@@ -465,6 +574,46 @@ watch(
             :list="product.countitemproduct_set || []"
             @updateQuantity="updateTotalPrice"
           />
+           <!-- Блок для кастомного веса -->
+<div v-if="showCustomWeightButton" class="custom-weight-section">
+  <!-- Кнопка "Задать свой вес" -->
+  <div v-if="!showCustomWeightInput && !isCustomWeightApplied" class="custom-weight-btn-wrapper">
+    <Button 
+      class="custom-weight-btn" 
+      @click="openCustomWeightInput" 
+      
+    >
+      <div class="wrapper">
+        <div class='quantity_special' @click="openCustomWeightInput">Указать свой вес</div>
+      </div>
+    </Button>
+  </div>
+  
+  <!-- Поле ввода веса -->
+  <div v-if="showCustomWeightInput" class="custom-weight-input">
+    <input 
+      v-model="customWeight" 
+      type="number" 
+      min="0.1" 
+      step="0.1" 
+      placeholder="Введите вес в кг"
+      class="weight-input"
+    />
+    <Button @click="applyCustomWeight" kind="primary" class="apply-weight-btn">
+      Применить
+    </Button>
+  </div>
+  
+  <!-- Отображение примененного кастомного веса -->
+  <div v-if="isCustomWeightApplied && customWeight" class="custom-weight-applied">
+    <div class="applied-weight-info">
+      <span>Выбранный вес: {{ customWeight }} кг</span>
+      <button @click="resetCustomWeight" class="reset-weight-btn">
+        <img src="../assets/image/cross.svg" alt="Сбросить" />
+      </button>
+    </div>
+  </div>
+</div>
         </div>
       </div>
     </div>
@@ -1404,4 +1553,250 @@ li {
     margin-top: 16px;
   }
   }
+
+
+
+  /* Добавляем стили для кастомного веса */
+.custom-weight-section {
+  margin-top: 12px;
+}
+
+.custom-weight-btn-wrapper {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.custom-weight-btn {
+  width: auto;
+  min-width: 200px;
+}
+
+.custom-weight-input {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-top: 8px;
+}
+
+.weight-input {
+  padding: 8px 12px;
+  border: 1px solid #a7acb1;
+  border-radius: 4px;
+  font-family: 'SFProText';
+  font-size: 14px;
+  width: 120px;
+  
+  &:focus {
+    outline: none;
+    border-color: var(--highlight);
+  }
+}
+
+.apply-weight-btn {
+  white-space: nowrap;
+  padding: 8px 16px;
+}
+
+.custom-weight-applied {
+  margin-top: 8px;
+}
+
+.applied-weight-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: var(--bg-default);
+  border-radius: 4px;
+  border: 1px solid var(--highlight);
+  max-width: 250px;
+  span {
+    color: var(--text-default);
+    font-family: 'SFProText';
+    font-size: 14px;
+    font-weight: 500;
+  }
+}
+
+.reset-weight-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  img {
+    width: 12px;
+    height: 12px;
+  }
+  
+  &:hover {
+    opacity: 0.7;
+  }
+}
+
+
+.custom-weight-btn {
+  border: none;
+  background-color: var(--bg-default);
+  padding: 0;
+  text-align: left;
+  margin-top: 8px;
+  color:  rgba(44, 110, 203, 1);
+font-family: 'SFProText';
+font-size: 14px;
+font-weight: 400;
+line-height: 20px;
+letter-spacing: 0px;
+text-align: left;
+}
+
+
+/* Добавляем стили для кастомного веса */
+.custom-weight-section {
+  margin-top: 12px;
+  min-height: 40px; /* Фиксируем минимальную высоту */
+  transition: min-height 0.3s ease;
+}
+
+.custom-weight-btn-wrapper {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.custom-weight-btn {
+  border: none;
+  background-color: var(--bg-default);
+  padding: 0;
+  text-align: left;
+  margin-top: 8px;
+  color: rgba(44, 110, 203, 1);
+  font-family: 'SFProText';
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+  letter-spacing: 0px;
+  text-align: left;
+  cursor: pointer;
+  
+  &:hover {
+    color: var(--highlight);
+  }
+}
+
+.custom-weight-input {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-top: 8px;
+  animation: fadeIn 0.3s ease;
+}
+
+.weight-input {
+  padding: 8px 12px;
+  border: 1px solid #a7acb1;
+  border-radius: 4px;
+  font-family: 'SFProText';
+  font-size: 14px;
+  width: 120px;
+  transition: border-color 0.3s ease;
+  
+  &:focus {
+    outline: none;
+    border-color: var(--highlight);
+  }
+}
+
+.apply-weight-btn {
+  white-space: nowrap;
+  padding: 8px 16px;
+  transition: all 0.3s ease;
+}
+
+.custom-weight-applied {
+  margin-top: 8px;
+  animation: slideDown 0.3s ease;
+}
+
+.applied-weight-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 12px;
+  background: var(--bg-default);
+  border-radius: 4px;
+  border: 1px solid var(--highlight);
+  max-width: 250px;
+  animation: fadeIn 0.3s ease;
+  
+  span {
+    color: var(--text-default);
+    font-family: 'SFProText';
+    font-size: 14px;
+    font-weight: 500;
+    flex: 1;
+  }
+}
+
+.reset-weight-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.3s ease;
+  flex-shrink: 0;
+  
+  img {
+    width: 12px;
+    height: 12px;
+  }
+  
+  &:hover {
+    opacity: 0.7;
+  }
+}
+
+/* Анимации */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    max-height: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    max-height: 50px;
+    transform: translateY(0);
+  }
+}
+
+/* Плавные переходы для всех состояний */
+.custom-weight-btn-wrapper,
+.custom-weight-input,
+.custom-weight-applied {
+  transition: all 0.3s ease;
+}
+
+/* Убедитесь, что контейнер не меняет высоту резко */
+.product_details > div:first-child {
+  min-height: auto;
+  transition: min-height 0.3s ease;
+}
 </style>
