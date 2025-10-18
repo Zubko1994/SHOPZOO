@@ -15,6 +15,8 @@ interface Cards {
   key_features: string,
   nutritional_supplements: string,
   description: string
+  sale: {id: number; image: string; percent: number; title: string }
+    promotion: string,
 }
 
 interface CardsObj {
@@ -82,7 +84,7 @@ const prevSlide = () => {
           <Card  v-for="(card, index) in dataCards?.results.slice(0, length)" :key="index" :image_prev="card.image_prev" :description="card.description",
                         :guaranteed_analysis="card.guaranteed_analysis"
                         :key_features="card.key_features"
-                        :nutritional_supplements="card.nutritional_supplements" :title="card.title" :price="card.price" :countitemproduct_set="card.countitemproduct_set"  />
+                        :nutritional_supplements="card.nutritional_supplements" :sale="card.sale" :title="card.title" :price="card.price" :countitemproduct_set="card.countitemproduct_set"  />
         </div>
         <Button class="show-goods" kind="primary"><RouterLink to="/catalog" class="link_button" :class="['item']"
           >Смотреть больше товаров</RouterLink></Button>

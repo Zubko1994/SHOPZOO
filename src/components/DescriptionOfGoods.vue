@@ -291,12 +291,17 @@ watch(
   <section class="product-description" :key="route.params.id">
     <div class="container">
       <div class="product-description_wrapper">
+        <div class="wrapper_ceil">
         <Text
           class="cards_title"
           tag="h2"
           print="title-goods"
           :title="product.title"
         />
+        <div v-if="product.sale && product.sale.percent > 0" class="product-promotion">
+{{props.promotion}}
+      </div>
+      </div>
         <div class="product_information">
           <div class="wrapper-image">
             <img
@@ -357,7 +362,10 @@ watch(
               </div>
             </div>
             <div class="cost-quantity">
+              <div class="cost_information">
+              <div v-if="product.sale && product.sale.percent > 0" class="total-price total-price-big"> {{(totalPrice + (totalPrice*(product.sale.percent / 100))).toFixed(2)}} BYN</div>
               <div class="cost_info">{{ displayPrice }} BYN</div>
+            </div>
               <div class="quantity_info">
                 Количество:
                 {{ (safeSelectedQuantity.value * countProduct).toFixed(1) }}
@@ -471,7 +479,12 @@ watch(
             <img src="../assets/image/plus_minor.svg" alt="плюс" />
           </button>
         </div>
+        <div>
+        <div class="wrapper-cost">
+        <div v-if="product.sale && product.sale.percent > 0" class="total-price">{{(totalPrice * (1 - product.sale.percent / 100)).toFixed(2)}} BYN</div>
         <div class="cost">{{ totalPrice.toFixed(2) }} BYN</div>
+      </div>
+      </div>
       </div>
     </div>
   </div>
@@ -494,7 +507,7 @@ watch(
     <div class="order__wrapper">
       <div class="modal-ceil">
       <div v-if="product.sale && product.sale.percent > 0" class="product-promotion-modal">
-{{product.promotion}}
+{{props.promotion}}
       </div>
     <div class="cross_block">
         <img
@@ -540,7 +553,7 @@ watch(
           </button>
         </div>
         <div class="wrapper-cost">
-        <div v-if="product.sale && product.sale.percent > 0" class="total-price">{{(+totalPrice + +(totalPrice*props.sale.percent/100)).toFixed(2)}}BYN</div>
+        <div v-if="product.sale && product.sale.percent > 0" class="total-price"> {{(totalPrice * (1 - product.sale.percent / 100)).toFixed(2)}} BYN</div>
         <div class="cost">{{ totalPrice.toFixed(2) }} BYN</div>
         </div>
       </div>
@@ -582,6 +595,25 @@ watch(
   background-color: var(--bg-default);
 }
 
+.goods_info-wrapper {
+  display: flex;
+  gap: 35px;
+  align-items: center;
+  min-width: 200px; /* Фиксируем минимальную ширину */
+}
+
+.wrapper-cost {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  min-width: 120px; /* Фиксируем ширину для цен */
+}
+
+.total-price, .cost {
+  white-space: nowrap;
+  min-width: 100px; /* Гарантируем одинаковую ширину */
+  text-align: left; /* Выравниваем по правому краю */
+}
 .cards_title{
   max-width: 870px;
   margin-bottom: 24px;
@@ -609,6 +641,13 @@ watch(
   margin-bottom: 12px;
 }
 
+.wrapper_ceil {
+  display: flex;
+  gap: 20px;
+align-items: flex-start;
+  justify-content: space-between;
+}
+
 .quantity {
   margin-bottom: 24px;
 }
@@ -629,6 +668,22 @@ watch(
   display: flex;
   flex-direction: column;
   gap: 6px;
+}
+
+.line-through {
+  text-decoration: line-through;
+  color: var(--text-gray);
+}
+
+.total-price {
+font-family: 'SFProText';
+font-weight: 700;
+font-style: Bold;
+font-size: 16px;
+line-height: 130%;
+letter-spacing: 0px;
+text-decoration: line-through solid rgba(215, 44, 13, 1);
+color: rgba(140, 145, 150, 1);
 }
 
 .product_details {
@@ -689,6 +744,84 @@ watch(
   padding: 11px 23px;
 }
 
+.button-catalog:hover {
+  .addProduct {
+  background-color: var(--highlight);
+  color: var(--white);
+}
+
+.link_button-catalog{
+  color: var(--white);
+}
+}
+
+.button-send {
+  color: var(--text-default);
+  background-color: var(--white);
+  border: 1px solid rgba(140, 145, 150, 1);
+  border-radius: 4px;
+  box-sizing: border-box;
+  padding: 11px 23px;
+}
+
+.link_button {
+  color: var(--text-default);
+}
+
+.button-send:hover {
+  background-color: var(--highlight);
+
+  .link_button {
+  color: var(--white);
+  
+}
+}
+
+
+
+.addProduct {
+  color: var(--text-default);
+  background-color: var(--white);
+  border: 1px solid rgba(140, 145, 150, 1);
+  border-radius: 4px;
+  box-sizing: border-box;
+  padding: 11px 23px;
+}
+
+.addProduct:hover {
+  background-color: var(--highlight);
+  color: var(--white);
+}
+
+.addProduct:active {
+  background-color: var(--highlight);
+  color: var(--white);
+}
+
+
+
+.link_button-catalog:hover {
+  background-color: var(--highlight);
+  color: var(--white);
+}
+
+.link_button-catalog:active {
+  background-color: var(--highlight);
+  color: var(--white);
+}
+
+
+
+.button-catalog:hover {
+  background-color: var(--highlight);
+  color: var(--white);
+}
+
+.button-catalog:active {
+  background-color: var(--highlight);
+  color: var(--white);
+}
+
 .quantity_info {
   color: var(--text-default);
   font-family: 'SFProText';
@@ -701,7 +834,7 @@ watch(
 
 .count {
   display: flex;
-  gap: 6px;
+  gap: 10px;
 }
 
 .waiting_button {
@@ -791,6 +924,12 @@ text-align: left;
   flex-direction: column;
   gap: 24px;
 }
+.cost_information {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 5px;
+}
 
 .product-info_right {
   display: flex;
@@ -820,9 +959,7 @@ text-align: left;
   z-index: 900;
 }
 
-.link_button {
-  color: var(--white);
-}
+
 
 .register__info {
   max-width: 611px;
@@ -923,12 +1060,26 @@ justify-content: center;
 
 .count {
   display: flex;
-  gap: 6px;
+  gap: 10px;
 }
 
 .goods_info-wrapper {
   display: flex;
   gap: 35px;
+}
+
+.product-promotion {
+    
+    color: rgb(255, 255, 255);
+    font-family: "SFProText";
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    letter-spacing: 0px;
+    padding: 2px 8px;
+    background: rgba(253, 87, 73, 1);
+    border-radius: 2px;
+    // user-select: none;
 }
 
 .wrapper-card {
@@ -969,6 +1120,13 @@ justify-content: center;
   line-height: 130%;
   letter-spacing: 0px;
   text-align: left;
+  text-wrap: nowrap;
+}
+
+.wrapper-cost {
+  display: flex;
+  align-items: center;
+  gap: 5px;
 }
 
 
@@ -1205,6 +1363,10 @@ li {
     vertical-align: middle;
     color: rgba(140, 145, 150, 1);
   }    
+
+  .total-price-big {
+    font-size: 28px;
+  }
   
   .cost {
     font-family: 'SFProText';
@@ -1218,8 +1380,8 @@ li {
   
   .count {
     display: flex;
-    gap: 17px;
-    justify-content: space-between;
+    gap: 10px;
+    justify-content: center;
     
   }
 
@@ -1235,5 +1397,11 @@ li {
   }
   
 
-
+  @media(max-width: 360px){
+  .wrapper_ceil {
+    flex-direction: column-reverse;
+    gap:  16px;
+    margin-top: 16px;
+  }
+  }
 </style>

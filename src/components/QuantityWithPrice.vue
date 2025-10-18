@@ -53,6 +53,7 @@ function quantityHandler (item: string){
   flex-direction: column;
   gap: 4px;
   justify-content: flex-start;
+  
 }
 
 .quantity-price-price{
@@ -60,4 +61,13 @@ function quantityHandler (item: string){
     line-height: 110%;
 }
 
+.wrapper-quantity {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 4px;
+}
+
+.wrapper-quantity .button {
+  width: 100%; /* Занимает всю ширину ячейки grid */
+}
 </style>

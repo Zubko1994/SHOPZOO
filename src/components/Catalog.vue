@@ -34,16 +34,19 @@ const props = withDefaults(
     id?: Number
     brand?: object
     category?: object
-    sale?: object
+    sale: {id: number; image: string; percent: number; title: string }
+    promotion: string,
     isFiltersOpen?: boolean
     selectedAnimalId?: number | null 
     selectedCategory?: number | null
     searchQuery?: string
+
   }>(),
   {
     size: 15,
     count: 1,
-    selectedAnimalId: null
+    selectedAnimalId: null,
+    promotion: "Акция",
   }
 )
 
@@ -535,6 +538,7 @@ watch([choiceCategory, selectedCategory, choiceBrand], () => {
                         :brand="card.brand"
                         :category="card.category"
                         :sale="card.sale"
+          
                         :id="id"
                         :description="card.description",
                         :guaranteed_analysis="card.guaranteed_analysis"

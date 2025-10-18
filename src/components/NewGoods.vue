@@ -15,6 +15,8 @@ interface Cards {
   key_features: string,
   nutritional_supplements: string,
   description: string
+  sale: {id: number; image: string; percent: number; title: string }
+    promotion: string,
 }
 
 interface CardsObj {
@@ -84,6 +86,7 @@ const prevSlide = () => {
             :description="card.description",
                         :guaranteed_analysis="card.guaranteed_analysis"
                         :key_features="card.key_features"
+                        :sale="card.sale"
                         :nutritional_supplements="card.nutritional_supplements"
             :countitemproduct_set="card.countitemproduct_set"
           />
