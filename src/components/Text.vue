@@ -170,6 +170,7 @@ const computedClass = computed(() => {
     line-height: 24px;
     letter-spacing: 0px;
     text-align: left;
+    margin-bottom: 5px;
   }
 
   &-feedback {

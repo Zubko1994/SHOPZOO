@@ -236,9 +236,16 @@ watch(totalPrice, (newVal) => {
 
 .order__wrapper {
   background-color: var(--white);
-  max-width: 611px;
-  margin: 0 auto;
+
+
   border-radius: 8px;
+
+  width: 611px; /* Добавить относительную ширину */
+  margin: 20px auto; /* Добавить отступы */
+
+  position: relative; /* Изменить на relative */
+  max-height: 90vh; /* Ограничить высоту */
+  overflow-y: auto; /* Добавить прокрутку если нужно */
 }
 
 label {
@@ -283,6 +290,14 @@ input {
     display: flex;
     flex-direction: column;
     gap: 16px;
+    background-color: var(--white);
+  border-radius: 8px;
+  // width: 90%; /* Добавить относительную ширину */
+  margin: 20px auto; /* Добавить отступы */
+  position: relative; /* Изменить на relative */
+  max-height: 90vh; /* Ограничить высоту */
+  overflow-y: auto; /* Добавить прокрутку если нужно */
+
 }
 
 .button-send {

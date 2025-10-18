@@ -6,6 +6,8 @@ import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import { useRoute } from 'vue-router'
 import Text from './Text.vue'
 import QuantityWithPrice from '../components/QuantityWithPrice.vue'
+import Quantity from '../components/Quantity.vue'
+import ModalWindowWaitingOrder from '../components/ModalWindowWaitingOrder.vue'
 
 const props = withDefaults(
   defineProps<{
@@ -20,15 +22,50 @@ const props = withDefaults(
     key_features: string
     guaranteed_analysis: string
     nutritional_supplements: string
+    sale: {id: number; image: string; percent: number; title: string }
+  promotion: string,
   }>(),
   {
     quantity: 1,
+    promotion: "Акция",
   }
 )
 import Button from './Button.vue'
 
 const route = useRoute()
 const countProduct = ref(1)
+const showModal = ref(false)
+const showModalOrder = ref(false)
+const buyOneClickModal = ref(false)
+
+const buyOneClick = () => {
+buyOneClickModal.value = !buyOneClickModal.value
+}
+
+const buyOneClickClose = () => {
+  buyOneClickModal.value = false
+}
+
+const showModalProductAddBasket = () => {
+  showModal.value = !showModal.value
+}
+
+const showModalWindowOrder = () => {
+  showModalOrder.value = !showModalOrder.value
+  buyOneClickModal.value = false
+}
+
+const closeModalOrder = () => {
+  showModal.value = false
+}
+
+const closeAccept = () => {
+  showModal.value = false
+}
+
+const closeWindow = () => {
+showModalOrder.value = false
+}
 
 const product = ref({
   id: 0,
@@ -255,7 +292,7 @@ watch(
     <div class="container">
       <div class="product-description_wrapper">
         <Text
-          class="card_title"
+          class="cards_title"
           tag="h2"
           print="title-goods"
           :title="product.title"
@@ -338,10 +375,10 @@ watch(
                 </button>
               </div>
 
-              <Button class="addProduct" @click="addProduct" kind="primary"
+              <Button class="addProduct" @click="addProduct" @customClick="showModalProductAddBasket" kind="primary"
                 >Добавить в корзину</Button
               >
-              <Button class="buying-click" @click="showModalWindow" kind="buying-click"
+              <Button class="buying-click" @click="buyOneClick" kind="buying-click"
                 >Купить в 1 клик</Button
               >
             </div>
@@ -387,7 +424,156 @@ watch(
       </div>
       </div>
     </div>
+    <div v-if="showModal" class="modal-waiting">
+      <div class="register__info">
+            <div class="cross_block">
+              <img
+                class="cross"
+                @click.self="closeAccept"
+                src="../assets/image/cross.svg"
+                alt="крестик"
+              />
+            </div>
+            <div class="checkmark">
+          <img class="mark" src="../assets/image/shape.svg" alt="галочка" />
+          <span class="mark-title">Товар добавлен в корзину</span>
+          </div>
+          <div class="wrapper-card">
+    <div class="wrapper-card_left">
+      <img
+        class="card_image"
+        :src="product.image_prev"
+        alt="Изображение товара"
+      />
+      <div class="product-info">
+        <Text
+          class="card_title"
+          tag="h3"
+          print="basket-title-product"
+          :title="product.title"
+        />
+        <div class="product-info_quantity">
+           <Quantity
+            :list="product.countitemproduct_set || []"
+            @updateQuantity="updateTotalPrice"
+          />
+        </div>
+      </div>
+    </div>
+    <div class="wrapper-card_right">
+      <div class="goods_info-wrapper">
+        <div class="count">
+          <button @click="decreaseCount" class="wrapper_symbol">
+            <img src="../assets/image/minus_minor.svg" alt="минус" />
+          </button>
+          <p class="wrapper_symbol">{{ countProduct }}</p>
+          <button @click="increaseCount" class="wrapper_symbol">
+            <img src="../assets/image/plus_minor.svg" alt="плюс" />
+          </button>
+        </div>
+        <div class="cost">{{ totalPrice.toFixed(2) }} BYN</div>
+      </div>
+    </div>
+  </div>
+<div class="waiting_button">
+            <Button class="button-send" kind="primary" 
+              ><RouterLink to="/basket" class="link_button" :class="['item']"
+              >Перейти в корзину</RouterLink></Button
+            >
+            <Button class="button-catalog" kind="primary" 
+              ><RouterLink to="/catalog" class="link_button-catalog" :class="['item']"
+              >Продолжить покупки</RouterLink></Button
+            >
+          </div>
+      </div>
+    </div>
   </section>
+
+
+  <section v-if="buyOneClickModal" class="order">
+    <div class="order__wrapper">
+      <div class="modal-ceil">
+      <div v-if="product.sale && product.sale.percent > 0" class="product-promotion-modal">
+{{product.promotion}}
+      </div>
+    <div class="cross_block">
+        <img
+          class="cross"
+          @click.self="buyOneClickClose"
+          src="../assets/image/cross.svg"
+          alt="крестик"
+        />
+      </div>
+      </div>
+      <Text tag="h2" print="order-title" title="Оформление заказа в 1 клик" class="order__title" />
+      <div class="wrapper-card">
+    <div class="wrapper-card_left">
+      <img
+        class="card_image"
+        :src="product.image_prev"
+        alt="Изображение товара"
+      />
+      <div class="product-info">
+        <Text
+          class="card_title"
+          tag="h3"
+          print="basket-title-product"
+          :title="product.title"
+        />
+        <div class="product-info_quantity">
+           <Quantity
+            :list="product.countitemproduct_set || []"
+            @updateQuantity="updateTotalPrice"
+          />
+        </div>
+      </div>
+    </div>
+    <div class="wrapper-card_right">
+      <div class="goods_info-wrapper">
+        <div class="count">
+          <button @click="decreaseCount" class="wrapper_symbol">
+            <img src="../assets/image/minus_minor.svg" alt="минус" />
+          </button>
+          <p class="wrapper_symbol">{{ countProduct }}</p>
+          <button @click="increaseCount" class="wrapper_symbol">
+            <img src="../assets/image/plus_minor.svg" alt="плюс" />
+          </button>
+        </div>
+        <div class="wrapper-cost">
+        <div v-if="product.sale && product.sale.percent > 0" class="total-price">{{(+totalPrice + +(totalPrice*props.sale.percent/100)).toFixed(2)}}BYN</div>
+        <div class="cost">{{ totalPrice.toFixed(2) }} BYN</div>
+        </div>
+      </div>
+    </div>
+  </div>
+            <div class="line"> 
+           </div>
+           <Text tag="p" print="order-oneclick-subtitle"
+          >Заполните данные и нажмите кнопку «Оформить заказ». Товар будет ждать вас по адресу: Минск, ул. Чюрлёниса, 6.</Text
+        >
+
+               <div class="contacts-info">
+          <div class="customer-name">
+            <label for="name">Имя</label>
+            <input id="name" type="text" placeholder="Иванов Иван Иванович" required/>
+          </div>
+          <div class="customer-phone">
+            <label for="name">Номер телефона</label>
+            <input id="name" type="text" placeholder="+375 ___-__-__" required />
+          </div>
+        </div>
+        <div class="wrapper-bottom-form">
+        <Button @click="showModalWindowOrder" class="button-send-order" kind="primary" 
+          >Оформить заказ</Button
+        >
+        <Text tag="p" print="personal"
+          >Нажимая на кнопку вы даёте согласие на обработку
+          <span>персональных данных</span></Text
+        >
+        </div>
+            </div>
+  </section>
+  <ModalWindowWaitingOrder v-if="showModalOrder" @closeWindow="closeWindow" @click="closeModalOrder"/>
 </template>
 
 <style lang="scss" scoped>
@@ -396,9 +582,13 @@ watch(
   background-color: var(--bg-default);
 }
 
-.card_title {
-  margin-bottom: 24px;
+.cards_title{
   max-width: 870px;
+  margin-bottom: 24px;
+}
+
+.card_title {
+  max-width: 355px;
 }
 
 .product_information__image {
@@ -490,6 +680,15 @@ watch(
   text-align: left;
 }
 
+.button-catalog {
+  color: var(--text-default);
+  background-color: var(--white);
+  border: 1px solid rgba(140, 145, 150, 1);
+  border-radius: 4px;
+  box-sizing: border-box;
+  padding: 11px 23px;
+}
+
 .quantity_info {
   color: var(--text-default);
   font-family: 'SFProText';
@@ -503,6 +702,19 @@ watch(
 .count {
   display: flex;
   gap: 6px;
+}
+
+.waiting_button {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 auto;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+.link_button-catalog {
+  color: var(--text-default);
 }
 
 .wrapper_symbol {
@@ -596,6 +808,192 @@ text-align: left;
   max-width: 670px;
 }
 
+.modal-waiting {
+  position: absolute;
+  top: 0;
+  left: 0;
+  min-height: 100vh;
+  height: 100%;
+  width: 100%;
+  background: rgba(83, 84, 85, 0.5);
+  position: fixed;
+  z-index: 900;
+}
+
+.link_button {
+  color: var(--white);
+}
+
+.register__info {
+  max-width: 611px;
+  min-width: 312px;
+  top: 50%;
+  left: 50%;
+  position: absolute;
+  transform: translate(-50%, -50%);
+  margin: 0 auto;
+  background: var(--white);
+  padding: 6px;
+  border-radius: 8px;
+  position: fixed;
+  
+}
+
+.cross_block {
+  display: block;
+  text-align: right;
+}
+
+.cross {
+  cursor: pointer;
+}
+
+.mark {
+  width: 20px;
+  height: 20px;
+}
+
+.mark-title {
+  font-family: 'SFProDisplay';
+  font-weight: 700;
+  font-style: Bold;
+  font-size: 20px;
+  line-height: 28px;
+  letter-spacing: 0px;
+  text-align: center;
+  color: var(--text-default);
+  
+}
+
+.checkmark {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 auto;
+ margin-bottom: 48px;
+ justify-content: center;
+}
+
+.product-info {
+  max-width: 355px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.card_title {
+  -webkit-line-clamp: 2;
+  position: relative;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+}
+
+.card_image {
+  width: 56px;
+  height: 56px;
+  background-color: var(--white);
+  mix-blend-mode: multiply;
+}
+
+.wrapper-card_left {
+  display: flex;
+  gap: 16px;
+}
+
+.wrapper_symbol {
+  width: 36px;
+  height: 36px;
+  border: 1px solid rgba(186, 191, 195, 1);
+  padding: 8px 0px 8px 0px;
+  box-sizing: border-box;
+  border-radius: 4px;
+  box-shadow: 0px 1px 0px 0px rgba(0, 0, 0, 0.05);
+  background: var(--white);
+  color: var(--text-default);
+  font-family: 'SFProText';
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 20px;
+  letter-spacing: 0px;
+  text-align: left;
+display: flex;
+justify-content: center;
+}
+
+.count {
+  display: flex;
+  gap: 6px;
+}
+
+.goods_info-wrapper {
+  display: flex;
+  gap: 35px;
+}
+
+.wrapper-card {
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+  min-width: 563px;
+  width: 100%;
+  margin-bottom: 17px;
+  padding-left: 18px;
+  padding-right: 18px;
+}
+
+.wrapper-card_right {
+  display: flex;
+  align-items: flex-start;
+  gap: 35px;
+}
+
+.trash-can {
+  background-color: var(--white);
+  mix-blend-mode: multiply;
+  margin-top: 6px;
+}
+
+.goods_info-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-content: flex-start;
+}
+
+.cost {
+  color: var(--text-default);
+  font-family: 'SFProText';
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 130%;
+  letter-spacing: 0px;
+  text-align: left;
+}
+
+
+@media (max-width: 820px) {
+
+  .wrapper-card {
+    min-width: 600px;
+  }
+
+}
+
+
+@media (max-width: 684px) {
+ .wrapper-card{
+    min-width: 340px;
+    padding: 24px 16px 0px 16px;
+    flex-direction: column;
+  }
+  .wrapper-card_left {
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+}
+
 @media(max-width: 1011px){
   .product_information {
     align-items: center;
@@ -640,6 +1038,202 @@ font-size: 20px;
 
 }
 
+
+
+.order {
+  padding: 24px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  min-height: 100vh;
+  height: 100%;
+  width: 100%;
+  background: rgba(83, 84, 85, 0.5);
+  position: fixed;
+  z-index: 10000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}  
+
+.product-promotion-modal {
+    position: absolute;
+    top: 24px;
+    left: 24px;
+    color: rgb(255, 255, 255);
+    font-family: "SFProText";
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    letter-spacing: 0px;
+    padding: 2px 8px;
+    background: rgba(253, 87, 73, 1);
+    border-radius: 2px;
+  }    
+
+.cross_block {
+  display: block;
+  text-align: right;
+}  
+
+.cross {
+  cursor: pointer;
+}  
+
+.order__title {
+    font-family: 'SFProDisplay';
+    font-weight: 700;
+    font-style: Bold;
+    font-size: 20px;
+    line-height: 28px;
+    letter-spacing: 0px;
+    text-align: center;
+  }    
+  
+  .order__wrapper {
+    background-color: var(--white);
+    width: 611px;
+    margin: 0 auto;
+    border-radius: 8px;
+    position: absolute;
+  }  
+
+label {
+  color: var(--text-default);
+  font-family: 'SFProText';
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 130%;
+  letter-spacing: 0px;
+}  
+
+::placeholder {
+  font-family: 'SFProText';
+  font-weight: 400;
+  font-size: 15px;
+  line-height: 20px;
+  letter-spacing: 0px;
+  vertical-align: middle;
+}  
+
+.customer-name,
+.customer-phone {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}  
+
+input {
+  padding: 8px 12px;
+  width: 100%;
+  border: 1px solid #a7acb1;
+  display: block;
+  border-radius: 4px;
+}  
+
+.order__wrapper{
+    padding: 24px;
+    margin: 0 auto;
+    background-color: var(--white);
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    max-width: 611px;
+}    
+
+.button-send-order {
+    margin: 0 auto;
+    margin-top: 8px;
+  }    
+  
+  .contacts-info {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 349px; 
+    margin: 0 auto;
+  }   
+  
+  .wrapper-bottom-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }    
+  
+  span {
+    color: var(--blue-text);
+  }  
+  
+  .order__info {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}    
+
+
+.list {
+display: flex;
+flex-direction: column;
+gap: 6px;
+padding-left: 0;
+margin-left: 20px;
+}    
+
+li {
+    list-style: disc;
+    
+  }    
+  
+  .markers li::marker {
+    color: rgba(140, 145, 150, 1);
+  }
+  
+  .order__cost {
+    display: flex;
+    flex-direction: row;
+    gap: 16px;
+    align-items: center;
+  }    
+  
+  .list__subtitle {
+    font-family: 'SFProText';
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 20px;
+    letter-spacing: 0px;
+    vertical-align: middle;
+    color: rgba(140, 145, 150, 1);
+  }    
+  
+  .cost {
+    font-family: 'SFProText';
+    font-weight: 700;
+    font-style: Bold;
+    font-size: 16px;
+    line-height: 24px;
+    letter-spacing: 0px;
+    color: var(--text-default);
+  }    
+  
+  .count {
+    display: flex;
+    gap: 17px;
+    justify-content: space-between;
+    
+  }
+
+  @media(max-width: 656px){
+
+    .order__wrapper {
+      width: 99%;
+    }
+
+    input {
+      width: 90%;
+    }
+  }
+  
 
 
 </style>

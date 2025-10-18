@@ -47,7 +47,7 @@ fetch('https://oliver1ck.pythonanywhere.com/api/get_sales_list/')
 .sales_wrapper {
   padding: 30px 5px;
   background-color: var(--bg-default);
-  height: 82vh;
+  min-height: 68vh;
 }
 
 .cards_wrapper {
@@ -75,7 +75,7 @@ fetch('https://oliver1ck.pythonanywhere.com/api/get_sales_list/')
 
 .sales_wrapper {
   padding: 0px 5px 56px 5px;
-  height: 75vh;
+  min-height: 61vh;
 }
 
 .cards_wrapper {

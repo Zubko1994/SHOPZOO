@@ -1084,7 +1084,7 @@ mix-blend-mode: multiply;
   }
 
   .wrapper-cards > * {
-    width: 340px;
+    // width: 340px;
     // max-width: 340px;
   }
 

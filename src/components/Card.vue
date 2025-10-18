@@ -177,6 +177,54 @@ const storeProductData = () => {
   router.push(`/productdescription/${props.id}`)
 }
 
+const countProduct = ref(1)
+
+function updateCount(newQuantity: number) {
+  // totalCost = цена * выбранноеКоличество * количество товаров
+  countProduct.value = newQuantity
+  const selectedQty = Number(selectedQuantity.value) || 1
+  const totalCostValue = (Number(props.price) * selectedQty * newQuantity).toFixed(2)
+  
+  const cart = JSON.parse(localStorage.getItem('cart') || '[]')
+  const updatedCart = cart.map(item => {
+    if (item.id === props.id && item.variant === props.variant && item.title === props.title) {
+      return { 
+        ...item, 
+        quantity: newQuantity, 
+        totalCost: totalCostValue,
+        selectedQuantity: selectedQuantity.value
+      }
+    }
+    return item
+  })
+}
+
+function increaseCount() {
+  const newQuantity = countProduct.value + 1
+  countProduct.value = newQuantity
+  
+  // Пересчитываем totalPrice с учетом выбранного количества
+  const selectedQty = Number(selectedQuantity.value) || 1
+  totalPrice.value = Number((props.price * selectedQty * newQuantity).toFixed(2))
+  
+  updateCount(newQuantity)
+
+}
+
+
+function decreaseCount() {
+  if (countProduct.value > 1) {
+    const newQuantity = countProduct.value - 1
+    countProduct.value = newQuantity
+    
+    // Пересчитываем totalPrice с учетом выбранного количества
+    const selectedQty = Number(selectedQuantity.value) || 1
+    totalPrice.value = Number((props.price * selectedQty * newQuantity).toFixed(2))
+    
+    updateCount(newQuantity)
+  }
+}
+
 
 </script>
 
@@ -528,7 +576,7 @@ color: rgba(140, 145, 150, 1);
   
   .order__wrapper {
     background-color: var(--white);
-    width: 611px;
+    // width: 611px;
     margin: 0 auto;
     border-radius: 8px;
     position: absolute;
@@ -768,8 +816,8 @@ li {
 
 .order__wrapper {
   background-color: var(--white);
-  max-width: 611px; // Меняем width на max-width
-  width: 90%; // Добавляем относительную ширину
+  // max-width: 611px; // Меняем width на max-width
+  max-width: 611px; // Добавляем относительную ширину
   margin: 20px auto; // Добавляем отступы сверху и снизу
   border-radius: 8px;
   position: absolute;
@@ -865,7 +913,7 @@ li {
   
 .order__wrapper {
   background-color: var(--white);
-  max-width: 611px;
+  // max-width: 611px;
   width: 90%;
   margin: 20px auto;
   border-radius: 8px;
