@@ -133,32 +133,23 @@ console.log(quantityitem.value)
 
 }
 
-// Вычисляемое свойство для общей стоимости
 const totalCost = computed(() => {
-  forceUpdate.value // Принудительное обновление при изменении
-  
   return cartItems.value.reduce((total, item) => {
-    try {
-      const quantity = Number(item.quantity) || 1
-      const price = Number(item.price) || 0
-      let selectedQty = 1
-      
-      // Используем selectedQuantity если он есть
-      if (item.selectedQuantity && !isNaN(Number(item.selectedQuantity.value))) {
-        selectedQty = Number(item.selectedQuantity.value)
-      } else if (item.countitemproduct_set && item.countitemproduct_set.length > 0) {
-        const firstQty = item.countitemproduct_set[0]
-        if (firstQty && !isNaN(Number(firstQty))) {
-          selectedQty = Number(firstQty)
-        }
+    const quantity = Number(item.quantity) || 1
+    const price = Number(item.price) || 0
+    let selectedQty = 1
+
+    // Получаем значение фасовки
+    if (item.variant) {
+      if (typeof item.variant === 'string') {
+        const match = item.variant.match(/(\d+\.?\d*)\s*(.*)/)
+        selectedQty = match ? parseFloat(match[1]) : 1
+      } else if (item.variant.value) {
+        selectedQty = parseFloat(item.variant.value) || 1
       }
-      
-      const itemTotalCost = price * selectedQty * quantity
-      return total + itemTotalCost
-    } catch (error) {
-      console.error('Ошибка расчета для товара:', item, error)
-      return total
     }
+
+    return total + (price * selectedQty * quantity)
   }, 0).toFixed(2)
 })
 // Функция обновления количества товара

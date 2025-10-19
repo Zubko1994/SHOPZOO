@@ -17,6 +17,7 @@ interface Cards {
   description: string
   sale: {id: number; image: string; percent: number; title: string }
     promotion: string,
+    brand: {id: number; name: string}
 }
 
 interface CardsObj {
@@ -83,6 +84,7 @@ const prevSlide = () => {
             :image_prev="card.image_prev"
             :title="card.title"
             :price="card.price"
+            :brand="card.brand"
             :description="card.description",
                         :guaranteed_analysis="card.guaranteed_analysis"
                         :key_features="card.key_features"

@@ -27,6 +27,7 @@ const props = withDefaults(
   key_features: string
   guaranteed_analysis: string
   nutritional_supplements: string
+  brand: {id: number; name: string}
 }>(),
 {
     promotion: "Акция",
@@ -66,43 +67,68 @@ const emit = defineEmits(['updateCategory', 'addInBasket'])
 
 
 
-function addProduct(){
- 
-  const product = {
-    id: props.id, // ← Используем ID товара, а не случайный!
+function addProduct() {
+  let selectedQtyValue = 1;
+  let selectedQtyUnit = '';
+
+  // Парсим выбранную фасовку
+  if (selectedQuantity.value) {
+    if (typeof selectedQuantity.value === 'string') {
+      const match = selectedQuantity.value.match(/(\d+\.?\d*)\s*(.*)/);
+      if (match) {
+        selectedQtyValue = parseFloat(match[1]);
+        selectedQtyUnit = match[2] || '';
+      }
+    } else {
+      // Если это объект
+      selectedQtyValue = parseFloat(selectedQuantity.value.value) || 1;
+      selectedQtyUnit = selectedQuantity.value.unit || '';
+    }
+  }
+
+  const productToAdd = {
+    id: props.id,
+    image_prev: props.image_prev,
+    brand: props.brand.name,
     description: props.description,
-    image_prev: props.image_prev, 
+    key_features: props.key_features,
     countitemproduct_set: props.countitemproduct_set,
     title: props.title,
     price: Number(props.price),
-    quantity: Number(selectedQuantity.value) || 1, // ← Преобразуем в число
-    variant: selectedQuantity.value, // ← Это вариант товара
-    totalCost: (Number(props.price) * (Number(selectedQuantity.value) || 1)).toFixed(2)
-  };
-
-  const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-  
-  // Ключ для сравнения товаров (ДОЛЖЕН БЫТЬ УНИКАЛЬНЫМ ДЛЯ КАЖДОЙ КОМБИНАЦИИ)
-  const productKey = `${product.id}-${product.variant}-${product.title}`;
-  
-  // Проверяем, есть ли уже такой товар
-  const existingIndex = cart.findIndex(item => 
-    `${item.id}-${item.variant}-${item.title}` === productKey
-  );
-  
-  if (existingIndex !== -1) {
-    // Если товар уже есть - увеличиваем количество
-    // cart[existingIndex].quantity += product.quantity;
-    // cart[existingIndex].totalCost = (cart[existingIndex].price * cart[existingIndex].quantity).toFixed(2);
-  } else {
-    // Если нет - добавляем новый товар
-    cart.push(product);
+    quantity: countProduct.value,
+    variant: {
+      value: selectedQtyValue.toString(),
+      unit: selectedQtyUnit
+    },
+    totalCost: (Number(props.price) * selectedQtyValue * countProduct.value).toFixed(2),
   }
-  
-  localStorage.setItem("cart", JSON.stringify(cart));
-  window.dispatchEvent(new CustomEvent('cartUpdated'))
-}
 
+  console.log('Adding product to cart:', productToAdd)
+
+  const cart = JSON.parse(localStorage.getItem('cart') || '[]')
+  
+  const productKey = `${productToAdd.id}-${productToAdd.variant.value}-${productToAdd.variant.unit}-${productToAdd.title}`
+
+  const existingIndex = cart.findIndex(
+    (item) => 
+      `${item.id}-${item.variant?.value}-${item.variant?.unit}-${item.title}` === productKey
+  )
+
+  if (existingIndex !== -1) {
+    cart[existingIndex].quantity += productToAdd.quantity
+    cart[existingIndex].totalCost = (
+      Number(cart[existingIndex].price) *
+      (parseFloat(cart[existingIndex].variant?.value) || 1) *
+      cart[existingIndex].quantity
+    ).toFixed(2)
+  } else {
+    cart.push(productToAdd)
+  }
+
+  localStorage.setItem('cart', JSON.stringify(cart))
+  window.dispatchEvent(new CustomEvent('cartUpdated'))
+
+}
 
 
 const showModal = ref(false)
@@ -159,6 +185,7 @@ const storeProductData = () => {
     sale: props.sale,
     description: props.description,
     key_features: props.key_features,
+    brand: props.brand,
     guaranteed_analysis: props.guaranteed_analysis,
   nutritional_supplements: props.nutritional_supplements
   }

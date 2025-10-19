@@ -90,12 +90,15 @@ const searchProduct = (query: string) => {
   emit('searchProduct', searchQuery.value);
 }
 
+
+
 const selectProduct = (product: any) => {
-  // Переход на страницу товара при выборе из поиска
-  router.push(`/product/${product.id}`);
+  console.log('Product selected in App:', product);
+  // Переход на страницу товара
+  if (product && product.id) {
+    router.push(`/productdescription/${product.id}`);
+  }
 }
-
-
 </script>
 
 <template>

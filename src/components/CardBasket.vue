@@ -20,6 +20,36 @@ const props = withDefaults(defineProps<{
   }
 )
 
+// Добавьте вычисляемое свойство для стоимости товара
+const itemTotalCost = computed(() => {
+  const quantity = Number(props.quantity) || 1
+  const price = Number(props.price) || 0
+  let selectedQty = 1
+console.log(props.variant.value)
+  // Получаем значение фасовки
+  if (props.variant) {
+    if (typeof props.variant === 'string') {
+      const match = props.variant.match(/(\d+\.?\d*)\s*(.*)/)
+      selectedQty = match ? parseFloat(match[1]) : 1
+    } else if (props.variant.value) {
+      selectedQty = parseFloat(props.variant.value) || 1
+    }
+  }
+
+  return (price * selectedQty * quantity).toFixed(2)
+})
+
+// Функция для отображения фасовки
+const displayVariant = computed(() => {
+  if (!props.variant) return ''
+  
+  if (typeof props.variant === 'string') {
+    return props.variant
+  } else {
+    return `${props.variant.value} ${props.variant.unit}`
+  }
+})
+
 
 const selectedQuantity = ref<string | null>(null)
 const totalPrice = ref(props.price)
@@ -29,7 +59,7 @@ const emit = defineEmits(['remove-item', 'quantityitem', 'update-total'])
 
 const updateTotalPrice = (quantity: string) => {
   selectedQuantity.value = quantity
-  const selectedQty = Number(quantity) || 1
+  const selectedQty = Number(quantity.value) || 1
   console.log(quantity.value)
   
   // Пересчитываем totalPrice с учетом выбранного количества и текущего количества товаров
@@ -46,7 +76,7 @@ function updateCount(newQuantity: number) {
   // totalCost = цена * выбранноеКоличество * количество товаров
   countProduct.value = newQuantity
   const selectedQty = Number(selectedQuantity.value) || 1
-  const totalCostValue = (Number(props.price) * selectedQty * newQuantity).toFixed(2)
+  const totalCostValue = (Number(props.price * selectedQty * countProduct.value) * newQuantity).toFixed(2)
   
   const cart = JSON.parse(localStorage.getItem('cart') || '[]')
   const updatedCart = cart.map(item => {
@@ -66,7 +96,16 @@ function updateCount(newQuantity: number) {
   // Уведомляем родительский компонент об изменении стоимости
   emit('update-total', totalCostValue)
 }
-
+// Функция для парсинга значения фасовки
+const parseQuantityValue = (quantity: string | null): number => {
+  if (!quantity) return 1
+  
+  if (typeof quantity === 'string') {
+    const match = quantity.match(/(\d+\.?\d*)\s*(.*)/)
+    return match ? parseFloat(match[1]) : 1
+  }
+  return 1
+}
 
 
 function increaseCount() {
@@ -74,7 +113,9 @@ function increaseCount() {
   countProduct.value = newQuantity
   
   // Пересчитываем totalPrice с учетом выбранного количества
-  const selectedQty = Number(selectedQuantity.value) || 1
+  const selectedQty = parseQuantityValue(selectedQuantity.value)
+  console.log(selectedQty)
+  console.log(newQuantity)
   totalPrice.value = Number((props.price * selectedQty * newQuantity).toFixed(2))
   
   updateCount(newQuantity)
@@ -88,10 +129,12 @@ function decreaseCount() {
     countProduct.value = newQuantity
     
     // Пересчитываем totalPrice с учетом выбранного количества
-    const selectedQty = Number(selectedQuantity.value) || 1
-    totalPrice.value = Number((props.price * selectedQty * newQuantity).toFixed(2))
+    const selectedQty = parseQuantityValue(selectedQuantity.value) //
+    console.log(selectedQty)
+    console.log(selectedQty)
+    totalPrice.value = Number(((props.price) * selectedQty * newQuantity).toFixed(2))
     
-    updateCount(newQuantity)
+    // updateCount(newQuantity)
   }
 }
 
@@ -129,6 +172,10 @@ watch(totalPrice, (newVal) => {
   console.log('Цена обновлена:', newVal)
 })
 
+watch(countProduct, (newVal) => {
+countProduct.value = newVal
+})
+
 </script>
 
 <template>
@@ -147,6 +194,7 @@ watch(totalPrice, (newVal) => {
           :title="props.title"
         />
         <div class="product-info_quantity">
+          {{ displayVariant }}
            <Quantity
            
             :list="props.countitemproduct_set || []"
@@ -166,7 +214,7 @@ watch(totalPrice, (newVal) => {
             <img src="../assets/image/plus_minor.svg" alt="плюс" />
           </button>
         </div>
-        <div class="cost">{{ totalPrice }} BYN</div>
+        <div class="cost">{{ (totalPrice).toFixed(2) }} BYN</div>
       </div>
       <button @click="removeItem" class="trash-can">
         <img src="../assets/svg/Delete.svg" alt="удалить товар" />

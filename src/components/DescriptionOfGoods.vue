@@ -21,6 +21,7 @@ const props = withDefaults(
     variant: string
     description: string
     key_features: string
+    brand: {id: number; name: string}
     guaranteed_analysis: string
     nutritional_supplements: string
     sale: {id: number; image: string; percent: number; title: string }
@@ -141,6 +142,7 @@ const product = ref({
   guaranteed_analysis: '',
   key_features: '',
   nutritional_supplements: '',
+  brand: { id: 0, name: ''},
 })
 
 const selectedQuantity = ref<{ value: string; unit: string } | null>(null)
@@ -201,44 +203,32 @@ watch(
 
 const loadProductData = () => {
   isLoading.value = true
-
+  
+  // Пробуем загрузить из localStorage
   const storedProduct = localStorage.getItem('currentProduct')
   console.log('Loading product from localStorage:', storedProduct)
-
+  
   if (storedProduct) {
     try {
       const parsedProduct = JSON.parse(storedProduct)
-      product.value = parsedProduct
-      // Не устанавливаем totalPrice здесь, он будет пересчитан в recalculateTotalPrice
-
-      console.log('Successfully loaded product:', parsedProduct)
-
-      // Автоматически выбираем первое значение
-      if (
-        parsedProduct.countitemproduct_set &&
-        parsedProduct.countitemproduct_set.length > 0
-      ) {
+      product.value = { ...product.value, ...parsedProduct }
+      console.log('Product data loaded successfully:', product.value)
+      
+      // Инициализируем выбранное количество
+      if (parsedProduct.countitemproduct_set && parsedProduct.countitemproduct_set.length > 0) {
         const firstItem = parsedProduct.countitemproduct_set[0]
-
         if (typeof firstItem === 'string') {
-          const match = firstItem.match(/(\d+)\s*(.*)/)
+          const match = firstItem.match(/(\d+\.?\d*)\s*(.*)/)
           if (match) {
             selectedQuantity.value = {
               value: match[1],
               unit: match[2] || '',
             }
-          } else {
-            selectedQuantity.value = {
-              value: firstItem,
-              unit: '',
-            }
           }
-        } else {
-          selectedQuantity.value = firstItem
         }
       }
-
-      // Пересчитываем общую стоимость после загрузки данных
+      
+      // Пересчитываем цену
       recalculateTotalPrice()
     } catch (error) {
       console.error('Error parsing product data:', error)
@@ -246,10 +236,9 @@ const loadProductData = () => {
   } else {
     console.warn('No product data found in localStorage')
   }
-
+  
   isLoading.value = false
 }
-
 // Функция для пересчета общей стоимости
 const recalculateTotalPrice = () => {
   if (selectedQuantity.value && product.value.price) {
@@ -298,20 +287,71 @@ function decreaseCount() {
   }
 }
 
+// function addProduct() {
+//   // Используем данные из product.value, а не из props
+//   const productToAdd = {
+//     id: props.id, // ← Используем ID товара, а не случайный!
+//     image_prev: product.value.image_prev,
+//     description: product.value.description,
+//     key_features: product.value.key_features,
+//     countitemproduct_set: product.value.countitemproduct_set,
+//     title: product.value.title,
+//     price: Number(product.value.price),
+//     quantity: Number(selectedQuantity.value) || 1, // ← Преобразуем в число
+//     variant: selectedQuantity.value, // ← Это вариант товара
+//     totalCost: (
+//       Number(product.value.price) * (Number(selectedQuantity.value) || 1)
+//     ).toFixed(2),
+//   }
+
+//   console.log('Adding product to cart:', productToAdd)
+
+//   const cart = JSON.parse(localStorage.getItem('cart') || '[]')
+
+//   // Ключ для сравнения товаров
+//   const productKey = `${productToAdd.id}-${productToAdd.variant}-${productToAdd.title}`
+
+//   // Проверяем, есть ли уже такой товар
+//   const existingIndex = cart.findIndex(
+//     (item) => `${item.id}-${item.variant}-${item.title}` === productKey
+//   )
+
+//   if (existingIndex !== -1) {
+//     // Если товар уже есть - увеличиваем количество
+//     cart[existingIndex].quantity += productToAdd.quantity
+//     cart[existingIndex].totalCost = (
+//       Number(cart[existingIndex].price) *
+//       Number(cart[existingIndex].selectedQuantity?.value || 1) *
+//       cart[existingIndex].quantity
+//     ).toFixed(2)
+//   } else {
+//     // Если нет - добавляем новый товар
+//     cart.push(productToAdd)
+//   }
+
+//   localStorage.setItem('cart', JSON.stringify(cart))
+//   window.dispatchEvent(new CustomEvent('cartUpdated'))
+
+//   console.log('Cart updated:', cart)
+// }
+
 function addProduct() {
-  // Используем данные из product.value, а не из props
   const productToAdd = {
-    id: props.id, // ← Используем ID товара, а не случайный!
+    id: props.id,
     image_prev: product.value.image_prev,
     description: product.value.description,
     key_features: product.value.key_features,
+    brand: product.value.brand.name,
     countitemproduct_set: product.value.countitemproduct_set,
     title: product.value.title,
     price: Number(product.value.price),
-    quantity: Number(selectedQuantity.value) || 1, // ← Преобразуем в число
-    variant: selectedQuantity.value, // ← Это вариант товара
+    quantity: countProduct.value, // количество упаковок
+    variant: selectedQuantity.value, // выбранная фасовка
+    // Правильный расчет стоимости
     totalCost: (
-      Number(product.value.price) * (Number(selectedQuantity.value) || 1)
+      Number(product.value.price) * 
+      (parseFloat(selectedQuantity.value?.value) || 1) * 
+      countProduct.value
     ).toFixed(2),
   }
 
@@ -319,32 +359,32 @@ function addProduct() {
 
   const cart = JSON.parse(localStorage.getItem('cart') || '[]')
 
-  // Ключ для сравнения товаров
-  const productKey = `${productToAdd.id}-${productToAdd.variant}-${productToAdd.title}`
+  // Правильный ключ для сравнения товаров
+  const productKey = `${productToAdd.id}-${productToAdd.variant?.value}-${productToAdd.variant?.unit}-${productToAdd.title}`
 
-  // Проверяем, есть ли уже такой товар
   const existingIndex = cart.findIndex(
-    (item) => `${item.id}-${item.variant}-${item.title}` === productKey
+    (item) => 
+      `${item.id}-${item.variant?.value}-${item.variant?.unit}-${item.title}` === productKey
   )
 
   if (existingIndex !== -1) {
-    // Если товар уже есть - увеличиваем количество
+    // Обновляем существующий товар
     cart[existingIndex].quantity += productToAdd.quantity
+    // Пересчитываем стоимость
     cart[existingIndex].totalCost = (
       Number(cart[existingIndex].price) *
-      Number(cart[existingIndex].selectedQuantity?.value || 1) *
+      (parseFloat(cart[existingIndex].variant?.value) || 1) *
       cart[existingIndex].quantity
     ).toFixed(2)
   } else {
-    // Если нет - добавляем новый товар
     cart.push(productToAdd)
   }
 
   localStorage.setItem('cart', JSON.stringify(cart))
   window.dispatchEvent(new CustomEvent('cartUpdated'))
-
-  console.log('Cart updated:', cart)
+  showModalProductAddBasket()
 }
+
 
 // Наблюдатель за изменением selectedQuantity и countProduct для автоматического пересчета
 watch(
@@ -371,6 +411,14 @@ watch(
 {{props.promotion}}
       </div>
       </div>
+      <RouterLink 
+  :to="`/catalog?brand=${product.brand?.id}`"
+  class="custom-weight-btn brand-link"
+>
+  <div class="wrapper">
+    <div class='brand_special'>Смотреть все бренды {{ product.brand?.name }}</div>
+  </div>
+</RouterLink>
         <div class="product_information">
           <div class="wrapper-image">
             <img
@@ -797,6 +845,17 @@ align-items: flex-start;
   justify-content: space-between;
 }
 
+.brand-link {
+  text-decoration: none;
+  display: inline-block;
+  
+  &:hover {
+    .brand_special {
+      color: var(--highlight);
+    }
+  }
+}
+
 .quantity {
   margin-bottom: 24px;
 }
@@ -1173,6 +1232,12 @@ text-align: left;
   overflow: hidden;
   display: -webkit-box;
   -webkit-box-orient: vertical;
+}
+
+.brand_special {
+  font-size: 16px;
+  color: rgba(44, 110, 203, 1);
+  margin-bottom: 32px;
 }
 
 .card_image {
@@ -1643,7 +1708,7 @@ li {
   background-color: var(--bg-default);
   padding: 0;
   text-align: left;
-  margin-top: 8px;
+  
   color:  rgba(44, 110, 203, 1);
 font-family: 'SFProText';
 font-size: 14px;
@@ -1671,7 +1736,6 @@ text-align: left;
   background-color: var(--bg-default);
   padding: 0;
   text-align: left;
-  margin-top: 8px;
   color: rgba(44, 110, 203, 1);
   font-family: 'SFProText';
   font-size: 14px;

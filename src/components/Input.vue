@@ -19,7 +19,7 @@ const handleSearch = (event: Event) => {
 }
 
 const handleSelectProduct = (product: any) => {
-  searchQuery.value = product.title;
+  searchQuery.value = ''; // ОЧИЩАЕМ ПОЛЕ ПОИСКА
   showDropdown.value = false;
   emit('selectProduct', product);
 }

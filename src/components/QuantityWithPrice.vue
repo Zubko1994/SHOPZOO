@@ -20,11 +20,9 @@ const listItems = computed(() => {
   return props.list || []
 })
 
-function quantityHandler (item: string){
+function quantityHandler(item: any) {
   selectedItem.value = item
-  console.log(item)
-  emit('updateQuantity', item);
-  
+  emit('updateQuantity', item) // передаем объект {value, unit}
 }
 </script>
 

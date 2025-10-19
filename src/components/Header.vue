@@ -10,7 +10,10 @@ import Input from './Input.vue'
 import FormBackCall from '../components/FormBackCall.vue'
 import AcceptRequest from './AcceptRequest.vue'
 import { ref, onMounted, onUnmounted, computed } from 'vue'
+import { useRouter } from 'vue-router'
 
+
+const router = useRouter()
 const showModalWindow = ref(false);
 const showAcceptWindow = ref(false);
 const products = ref([]); // Добавляем список продуктов для поиска
@@ -49,12 +52,22 @@ const searchProduct = (query: string) => {
   console.log(searchQuery.value)
 }
 
-const selectProduct = (product: any) => {
-  emit('selectProduct', product);
-  // Можно добавить переход на страницу товара
-  console.log('Selected product:', product);
-}
 
+const selectProduct = (product: any) => {
+  console.log('Product selected in header:', product);
+  searchQuery.value = '';
+  emit('selectProduct', product);
+  
+  // ДОБАВЬТЕ ЭТУ ПРОВЕРКУ:
+  if (product && product.id) {
+    console.log('Navigating to product with ID:', product.id);
+    // Сохраняем товар в localStorage для страницы товара
+    localStorage.setItem('currentProduct', JSON.stringify(product));
+    router.push(`/productdescription/${product.id}`);
+  } else {
+    console.error('Product ID is missing:', product);
+  }
+}
 interface Cards {
   id: number
   image_prev: string
@@ -90,32 +103,35 @@ const allCards = computed(() => {
   return dataCards.value?.flatMap((page) => page.results) || []
 })
 
-// Функция для загрузки всех страниц
+// ЗАМЕНИТЕ существующую функцию loadAllProducts на эту:
 const loadAllProducts = async () => {
   try {
     console.log('Loading products for search...');
     
-    // Загружаем все страницы параллельно
-    const promises = pageUrls.map(async (url) => {
+    const allProducts = [];
+    
+    // Загружаем все страницы последовательно
+    for (let page = 1; page <= 7; page++) {
+      const url = `https://oliver1ck.pythonanywhere.com/api/get_products_filter/?order=date_create&page=${page}`;
       try {
         const response = await fetch(url);
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-        return await response.json();
+        const data = await response.json();
+        
+        if (data.results && Array.isArray(data.results)) {
+          // Фильтруем только валидные товары с ID
+          const validProducts = data.results.filter(product => 
+            product && product.id && product.title
+          );
+          allProducts.push(...validProducts);
+        }
       } catch (error) {
-        console.error(`Error loading page ${url}:`, error);
-        return { results: [] };
+        console.error(`Error loading page ${page}:`, error);
       }
-    });
-
-    const allPages = await Promise.all(promises);
-    console.log(allPages.values)
-    
-    // Объединяем все результаты
-    const allProducts = allPages.flatMap(page => page.results || []);
-    console.log(allProducts)
+    }
     
     products.value = allProducts;
-    console.log(`Loaded ${allProducts.length} products for search`);
+    console.log(`Loaded ${allProducts.length} valid products for search`);
     
   } catch (error) {
     console.error('Error loading products for search:', error);

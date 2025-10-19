@@ -82,6 +82,7 @@ export const router = createRouter({
       component: () => import('../pages/ProductDescription.vue'),
     },
 
+
     
 
     

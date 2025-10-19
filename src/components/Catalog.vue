@@ -17,7 +17,9 @@ import FilterTypeGoods from '../components/FilterTypeGoods.vue'
 import FiltersButton from '../components/FiltersButton.vue'
 import { useAnimalStore } from '../store/animalStore.js'
 import { inject } from 'vue';
+import { useRoute } from 'vue-router'
 
+const route = useRoute()
 const sortOrder = ref('date_create')
 const currentPage = ref(1)
 const totalPages = ref(0)
@@ -32,7 +34,6 @@ const props = withDefaults(
     size?: number
     count?: number
     id?: Number
-    brand?: object
     category?: object
     sale: {id: number; image: string; percent: number; title: string }
     promotion: string,
@@ -40,6 +41,7 @@ const props = withDefaults(
     selectedAnimalId?: number | null 
     selectedCategory?: number | null
     searchQuery?: string
+    brand: {id: number; name: string}
 
   }>(),
   {
@@ -107,6 +109,19 @@ const searchBrandQuery = ref('')
 
 
 onMounted(() => {
+
+  // Обработка query параметров для фильтрации по бренду
+  const urlParams = new URLSearchParams(window.location.search);
+   // Обработка query параметров для фильтрации по бренду
+  const brandId = route.query.brand;
+  if (brandId) {
+    const brandIdNum = parseInt(brandId as string);
+    if (!isNaN(brandIdNum)) {
+      choiceBrand.value = [brandIdNum];
+      console.log('Filtering by brand ID from URL:', brandIdNum);
+    }
+  }
+  
   Promise.all(
     pageUrls.map((url) =>
       fetch(url)
@@ -538,7 +553,7 @@ watch([choiceCategory, selectedCategory, choiceBrand], () => {
                         :brand="card.brand"
                         :category="card.category"
                         :sale="card.sale"
-          
+                       
                         :id="id"
                         :description="card.description",
                         :guaranteed_analysis="card.guaranteed_analysis"

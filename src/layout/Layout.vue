@@ -4,7 +4,10 @@ import Header from '../components/Header.vue'
 import Footer from '../components/Footer.vue'
 import HeaderActive from '../components/HeaderActive.vue'
 import { provide, ref } from 'vue';
+import { useRouter } from 'vue-router';
 
+
+const router = useRouter();
 const props = defineProps<{
   isActive?: boolean
 }>();
@@ -28,11 +31,13 @@ const searchProduct = (query: string) => {
 }
 
 const selectProduct = (product: any) => {
-  emit('selectProduct', product);
-  // Можно добавить логику перехода к товару
   console.log('Product selected in layout:', product);
+  // Переход на страницу товара
+  if (product && product.id) {
+    router.push(`/productdescription/${product.id}`);
+  }
+  emit('selectProduct', product);
 }
-
 
 
 </script>
