@@ -1,7 +1,7 @@
 <!-- @format -->
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import Quantity from './Quantity.vue'
 import ImageCard from './ImageCard.vue'
 import Text from './Text.vue'
@@ -48,18 +48,19 @@ const updateTotalPrice = (quantity: string) => {
   const info = JSON.parse(JSON.stringify(quantity))
   console.log(info.value)
   totalPrice.value = (props.price * info.value).toFixed(2)
-  
-  watch(totalPrice, (newVal) => {
-    if(newVal){
-    totalPrice.value = newVal
-    }
-  })
 }
 
-watch(() => props.price, () => {
-  selectedQuantity.value = null
-  return props.price
+// АВТОМАТИЧЕСКИЙ ВЫБОР ПЕРВОЙ ФАСОВКИ
+onMounted(() => {
+  if (props.countitemproduct_set && props.countitemproduct_set.length > 0 && !selectedQuantity.value) {
+    selectedQuantity.value = props.countitemproduct_set[0];
+    updateTotalPrice(props.countitemproduct_set[0]);
+  }
 })
+// watch(() => props.price, () => {
+//   selectedQuantity.value = null
+//   return props.price
+// })
 
 
 
@@ -96,11 +97,13 @@ function addProduct() {
     title: props.title,
     price: Number(props.price),
     quantity: countProduct.value,
-    variant: {
-      value: selectedQtyValue.toString(),
-      unit: selectedQtyUnit
-    },
-    totalCost: (Number(props.price) * selectedQtyValue * countProduct.value).toFixed(2),
+    variant: selectedQuantity.value,
+    selectedQuantity: selectedQuantity.value,
+    totalCost: (
+    Number(props.price) * 
+    (parseFloat(selectedQuantity.value?.value) || 1) * 
+    countProduct.value
+  ).toFixed(2),
   }
 
   console.log('Adding product to cart:', productToAdd)

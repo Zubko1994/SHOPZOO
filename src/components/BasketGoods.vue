@@ -139,14 +139,14 @@ const totalCost = computed(() => {
     const price = Number(item.price) || 0
     let selectedQty = 1
 
-    // Получаем значение фасовки
-    if (item.variant) {
-      if (typeof item.variant === 'string') {
-        const match = item.variant.match(/(\d+\.?\d*)\s*(.*)/)
-        selectedQty = match ? parseFloat(match[1]) : 1
-      } else if (item.variant.value) {
-        selectedQty = parseFloat(item.variant.value) || 1
-      }
+    // Получаем значение фасовки из правильного поля
+    if (item.selectedQuantity && item.selectedQuantity.value) {
+      selectedQty = parseFloat(item.selectedQuantity.value) || 1
+    } else if (item.variant && item.variant.value) {
+      selectedQty = parseFloat(item.variant.value) || 1
+    } else if (typeof item.variant === 'string') {
+      const match = item.variant.match(/(\d+\.?\d*)\s*(.*)/)
+      selectedQty = match ? parseFloat(match[1]) : 1
     }
 
     return total + (price * selectedQty * quantity)
@@ -168,15 +168,44 @@ const totalCost = computed(() => {
 // }
 
 
-// Функция удаления товара
-const removeItem = (id: number, variant: string, title: string) => {
-  const updatedCart = cartItems.value.filter(
-    item => !(item.id === id && item.variant === variant && item.title === title)
-  )
+const removeItem = (id: number, variant: any, title: string) => {
+  console.log('Removing item:', { id, variant, title })
+  
+  const cart = JSON.parse(localStorage.getItem('cart') || '[]')
+  
+  // Правильно фильтруем товары для удаления
+  const updatedCart = cart.filter((item: CartItem) => {
+    // Если variant - объект, сравниваем по value и unit
+    if (variant && typeof variant === 'object') {
+      return !(
+        item.id === id && 
+        item.title === title &&
+        item.variant?.value === variant.value &&
+        item.variant?.unit === variant.unit
+      )
+    } 
+    // Если variant - строка, сравниваем как строку
+    else {
+      return !(
+        item.id === id && 
+        item.title === title &&
+        item.variant === variant
+      )
+    }
+  })
+  
+  console.log('Cart after removal:', updatedCart)
   
   cartItems.value = updatedCart
   localStorage.setItem('cart', JSON.stringify(updatedCart))
-  forceUpdate.value++ // ← ВАЖНО: добавляем принудительное обновление
+  forceUpdate.value++
+  
+  // Обновляем счетчик корзины
+  const totalCount = updatedCart.reduce((sum: number, item: CartItem) => sum + Number(item.quantity), 0)
+  localStorage.setItem('cartCount', totalCount.toString())
+  window.dispatchEvent(new CustomEvent('cartCountUpdated', {
+    detail: { count: totalCount }
+  }))
 }
 
 // Вычисляемые свойства для общей стоимости и количества
@@ -201,13 +230,12 @@ const totalItems = computed(() => {
 
 
 
-// Загружаем корзину при монтировании и подписываемся на обновления
 onMounted(() => {
   loadCart()
   window.addEventListener('cartUpdated', loadCart)
 })
 
-onUnmounted(() => {
+onUnmounted(() => {  // Использовать onUnmounted для очистки
   window.removeEventListener('cartUpdated', loadCart)
 })
 
@@ -238,10 +266,10 @@ const fixAllTotalCosts = () => {
   loadCart()
 }
 
-// Вызовите эту функцию один раз для исправления существующих данных
-onMounted(() => {
-  fixAllTotalCosts()
-})
+// // Вызовите эту функцию один раз для исправления существующих данных
+// onMounted(() => {
+//   fixAllTotalCosts()
+// })
 
 watch(cartItems, (newItems) => {
   const totalCount = newItems.reduce((sum, item) => sum + item.quantity, 0)

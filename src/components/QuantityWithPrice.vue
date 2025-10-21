@@ -1,7 +1,7 @@
 <!-- @format -->
 <script setup lang="ts">
-import { ref, defineEmits, computed } from 'vue';
 import Button from './Button.vue';
+import { ref, defineEmits, computed, onMounted, watch } from 'vue';
 
 const selectedItem = ref<any | null>(null)
 
@@ -20,6 +20,23 @@ const listItems = computed(() => {
   return props.list || []
 })
 
+// АВТОМАТИЧЕСКИЙ ВЫБОР ПЕРВОЙ ФАСОВКИ
+onMounted(() => {
+  if (listItems.value.length > 0 && !selectedItem.value) {
+    selectedItem.value = listItems.value[0];
+    emit('updateQuantity', listItems.value[0]);
+  }
+})
+
+// Следим за изменениями списка
+watch(listItems, (newList) => {
+  if (newList && newList.length > 0 && !selectedItem.value) {
+    selectedItem.value = newList[0];
+    emit('updateQuantity', newList[0]);
+  }
+})
+
+
 function quantityHandler(item: any) {
   selectedItem.value = item
   emit('updateQuantity', item) // передаем объект {value, unit}
@@ -28,7 +45,7 @@ function quantityHandler(item: any) {
 
 <template>
   <div class="wrapper-quantity">
-    <Button v-for="item in listItems" :key="item" @custom-click="quantityHandler(item)"  kind="quantity-price" :isActive="item === selectedItem">
+    <Button v-for="item in listItems" :key="item" @custom-click="quantityHandler(item)"  kind="quantity-price" :isActive="item === selectedItem || (!selectedItem && item === listItems[0])">
       <div class="wrapper">
         <div>{{item.value}} {{item.unit}}</div>
         <div class="quantity-price-price">{{(props.price*item.value).toFixed(2)}} BYN</div>

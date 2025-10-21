@@ -108,7 +108,7 @@ const buyOneClickClose = () => {
 }
 
 const showModalProductAddBasket = () => {
-  showModal.value = !showModal.value
+  showModal.value = true;
 }
 
 const showModalWindowOrder = () => {
@@ -201,44 +201,44 @@ watch(
   }
 )
 
-const loadProductData = () => {
-  isLoading.value = true
+// const loadProductData = () => {
+//   isLoading.value = true
   
-  // Пробуем загрузить из localStorage
-  const storedProduct = localStorage.getItem('currentProduct')
-  console.log('Loading product from localStorage:', storedProduct)
+//   // Пробуем загрузить из localStorage
+//   const storedProduct = localStorage.getItem('currentProduct')
+//   console.log('Loading product from localStorage:', storedProduct)
   
-  if (storedProduct) {
-    try {
-      const parsedProduct = JSON.parse(storedProduct)
-      product.value = { ...product.value, ...parsedProduct }
-      console.log('Product data loaded successfully:', product.value)
+//   if (storedProduct) {
+//     try {
+//       const parsedProduct = JSON.parse(storedProduct)
+//       product.value = { ...product.value, ...parsedProduct }
+//       console.log('Product data loaded successfully:', product.value)
       
-      // Инициализируем выбранное количество
-      if (parsedProduct.countitemproduct_set && parsedProduct.countitemproduct_set.length > 0) {
-        const firstItem = parsedProduct.countitemproduct_set[0]
-        if (typeof firstItem === 'string') {
-          const match = firstItem.match(/(\d+\.?\d*)\s*(.*)/)
-          if (match) {
-            selectedQuantity.value = {
-              value: match[1],
-              unit: match[2] || '',
-            }
-          }
-        }
-      }
+//       // Инициализируем выбранное количество
+//       if (parsedProduct.countitemproduct_set && parsedProduct.countitemproduct_set.length > 0) {
+//         const firstItem = parsedProduct.countitemproduct_set[0]
+//         if (typeof firstItem === 'string') {
+//           const match = firstItem.match(/(\d+\.?\d*)\s*(.*)/)
+//           if (match) {
+//             selectedQuantity.value = {
+//               value: match[1],
+//               unit: match[2] || '',
+//             }
+//           }
+//         }
+//       }
       
       // Пересчитываем цену
-      recalculateTotalPrice()
-    } catch (error) {
-      console.error('Error parsing product data:', error)
-    }
-  } else {
-    console.warn('No product data found in localStorage')
-  }
+//       recalculateTotalPrice()
+//     } catch (error) {
+//       console.error('Error parsing product data:', error)
+//     }
+//   } else {
+//     console.warn('No product data found in localStorage')
+//   }
   
-  isLoading.value = false
-}
+//   isLoading.value = false
+// }
 // Функция для пересчета общей стоимости
 const recalculateTotalPrice = () => {
   if (selectedQuantity.value && product.value.price) {
@@ -262,15 +262,82 @@ const updateTotalPrice = (quantity: any) => {
   recalculateTotalPrice()
 }
 
-// Обновите computed свойство safeSelectedQuantity
 const safeSelectedQuantity = computed(() => {
   if (isCustomWeightApplied.value && customWeight.value) {
-    return { value: customWeight.value, unit: 'кг' };
+    return { 
+      value: customWeight.value, 
+      unit: 'кг',
+      numericValue: parseFloat(customWeight.value) || 1
+    };
   }
-  return selectedQuantity.value || { value: '', unit: '' }
-})
+  
+  if (selectedQuantity.value) {
+    return {
+      ...selectedQuantity.value,
+      numericValue: parseFloat(selectedQuantity.value.value) || 1
+    };
+  }
+  
+  // Если ничего не выбрано, возвращаем значения по умолчанию
+  return { 
+    value: '', 
+    unit: '', 
+    numericValue: 1 
+  };
+});
 
+// Функция для автоматического выбора первой фасовки при загрузке
+const setDefaultQuantity = () => {
+  if (product.value.countitemproduct_set && product.value.countitemproduct_set.length > 0 && !selectedQuantity.value) {
+    const firstItem = product.value.countitemproduct_set[0];
+    if (typeof firstItem === 'string') {
+      const match = firstItem.match(/(\d+\.?\d*)\s*(.*)/);
+      if (match) {
+        selectedQuantity.value = {
+          value: match[1],
+          unit: match[2] || '',
+        };
+      }
+    } else {
+      // Если это уже объект
+      selectedQuantity.value = firstItem;
+    }
+    recalculateTotalPrice();
+  }
+};
 
+// Вызываем при загрузке данных
+const loadProductData = () => {
+  isLoading.value = true;
+  
+  const storedProduct = localStorage.getItem('currentProduct');
+  console.log('Loading product from localStorage:', storedProduct);
+  
+  if (storedProduct) {
+    try {
+      const parsedProduct = JSON.parse(storedProduct);
+      product.value = { ...product.value, ...parsedProduct };
+      console.log('Product data loaded successfully:', product.value);
+      
+      // Устанавливаем первую фасовку по умолчанию
+      setDefaultQuantity();
+      
+    } catch (error) {
+      console.error('Error parsing product data:', error);
+    }
+  } else {
+    console.warn('No product data found in localStorage');
+  }
+  
+  isLoading.value = false;
+};
+
+// Также вызываем при изменении списка фасовок
+watch(() => product.value.countitemproduct_set, (newList) => {
+  if (newList && newList.length > 0 && !selectedQuantity.value) {
+    setDefaultQuantity();
+  }
+});
 const displayPrice = computed(() => {
   return totalPrice.value.toFixed(2)
 })
@@ -394,6 +461,18 @@ watch(
   },
   { deep: true }
 )
+
+const stopWatcher = watch(
+  [selectedQuantity, countProduct],
+  () => {
+    recalculateTotalPrice()
+  },
+  { deep: true }
+)
+
+onUnmounted(() => {
+  stopWatcher()
+})
 </script>
 
 <template>
@@ -525,7 +604,7 @@ watch(
             </div>
               <div class="quantity_info">
                 Количество:
-                {{ (safeSelectedQuantity.value * countProduct).toFixed(1) }}
+                {{ (safeSelectedQuantity.numericValue * countProduct).toFixed(1) }}
                 {{ safeSelectedQuantity.unit }}
               </div>
             </div>
@@ -1649,7 +1728,7 @@ li {
   border-radius: 4px;
   font-family: 'SFProText';
   font-size: 14px;
-  width: 120px;
+  width: 150px;
   
   &:focus {
     outline: none;
@@ -1764,7 +1843,7 @@ text-align: left;
   border-radius: 4px;
   font-family: 'SFProText';
   font-size: 14px;
-  width: 120px;
+  width: 170px;
   transition: border-color 0.3s ease;
   
   &:focus {

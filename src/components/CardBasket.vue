@@ -5,6 +5,10 @@
 import Text from './Text.vue'
 import Quantity from './Quantity.vue'
 import { ref, computed, watch, onMounted } from 'vue'
+import { onUnmounted } from 'vue'
+
+const isComponentMounted = ref(true)
+
 
 const props = withDefaults(defineProps<{
   id: number
@@ -19,6 +23,8 @@ const props = withDefaults(defineProps<{
     quantity: 1,
   }
 )
+
+
 
 // Добавьте вычисляемое свойство для стоимости товара
 const itemTotalCost = computed(() => {
@@ -51,25 +57,37 @@ const displayVariant = computed(() => {
 })
 
 
-const selectedQuantity = ref<string | null>(null)
+const selectedQuantity = ref<{value: string, unit: string} | null>(null)
 const totalPrice = ref(props.price)
 const countProduct = ref(props.quantity) // ← Используем переданное количество
 
 const emit = defineEmits(['remove-item', 'quantityitem', 'update-total'])
 
-const updateTotalPrice = (quantity: string) => {
+const updateTotalPrice = (quantity: any) => {
   selectedQuantity.value = quantity
-  const selectedQty = Number(quantity.value) || 1
-  console.log(quantity.value)
+  recalculateTotalPrice()
   
-  // Пересчитываем totalPrice с учетом выбранного количества и текущего количества товаров
-  totalPrice.value = Number((props.price * selectedQty * countProduct.value).toFixed(2))
-  console.log(props.price)
-  console.log(selectedQty)
-  console.log(countProduct.value)
+  // Обновляем корзину с новой фасовкой
+  updateCartVariant(quantity)
+}
 
+// Новая функция для обновления варианта в корзине
+const updateCartVariant = (newVariant: any) => {
+  const cart = JSON.parse(localStorage.getItem('cart') || '[]')
+  const updatedCart = cart.map((item: any) => {
+    if (item.id === props.id && item.title === props.title) {
+      return {
+        ...item,
+        variant: newVariant,
+        selectedQuantity: newVariant,
+        totalCost: (Number(props.price) * (parseFloat(newVariant.value) || 1) * item.quantity).toFixed(2)
+      }
+    }
+    return item
+  })
   
-  updateCount(countProduct.value)
+  localStorage.setItem('cart', JSON.stringify(updatedCart))
+  window.dispatchEvent(new CustomEvent('cartUpdated'))
 }
 // Функция для обновления количества и сохранения
 function updateCount(newQuantity: number) {
@@ -151,21 +169,26 @@ const removeItem = () => {
   emit('remove-item', props.id, props.variant, props.title)
 }
 
+// Инициализируем выбранную фасовку из props
 onMounted(() => {
-  if (props.countitemproduct_set && props.countitemproduct_set.length > 0) {
-    const firstItem = props.countitemproduct_set[0]
-    if (typeof firstItem === 'string') {
-      const match = firstItem.match(/(\d+)\s*(.*)/)
+  if (props.variant) {
+    if (typeof props.variant === 'string') {
+      // Парсим строку в объект
+      const match = props.variant.match(/(\d+\.?\d*)\s*(.*)/)
       if (match) {
-        selectedQuantity.value = match[1]
-      } else {
-        selectedQuantity.value = firstItem
+        selectedQuantity.value = {
+          value: match[1],
+          unit: match[2] || ''
+        }
       }
     } else {
-      selectedQuantity.value = firstItem
+      // Если это уже объект
+      selectedQuantity.value = props.variant
     }
-    updateTotalPrice(selectedQuantity.value)
   }
+  
+  // Пересчитываем цену после инициализации
+  recalculateTotalPrice()
 })
 
 watch(totalPrice, (newVal) => {
@@ -175,6 +198,52 @@ watch(totalPrice, (newVal) => {
 watch(countProduct, (newVal) => {
 countProduct.value = newVal
 })
+
+watch(() => props.variant, (newVariant) => {
+  if (newVariant) {
+    if (typeof newVariant === 'string') {
+      const match = newVariant.match(/(\d+\.?\d*)\s*(.*)/)
+      if (match) {
+        selectedQuantity.value = {
+          value: match[1],
+          unit: match[2] || ''
+        }
+      }
+    } else {
+      selectedQuantity.value = newVariant
+    }
+    recalculateTotalPrice()
+  }
+})
+
+// Останавливаем watch при размонтировании
+const stopSelectedQuantityWatch = watch(selectedQuantity, (newVal) => {
+  if (!isComponentMounted.value) return
+  if(newVal){
+    selectedQuantity.value = newVal
+    updateCount(countProduct.value)
+  }
+})
+
+const stopTotalPriceWatch = watch(totalPrice, (newVal) => {
+  if (!isComponentMounted.value) return
+  console.log('Цена обновлена:', newVal)
+})
+
+onUnmounted(() => {
+  isComponentMounted.value = false
+  stopSelectedQuantityWatch()
+  stopTotalPriceWatch()
+})
+
+// Функция для пересчета цены
+const recalculateTotalPrice = () => {
+  if (selectedQuantity.value && props.price) {
+    const selectedQty = parseFloat(selectedQuantity.value.value) || 1
+    totalPrice.value = props.price * selectedQty * countProduct.value
+  }
+}
+
 
 </script>
 
@@ -196,9 +265,10 @@ countProduct.value = newVal
         <div class="product-info_quantity">
           {{ displayVariant }}
            <Quantity
-           
+           :isAtive="props.variant"
             :list="props.countitemproduct_set || []"
             @updateQuantity="updateTotalPrice"
+
           />
         </div>
       </div>

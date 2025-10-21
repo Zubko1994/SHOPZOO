@@ -9,8 +9,16 @@ const props = defineProps<{
   value: number,
   unit: string[],
   price: number,
-
+  selected?: {value: string, unit: string} | null
 }>()
+
+const isActive = (item: any) => {
+  if (!props.selected) return false
+  if (typeof item === 'string') {
+    return item === `${props.selected.value} ${props.selected.unit}`.trim()
+  }
+  return item.value === props.selected.value && item.unit === props.selected.unit
+}
 
 const emit = defineEmits(['updateQuantity']);
 
@@ -24,7 +32,7 @@ function quantityHandler (item: string){
 
 <template>
 <div class="wrapper-quantity">
-    <Button v-for="item in props.list" @custom-click="quantityHandler(item)" kind="quantity-basket" :isActive="item === selectedItem">
+    <Button v-for="item in props.list" @custom-click="quantityHandler(item)" kind="quantity-basket" :isActive="isActive(item)">
       {{ item.value }} {{ item.unit }}
     </Button>
   </div>
