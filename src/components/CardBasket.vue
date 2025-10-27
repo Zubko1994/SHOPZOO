@@ -18,6 +18,7 @@ const props = withDefaults(defineProps<{
   price: number
   quantity: number  
   variant: string   
+  selected: any
 }>(),
 {
     quantity: 1,
@@ -71,49 +72,81 @@ const updateTotalPrice = (quantity: any) => {
   updateCartVariant(quantity)
 }
 
-// Новая функция для обновления варианта в корзине
 const updateCartVariant = (newVariant: any) => {
-  const cart = JSON.parse(localStorage.getItem('cart') || '[]')
+  const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+  
   const updatedCart = cart.map((item: any) => {
     if (item.id === props.id && item.title === props.title) {
-      return {
+      const selectedQtyValue = typeof newVariant === 'object' ? 
+        parseFloat(newVariant.value) || 1 : 1;
+      
+      const updatedItem = {
         ...item,
         variant: newVariant,
         selectedQuantity: newVariant,
-        totalCost: (Number(props.price) * (parseFloat(newVariant.value) || 1) * item.quantity).toFixed(2)
-      }
+        totalCost: (Number(props.price) * selectedQtyValue * item.quantity).toFixed(2)
+      };
+      
+      // ДИСПАТЧИМ СОБЫТИЕ ОБНОВЛЕНИЯ
+      window.dispatchEvent(new CustomEvent('cartItemUpdated', {
+        detail: updatedItem
+      }));
+      
+      return updatedItem;
     }
-    return item
-  })
+    return item;
+  });
   
-  localStorage.setItem('cart', JSON.stringify(updatedCart))
-  window.dispatchEvent(new CustomEvent('cartUpdated'))
+  localStorage.setItem('cart', JSON.stringify(updatedCart));
+  window.dispatchEvent(new CustomEvent('cartUpdated'));
+  
+  // ПЕРЕСЧИТЫВАЕМ ОТОБРАЖАЕМУЮ ЦЕНУ
+  recalculateTotalPrice();
 }
 // Функция для обновления количества и сохранения
+// Функция для обновления количества и сохранения
 function updateCount(newQuantity: number) {
-  // totalCost = цена * выбранноеКоличество * количество товаров
   countProduct.value = newQuantity
-  const selectedQty = Number(selectedQuantity.value) || 1
-  const totalCostValue = (Number(props.price * selectedQty * countProduct.value) * newQuantity).toFixed(2)
   
-  const cart = JSON.parse(localStorage.getItem('cart') || '[]')
-  const updatedCart = cart.map(item => {
-    if (item.id === props.id && item.variant === props.variant && item.title === props.title) {
+  // ПЕРЕСЧИТЫВАЕМ С УЧЕТОМ ВЫБРАННОЙ ФАСОВКИ
+  const selectedQtyValue = selectedQuantity.value ? 
+    (typeof selectedQuantity.value === 'object' ? 
+      parseFloat(selectedQuantity.value.value) || 1 : 1) : 1;
+  
+  const totalCostValue = (Number(props.price) * selectedQtyValue * newQuantity).toFixed(2);
+  
+  const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+  const updatedCart = cart.map((item: any) => {
+    // ИСПРАВЛЕННОЕ СРАВНЕНИЕ ДЛЯ НАХОЖДЕНИЯ ТОВАРА
+    const isSameItem = item.id === props.id && 
+      item.title === props.title &&
+      JSON.stringify(item.variant) === JSON.stringify(props.variant);
+    
+    if (isSameItem) {
       return { 
         ...item, 
         quantity: newQuantity, 
         totalCost: totalCostValue,
         selectedQuantity: selectedQuantity.value
-      }
+      };
     }
-    return item
-  })
+    return item;
+  });
   
-  localStorage.setItem('cart', JSON.stringify(updatedCart))
-  window.dispatchEvent(new CustomEvent('cartUpdated'))
+  localStorage.setItem('cart', JSON.stringify(updatedCart));
+  
+  // ДИСПАТЧИМ СОБЫТИЕ С ОБНОВЛЕННОЙ КОРЗИНОЙ
+  window.dispatchEvent(new CustomEvent('cartUpdated', {
+    detail: { cart: updatedCart }
+  }));
+  
+  // Пересчитываем отображаемую цену
+  recalculateTotalPrice();
+  
   // Уведомляем родительский компонент об изменении стоимости
-  emit('update-total', totalCostValue)
+  emit('update-total');
 }
+
 // Функция для парсинга значения фасовки
 const parseQuantityValue = (quantity: string | null): number => {
   if (!quantity) return 1
@@ -127,42 +160,22 @@ const parseQuantityValue = (quantity: string | null): number => {
 
 
 function increaseCount() {
-  const newQuantity = countProduct.value + 1
-  countProduct.value = newQuantity
-  
-  // Пересчитываем totalPrice с учетом выбранного количества
-  const selectedQty = parseQuantityValue(selectedQuantity.value)
-  console.log(selectedQty)
-  console.log(newQuantity)
-  totalPrice.value = Number((props.price * selectedQty * newQuantity).toFixed(2))
-  
-  updateCount(newQuantity)
-
+  const newQuantity = countProduct.value + 1;
+  updateCount(newQuantity);
 }
-
 
 function decreaseCount() {
   if (countProduct.value > 1) {
-    const newQuantity = countProduct.value - 1
-    countProduct.value = newQuantity
-    
-    // Пересчитываем totalPrice с учетом выбранного количества
-    const selectedQty = parseQuantityValue(selectedQuantity.value) //
-    console.log(selectedQty)
-    console.log(selectedQty)
-    totalPrice.value = Number(((props.price) * selectedQty * newQuantity).toFixed(2))
-    
-    // updateCount(newQuantity)
+    const newQuantity = countProduct.value - 1;
+    updateCount(newQuantity);
   }
 }
-
-
-  watch(selectedQuantity, (newVal) => {
-    if(newVal){
-    selectedQuantity.value = newVal
-    updateCount(countProduct.value)
-    }
-  })
+  // watch(selectedQuantity, (newVal) => {
+  //   if(newVal){
+  //   selectedQuantity.value = newVal
+  //   updateCount(countProduct.value)
+  //   }
+  // })
 
 
 const removeItem = () => {
@@ -190,6 +203,7 @@ onMounted(() => {
   // Пересчитываем цену после инициализации
   recalculateTotalPrice()
 })
+
 
 watch(totalPrice, (newVal) => {
   console.log('Цена обновлена:', newVal)
@@ -235,15 +249,18 @@ onUnmounted(() => {
   stopSelectedQuantityWatch()
   stopTotalPriceWatch()
 })
-
-// Функция для пересчета цены
 const recalculateTotalPrice = () => {
   if (selectedQuantity.value && props.price) {
-    const selectedQty = parseFloat(selectedQuantity.value.value) || 1
-    totalPrice.value = props.price * selectedQty * countProduct.value
+    const selectedQtyValue = typeof selectedQuantity.value === 'object' ? 
+      parseFloat(selectedQuantity.value.value) || 1 : 1;
+    totalPrice.value = props.price * selectedQtyValue * countProduct.value;
+  } else {
+    totalPrice.value = props.price * countProduct.value;
   }
+  
+  // УВЕДОМЛЯЕМ РОДИТЕЛЬСКИЙ КОМПОНЕНТ ОБ ИЗМЕНЕНИИ
+  emit('update-total');
 }
-
 
 </script>
 
@@ -265,9 +282,9 @@ const recalculateTotalPrice = () => {
         <div class="product-info_quantity">
           {{ displayVariant }}
            <Quantity
-           :isAtive="props.variant"
-            :list="props.countitemproduct_set || []"
-            @updateQuantity="updateTotalPrice"
+           :list="props.countitemproduct_set"
+  @updateQuantity="updateTotalPrice"
+  :selected="props.variant"
 
           />
         </div>

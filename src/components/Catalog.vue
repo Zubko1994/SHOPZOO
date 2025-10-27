@@ -230,6 +230,7 @@ const selectedTypeGoods = (category: number[] | null) => {
   pageNumber.value = 0
 }
 
+
 const selectedPromotion = ref(false)
 const promotionProducts = () => {
   selectedPromotion.value = !selectedPromotion.value
@@ -244,14 +245,14 @@ const showFilters = ref(false)
 
 const filterButton = () => {
   console.log('клик по фильтру')
-showFilters.value = !showFilters.value
-isActiveWindowFilters.value = true
-emit('isActive', isActiveWindowFilters.value)
+  showFilters.value = !showFilters.value
+  isActiveWindowFilters.value = true
+  emit('isActive', isActiveWindowFilters.value)
 }
 
 const closeFilters = () => {
- showFilters.value = false
- isActiveWindowFilters.value = false;
+  showFilters.value = false
+  isActiveWindowFilters.value = false;
   emit('isActive', isActiveWindowFilters.value);
 }
 
@@ -530,8 +531,8 @@ watch([choiceCategory, selectedCategory, choiceBrand], () => {
                 
                 <div class="line-active"></div>
                 <BrendsNamesFiltersAll @hasBrandResult="hasResult" @searchBrand="handleSearchBrand"  class="brends" @upBrand="upBrand" />
-                <div class="wrapper-button">
-                  <Button @click="closeFilters" class="show-goods" kind="primary" v-if="hasResultBrand"
+                <div @click="closeFilters" class="wrapper-button">
+                  <Button  class="show-goods" kind="primary" v-if="hasResultBrand"
                     >Применить фильтры</Button
                   >
                 </div>
@@ -1046,7 +1047,7 @@ mix-blend-mode: multiply;
     position: fixed;
     top: 0;
     left: 0; // Добавляем для растягивания слева
-    z-index: 2600;
+     z-index: 9000;
     top: 40px;
     background-color: var(--white);
     margin: 0; // Убираем центрирование

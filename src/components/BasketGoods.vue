@@ -99,11 +99,11 @@ interface CartItem {
   image_prev: string
   title: string
   price: number
-  quantity: string
-  variant: string
-  countitemproduct_set: string[],
+  quantity: number  // Измените с string на number
+  variant: any  // Измените с string на any
+  countitemproduct_set: string[]
   totalCost: number
-  selectedQuantity?: {value: string, unit: string} // Добавляем опциональное поле
+  selectedQuantity?: {value: string, unit: string}
 }
 
 const selectedQuantity = ref<number | null>(null)
@@ -115,13 +115,15 @@ const forceUpdate = ref(0)
 // Функция загрузки корзины из Local Storage
 const loadCart = () => {
   try {
-    const cartData = localStorage.getItem('cart')
-    cartItems.value = cartData ? JSON.parse(cartData) : []
-    // Сохраняем общую стоимость в localStorage
-    localStorage.setItem('totalCost', totalCost.value)
+    const cartData = localStorage.getItem('cart');
+    cartItems.value = cartData ? JSON.parse(cartData) : [];
+    console.log('Cart loaded:', cartItems.value.length, 'items');
+    
+    // Форсируем обновление вычисляемых свойств
+    forceUpdate.value++;
   } catch (error) {
-    console.error('Error loading cart:', error)
-    cartItems.value = []
+    console.error('Error loading cart:', error);
+    cartItems.value = [];
   }
 }
 
@@ -134,24 +136,32 @@ console.log(quantityitem.value)
 }
 
 const totalCost = computed(() => {
-  return cartItems.value.reduce((total, item) => {
-    const quantity = Number(item.quantity) || 1
-    const price = Number(item.price) || 0
-    let selectedQty = 1
-
-    // Получаем значение фасовки из правильного поля
-    if (item.selectedQuantity && item.selectedQuantity.value) {
-      selectedQty = parseFloat(item.selectedQuantity.value) || 1
-    } else if (item.variant && item.variant.value) {
-      selectedQty = parseFloat(item.variant.value) || 1
+  forceUpdate.value; // Заставляем пересчитывать при изменении forceUpdate
+  
+  const total = cartItems.value.reduce((total, item) => {
+    const quantity = Number(item.quantity) || 1;
+    const price = Number(item.price) || 0;
+    
+    // Получаем числовое значение фасовки
+    let selectedQtyValue = 1;
+    if (item.selectedQuantity && typeof item.selectedQuantity === 'object') {
+      selectedQtyValue = parseFloat(item.selectedQuantity.value) || 1;
+    } else if (item.variant && typeof item.variant === 'object') {
+      selectedQtyValue = parseFloat(item.variant.value) || 1;
     } else if (typeof item.variant === 'string') {
-      const match = item.variant.match(/(\d+\.?\d*)\s*(.*)/)
-      selectedQty = match ? parseFloat(match[1]) : 1
+      const match = item.variant.match(/(\d+\.?\d*)\s*(.*)/);
+      selectedQtyValue = match ? parseFloat(match[1]) : 1;
     }
-
-    return total + (price * selectedQty * quantity)
-  }, 0).toFixed(2)
-})
+    
+    const itemTotal = price * selectedQtyValue * quantity;
+    console.log(`Item: ${item.title}, Qty: ${quantity}, Price: ${price}, SelectedQty: ${selectedQtyValue}, Total: ${itemTotal}`);
+    
+    return total + itemTotal;
+  }, 0);
+  
+  console.log('Total cart cost:', total);
+  return total.toFixed(2);
+});
 // Функция обновления количества товара
 // const updateQuantity = (id: number, variant: string, newQuantity: number) => {
 //   if (newQuantity < 1) return
@@ -173,9 +183,8 @@ const removeItem = (id: number, variant: any, title: string) => {
   
   const cart = JSON.parse(localStorage.getItem('cart') || '[]')
   
-  // Правильно фильтруем товары для удаления
   const updatedCart = cart.filter((item: CartItem) => {
-    // Если variant - объект, сравниваем по value и unit
+    // Упростите логику сравнения
     if (variant && typeof variant === 'object') {
       return !(
         item.id === id && 
@@ -183,13 +192,11 @@ const removeItem = (id: number, variant: any, title: string) => {
         item.variant?.value === variant.value &&
         item.variant?.unit === variant.unit
       )
-    } 
-    // Если variant - строка, сравниваем как строку
-    else {
+    } else {
       return !(
         item.id === id && 
         item.title === title &&
-        item.variant === variant
+        JSON.stringify(item.variant) === JSON.stringify(variant)
       )
     }
   })
@@ -198,16 +205,42 @@ const removeItem = (id: number, variant: any, title: string) => {
   
   cartItems.value = updatedCart
   localStorage.setItem('cart', JSON.stringify(updatedCart))
-  forceUpdate.value++
   
   // Обновляем счетчик корзины
-  const totalCount = updatedCart.reduce((sum: number, item: CartItem) => sum + Number(item.quantity), 0)
+  const totalCount = updatedCart.reduce((sum: number, item: CartItem) => sum + (Number(item.quantity) || 1), 0)
   localStorage.setItem('cartCount', totalCount.toString())
+  
+  // Отправляем событие об обновлении счетчика
   window.dispatchEvent(new CustomEvent('cartCountUpdated', {
     detail: { count: totalCount }
   }))
+  
+  // Отправляем событие об обновлении корзины
+  window.dispatchEvent(new CustomEvent('cartUpdated'))
 }
 
+// Функция для миграции старых данных корзины
+const migrateCartData = () => {
+  const cart = JSON.parse(localStorage.getItem('cart') || '[]')
+  let needsUpdate = false
+  
+  const migratedCart = cart.map((item: any) => {
+    // Если quantity строка - преобразуем в число
+    if (typeof item.quantity === 'string') {
+      needsUpdate = true
+      return {
+        ...item,
+        quantity: Number(item.quantity) || 1
+      }
+    }
+    return item
+  })
+  
+  if (needsUpdate) {
+    localStorage.setItem('cart', JSON.stringify(migratedCart))
+    console.log('Cart data migrated successfully')
+  }
+}
 // Вычисляемые свойства для общей стоимости и количества
 
 // const totalCost = computed(() => {
@@ -229,11 +262,18 @@ const totalItems = computed(() => {
 })
 
 
-
 onMounted(() => {
+  migrateCartData()
   loadCart()
   window.addEventListener('cartUpdated', loadCart)
+  
+  // Добавьте слушатель для обновлений счетчика
+  window.addEventListener('cartCountUpdated', (event: any) => {
+    const totalCount = event.detail.count
+    localStorage.setItem('cartCount', totalCount.toString())
+  })
 })
+
 
 onUnmounted(() => {  // Использовать onUnmounted для очистки
   window.removeEventListener('cartUpdated', loadCart)
@@ -271,6 +311,8 @@ const fixAllTotalCosts = () => {
 //   fixAllTotalCosts()
 // })
 
+
+
 watch(cartItems, (newItems) => {
   const totalCount = newItems.reduce((sum, item) => sum + item.quantity, 0)
   
@@ -292,11 +334,24 @@ onMounted(() => {
   }))
 })
 
-// Обработчик обновления стоимости отдельного товара
 const handleUpdateTotal = () => {
+  console.log('Update total triggered');
   // Принудительно обновляем вычисляемое свойство totalCost
-  forceUpdate.value++
+  forceUpdate.value++;
+  loadCart(); // Перезагружаем корзину для верности
 }
+
+onMounted(() => {
+  loadCart();
+  window.addEventListener('cartUpdated', loadCart);
+  // ДОБАВЬТЕ ЭТОТ СЛУШАТЕЛЬ ДЛЯ ОБНОВЛЕНИЙ ОТДЕЛЬНЫХ ТОВАРОВ
+  window.addEventListener('cartItemUpdated', loadCart);
+})
+
+onUnmounted(() => {
+  window.removeEventListener('cartUpdated', loadCart);
+  window.removeEventListener('cartItemUpdated', loadCart);
+})
  
 </script>
 

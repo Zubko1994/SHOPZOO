@@ -4,6 +4,9 @@
 import { ref, computed, watch } from 'vue'
 import Text from '../components/Text.vue'
 import Button from './Button.vue'
+import { useRouter } from 'vue-router'
+
+const router = useRouter() 
 
 interface Product {
   id: number
@@ -30,10 +33,27 @@ const filteredProducts = computed(() => {
 })
 
 const selectProduct = (product: Product) => {
+  console.log('Selecting product in SearchDropdown:', product.id, product.title)
+  
+  // ДОБАВЬТЕ ПРОВЕРКУ И ЛОГИРОВАНИЕ
+  if (!product || !product.id) {
+    console.error('Invalid product selected:', product)
+    return
+  }
+  
+  console.log('Navigating to product from SearchDropdown:', product.id)
+  
+  // СОХРАНИТЕ ТОВАР В localStorage
+  localStorage.setItem('currentProduct', JSON.stringify(product))
+  
+  // ВЫЗОВИТЕ EMIT ПЕРЕД НАВИГАЦИЕЙ
   emit('selectProduct', product)
-
   emit('closeDropdown')
-}
+  
+  // ПЕРЕЙДИТЕ НА СТРАНИЦУ ТОВАРА
+  router.push(`/productdescription/${product.id}`)
+} 
+
 </script>
 
 <template>
@@ -91,7 +111,7 @@ const selectProduct = (product: Product) => {
   overflow-y: auto;
   margin-right: 12px;
   margin-left: 30px;
-  top: 44px;
+
 }
 
 .search-dropdown::-webkit-scrollbar {
@@ -240,5 +260,98 @@ const selectProduct = (product: Product) => {
 
 .link_button {
   color: var(--white);
+}
+
+@media (max-width: 992px) {
+  .search-dropdown {
+    position: fixed !important;
+    top: 60px !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    max-height: none !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+    z-index: 10001;
+  }
+  
+  .dropdown-content {
+    max-height: calc(100vh - 60px);
+  }
+  
+  .dropdown-item {
+    padding: 16px;
+  }
+  
+  .product-image {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .product-title {
+    font-size: 16px;
+  }
+  
+  .no-results {
+    position: fixed;
+    top: 60px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    max-height: none;
+    margin: 0;
+    border-radius: 0;
+    padding: 40px 20px;
+    justify-content: center;
+    padding-top: 100px;
+  }
+}
+
+@media (max-width: 992px) {
+  .search-dropdown {
+    position: fixed !important;
+    top: 90px !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    max-height: none !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+    z-index: 10001;
+    border: none !important; // ДОБАВЬТЕ ЭТУ СТРОЧКУ
+    box-shadow: none !important; // ДОБАВЬТЕ ЭТУ СТРОЧКУ
+  }
+  
+  .dropdown-content {
+    max-height: calc(100vh - 60px);
+    padding: 0; // ДОБАВЬТЕ ЭТУ СТРОЧКУ
+  }
+  
+  .dropdown-item {
+    padding: 16px;
+  }
+  
+  .product-image {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .product-title {
+    font-size: 16px;
+  }
+  
+  .no-results {
+    position: fixed;
+    top: 90px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    max-height: none;
+    margin: 0;
+    border-radius: 0;
+    padding: 40px 20px;
+    justify-content: center;
+    padding-top: 100px;
+  }
 }
 </style>

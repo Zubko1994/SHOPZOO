@@ -185,6 +185,18 @@ onMounted(() => {
   loadProductData()
 })
 
+onMounted(() => {
+  // Слушаем обновления корзины
+  window.addEventListener('cartItemUpdated', (event: any) => {
+    const updatedItem = event.detail;
+    if (updatedItem.id === product.value.id) {
+      // Синхронизируем выбранную фасовку
+      selectedQuantity.value = updatedItem.selectedQuantity;
+      recalculateTotalPrice();
+    }
+  });
+});
+
 onUnmounted(() => {
   document.removeEventListener('localStorageChanged', handleStorageChange)
   window.removeEventListener('storage', handleStorageChange)
@@ -200,6 +212,32 @@ watch(
     }
   }
 )
+
+// // ОБНОВИТЬ ФУНКЦИЮ ДЛЯ МОДАЛЬНОГО ОКНА
+// const updateTotalPrice = (quantity: any) => {
+//   selectedQuantity.value = quantity;
+//   recalculateTotalPrice();
+  
+//   // НЕМЕДЛЕННО ОБНОВЛЯЕМ КОРЗИНУ
+//   const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+//   const updatedCart = cart.map((item: any) => {
+//     if (item.id === product.value.id && item.title === product.value.title) {
+//       const selectedQtyValue = typeof quantity === 'object' ? 
+//         parseFloat(quantity.value) || 1 : 1;
+      
+//       return {
+//         ...item,
+//         variant: quantity,
+//         selectedQuantity: quantity,
+//         totalCost: (Number(product.value.price) * selectedQtyValue * countProduct.value).toFixed(2)
+//       };
+//     }
+//     return item;
+//   });
+  
+//   localStorage.setItem('cart', JSON.stringify(updatedCart));
+//   window.dispatchEvent(new CustomEvent('cartUpdated'));
+// }
 
 // const loadProductData = () => {
 //   isLoading.value = true
@@ -260,6 +298,26 @@ const updateTotalPrice = (quantity: any) => {
     customWeight.value = '';
   }
   recalculateTotalPrice()
+  
+  // НЕМЕДЛЕННО ОБНОВЛЯЕМ КОРЗИНУ ЕСЛИ ТОВАР УЖЕ В КОРЗИНЕ
+  const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+  const updatedCart = cart.map((item: any) => {
+    if (item.id === product.value.id && item.title === product.value.title) {
+      const selectedQtyValue = typeof quantity === 'object' ? 
+        parseFloat(quantity.value) || 1 : 1;
+      
+      return {
+        ...item,
+        variant: quantity,
+        selectedQuantity: quantity,
+        totalCost: (Number(product.value.price) * selectedQtyValue * item.quantity).toFixed(2)
+      };
+    }
+    return item;
+  });
+  
+  localStorage.setItem('cart', JSON.stringify(updatedCart));
+  window.dispatchEvent(new CustomEvent('cartUpdated'));
 }
 
 const safeSelectedQuantity = computed(() => {
@@ -305,6 +363,32 @@ const setDefaultQuantity = () => {
     recalculateTotalPrice();
   }
 };
+
+// ОБНОВИТЬ ФУНКЦИЮ ДЛЯ МОДАЛЬНОГО ОКНА
+const updateQuantityInModal = (quantity: any) => {
+  selectedQuantity.value = quantity;
+  recalculateTotalPrice();
+  
+  // НЕМЕДЛЕННО ОБНОВЛЯЕМ КОРЗИНУ
+  const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+  const updatedCart = cart.map((item: any) => {
+    if (item.id === product.value.id && item.title === product.value.title) {
+      const selectedQtyValue = typeof quantity === 'object' ? 
+        parseFloat(quantity.value) || 1 : 1;
+      
+      return {
+        ...item,
+        variant: quantity,
+        selectedQuantity: quantity,
+        totalCost: (Number(product.value.price) * selectedQtyValue * countProduct.value).toFixed(2)
+      };
+    }
+    return item;
+  });
+  
+  localStorage.setItem('cart', JSON.stringify(updatedCart));
+  window.dispatchEvent(new CustomEvent('cartUpdated'));
+}
 
 // Вызываем при загрузке данных
 const loadProductData = () => {
@@ -403,8 +487,16 @@ function decreaseCount() {
 // }
 
 function addProduct() {
+  // Используем выбранную фасовку или первую из списка
+  const selectedVariant = selectedQuantity.value || 
+    (product.value.countitemproduct_set && product.value.countitemproduct_set.length > 0 ? 
+     product.value.countitemproduct_set[0] : null);
+
+  const selectedQtyValue = typeof selectedVariant === 'object' ? 
+    parseFloat(selectedVariant.value) || 1 : 1;
+
   const productToAdd = {
-    id: props.id,
+    id: product.value.id,
     image_prev: product.value.image_prev,
     description: product.value.description,
     key_features: product.value.key_features,
@@ -412,44 +504,45 @@ function addProduct() {
     countitemproduct_set: product.value.countitemproduct_set,
     title: product.value.title,
     price: Number(product.value.price),
-    quantity: countProduct.value, // количество упаковок
-    variant: selectedQuantity.value, // выбранная фасовка
-    // Правильный расчет стоимости
+    quantity: countProduct.value, 
+    variant: selectedVariant,
+    selectedQuantity: selectedVariant,
     totalCost: (
       Number(product.value.price) * 
-      (parseFloat(selectedQuantity.value?.value) || 1) * 
+      selectedQtyValue * 
       countProduct.value
     ).toFixed(2),
   }
 
-  console.log('Adding product to cart:', productToAdd)
+  console.log('Adding product to cart with variant:', selectedVariant)
 
   const cart = JSON.parse(localStorage.getItem('cart') || '[]')
-
-  // Правильный ключ для сравнения товаров
-  const productKey = `${productToAdd.id}-${productToAdd.variant?.value}-${productToAdd.variant?.unit}-${productToAdd.title}`
+  
+  const productKey = `${productToAdd.id}-${selectedQtyValue}-${productToAdd.title}`
 
   const existingIndex = cart.findIndex(
-    (item) => 
-      `${item.id}-${item.variant?.value}-${item.variant?.unit}-${item.title}` === productKey
+    (item: any) => {
+      const itemQtyValue = typeof item.variant === 'object' ? 
+        parseFloat(item.variant.value) || 1 : 1;
+      const itemKey = `${item.id}-${itemQtyValue}-${item.title}`;
+      return itemKey === productKey;
+    }
   )
 
   if (existingIndex !== -1) {
-    // Обновляем существующий товар
-    cart[existingIndex].quantity += productToAdd.quantity
-    // Пересчитываем стоимость
+    cart[existingIndex].quantity += productToAdd.quantity;
     cart[existingIndex].totalCost = (
       Number(cart[existingIndex].price) *
-      (parseFloat(cart[existingIndex].variant?.value) || 1) *
+      selectedQtyValue *
       cart[existingIndex].quantity
-    ).toFixed(2)
+    ).toFixed(2);
   } else {
-    cart.push(productToAdd)
+    cart.push(productToAdd);
   }
 
-  localStorage.setItem('cart', JSON.stringify(cart))
-  window.dispatchEvent(new CustomEvent('cartUpdated'))
-  showModalProductAddBasket()
+  localStorage.setItem('cart', JSON.stringify(cart));
+  window.dispatchEvent(new CustomEvent('cartUpdated'));
+  showModalProductAddBasket();
 }
 
 
@@ -699,7 +792,8 @@ onUnmounted(() => {
         <div class="product-info_quantity">
            <Quantity
             :list="product.countitemproduct_set || []"
-            @updateQuantity="updateTotalPrice"
+            @updateQuantity="updateQuantityInModal"
+            
           />
            <!-- Блок для кастомного веса -->
 <div v-if="showCustomWeightButton" class="custom-weight-section">
@@ -758,7 +852,7 @@ onUnmounted(() => {
         <div>
         <div class="wrapper-cost">
         <div v-if="product.sale && product.sale.percent > 0" class="total-price">{{(totalPrice * (1 - product.sale.percent / 100)).toFixed(2)}} BYN</div>
-        <div class="cost">{{ totalPrice.toFixed(2) }} BYN</div>
+        <div  class="cost">{{ totalPrice.toFixed(2) }} BYN</div>
       </div>
       </div>
       </div>

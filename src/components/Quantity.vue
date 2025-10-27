@@ -5,6 +5,11 @@ import Button from './Button.vue';
 
 const selectedItem = ref<string | null>(null)
 
+const handleBlur = (event: FocusEvent) => {
+  // НЕ ДЕЛАЕМ НИЧЕГО ПРИ ПОТЕРЕ ФОКУСА - ФАСОВКА ОСТАНЕТСЯ АКТИВНОЙ
+  console.log('Blur event, but keeping selection');
+}
+
 const props = defineProps<{
   list: string[],
   value: number,
@@ -30,6 +35,20 @@ watch(() => props.selected, (newSelected) => {
   }
 })
 
+const isActive = (item: any) => {
+  if (!props.selected) return false;
+  
+  if (typeof item === 'object' && typeof props.selected === 'object') {
+    return item.value === props.selected.value && item.unit === props.selected.unit;
+  }
+  
+  // Для обратной совместимости со строковым форматом
+  const itemStr = typeof item === 'object' ? `${item.value} ${item.unit}`.trim() : item;
+  const selectedStr = typeof props.selected === 'object' ? 
+    `${props.selected.value} ${props.selected.unit}`.trim() : props.selected;
+  
+  return itemStr === selectedStr;
+}
 
 const listItems = computed(() => {
   console.log('List in QuantityWithPrice:', props.list)
@@ -47,7 +66,7 @@ function quantityHandler (item: string){
 
 <template>
   <div class="wrapper-quantity">
-    <Button v-for="item in props.list" @custom-click="quantityHandler(item)" kind="quantity" :isActive="item === selectedItem || (!selectedItem && item === listItems[0])" >
+    <Button v-for="item in props.list" @custom-click="quantityHandler(item)" kind="quantity"  :isActive="isActive(item)"  >
       {{ item.value }} {{ item.unit }}
     </Button>
   </div>

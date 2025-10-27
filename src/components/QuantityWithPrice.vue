@@ -10,8 +10,29 @@ const props = defineProps<{
   value?: number,
   unit?: string[],
   price?: number,
-selected?: string | null
+selected?: any
 }>()
+
+const isActive = (item: any) => {
+  if (!props.selected) return false;
+  
+  if (typeof item === 'object' && typeof props.selected === 'object') {
+    return item.value === props.selected.value && item.unit === props.selected.unit;
+  }
+  
+  const itemStr = typeof item === 'object' ? `${item.value} ${item.unit}`.trim() : item;
+  const selectedStr = typeof props.selected === 'object' ? 
+    `${props.selected.value} ${props.selected.unit}`.trim() : props.selected;
+  
+  return itemStr === selectedStr;
+}
+
+
+
+const handleBlur = (event: FocusEvent) => {
+  // НЕ ДЕЛАЕМ НИЧЕГО ПРИ ПОТЕРЕ ФОКУСА - ФАСОВКА ОСТАНЕТСЯ АКТИВНОЙ
+  console.log('Blur event, but keeping selection');
+}
 
 const emit = defineEmits(['updateQuantity']);
 
@@ -45,7 +66,7 @@ function quantityHandler(item: any) {
 
 <template>
   <div class="wrapper-quantity">
-    <Button v-for="item in listItems" :key="item" @custom-click="quantityHandler(item)"  kind="quantity-price" :isActive="item === selectedItem || (!selectedItem && item === listItems[0])">
+    <Button v-for="item in listItems" :key="item" @custom-click="quantityHandler(item)"  kind="quantity-price" :isActive="isActive(item)" >
       <div class="wrapper">
         <div>{{item.value}} {{item.unit}}</div>
         <div class="quantity-price-price">{{(props.price*item.value).toFixed(2)}} BYN</div>

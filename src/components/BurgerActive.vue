@@ -1,7 +1,6 @@
 <!-- @format -->
 
 <script setup lang="ts">
-import { ref } from 'vue'
 import Input from './Input.vue'
 import Navigation from './Navigation.vue'
 import Button from './Button.vue'
@@ -9,6 +8,87 @@ import Link from './Link.vue'
 import Text from './Text.vue'
 import FormBackCall from '../components/FormBackCall.vue'
 import AcceptRequest from './AcceptRequest.vue'
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
+import { useRouter } from 'vue-router'
+import SearchDropdown from './SearchDropdown.vue'
+
+const emit = defineEmits(['closeMenu'])
+
+const router = useRouter()
+
+// ДОБАВЬТЕ ПРОПСЫ ДЛЯ ПОЛУЧЕНИЯ ПРОДУКТОВ
+const props = defineProps<{
+  products?: any[]
+}>()
+
+// ДОБАВЬТЕ СОСТОЯНИЯ ДЛЯ ПОИСКА
+const searchQuery = ref('')
+const showDropdown = ref(false)
+
+// ДОБАВЬТЕ ОБРАБОТЧИКИ ДЛЯ ПОИСКА
+const handleSearch = (event: Event) => {
+  searchQuery.value = (event.target as HTMLInputElement).value
+  showDropdown.value = searchQuery.value.length > 0
+}
+const isMenuOpen = ref(false)
+
+const closeMenu = () => {
+  isMenuOpen.value = false
+}
+
+
+const handleSelectProduct = (product: any) => {
+  console.log('Product selected in BurgerActive:', product?.id)
+  
+  // ДОБАВЬТЕ ПРОВЕРКУ И ПЕРЕХОД НА СТРАНИЦУ ТОВАРА
+  if (product && product.id) {
+    console.log('Navigating from BurgerActive to product:', product.id)
+    localStorage.setItem('currentProduct', JSON.stringify(product))
+    emit('closeMenu')
+    closeMenu()
+    router.push(`/productdescription/${product.id}`)
+  }
+  
+  searchQuery.value = ''
+  showDropdown.value = false
+}
+
+const handleCloseDropdown = () => {
+  showDropdown.value = false
+}
+
+// Закрываем dropdown при клике вне компонента
+const handleClickOutside = (event: Event) => {
+  const target = event.target as HTMLElement;
+  if (!target.closest('.search-container')) { 
+    showDropdown.value = false;
+  }
+}
+
+// Добавляем обработчик клика вне компонента
+onMounted(() => {
+  document.addEventListener('click', handleClickOutside);
+});
+
+onUnmounted(() => {
+  document.removeEventListener('click', handleClickOutside);
+});
+const showMobileSearch = ref(false)
+
+
+// Функции для управления мобильным поиском
+const openMobileSearch = () => {
+  showMobileSearch.value = true
+}
+
+const closeMobileSearch = () => {
+  showMobileSearch.value = false
+  searchQuery.value = ''
+}
+
+
+
+
 
 const show = ref(false);
 
@@ -44,11 +124,23 @@ const closeAccept = () => {
   <div class="menu">
     <div class="container">
       <div class="menu__wrapper">
+        <div class="search-container">
         <div class="search-field">
     <label for="search"></label>
-    <input class="search field-input" type="text" placeholder="Поиск">
+    <input class="search field-input" type="text" placeholder="Поиск" :value="searchQuery"
+          @input="handleSearch"
+          @focus="showDropdown = searchQuery.length > 0">
     <img class="magnifier" src="../assets/image/Search.png" alt="иконка лупы">
   </div>
+  <SearchDropdown 
+        class="search-dropdown"
+        :searchQuery="searchQuery"
+        :products="products || []"
+        :isVisible="showDropdown"
+        @selectProduct="handleSelectProduct"
+        @closeDropdown="handleCloseDropdown"
+      />
+      </div>
         <Navigation class="navigation" color="black" direction="vertical"/>
         <RouterLink to="/basket" :class="['item', `item-${color}`]"
         >
@@ -108,6 +200,7 @@ const closeAccept = () => {
 .menu {
   padding: 0px 10px 24px 10px;
   background: var(--white);
+  z-index: 5;
 }
 
 .backcall {
@@ -119,6 +212,39 @@ const closeAccept = () => {
   border: 1px solid rgb(167, 172, 177);
   padding: 8px 2px;
   margin: 0 auto;
+}
+
+
+.mobile-search-dropdown {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  max-height: none !important;
+  margin: 0 !important;
+  border-radius: 0 !important;
+  z-index: 10001;
+}
+
+
+.search-dropdown {
+  position: absolute;
+  top: 100%; /* Располагается сразу под полем поиска */
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  margin-top: 4px; /* Небольшой отступ от поля поиска */
+}
+// АДАПТИРУЙТЕ СТИЛИ ДЛЯ МОБИЛЬНЫХ УСТРОЙСТВ
+@media (max-width: 992px) {
+  .mobile-search-container {
+    padding: 16px;
+  }
+  
+  .field-input {
+    font-size: 16px; // Увеличиваем для мобильных
+  }
 }
 
 .search-field {
@@ -204,5 +330,24 @@ const closeAccept = () => {
   justify-content: center;
 }
 
+/* Адаптация для мобильных устройств */
+@media (max-width: 992px) {
+  .search-container {
+    flex: 1 1 auto;
+  }
+  
+  .search-dropdown {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 10001;
+    margin-top: 0;
+  }
+}
 
+.search-container {
+  position: relative;
+}
 </style>

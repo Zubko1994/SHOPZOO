@@ -28,6 +28,7 @@ const props = withDefaults(
   guaranteed_analysis: string
   nutritional_supplements: string
   brand: {id: number; name: string}
+  variant: string  
 }>(),
 {
     promotion: "Акция",
@@ -41,13 +42,14 @@ const totalPrice = ref(props.price)
   const totalCost = (props.price * quantity).toFixed(2)
 
 
-const updateTotalPrice = (quantity: string) => {
-  selectedQuantity.value = quantity
-  console.log(quantity)
-
-  const info = JSON.parse(JSON.stringify(quantity))
-  console.log(info.value)
-  totalPrice.value = (props.price * info.value).toFixed(2)
+const updateTotalPrice = (quantity: any) => {
+  selectedQuantity.value = quantity;
+  console.log('Selected quantity updated:', quantity);
+  
+  // ПЕРЕСЧИТЫВАЕМ ЦЕНУ С УЧЕТОМ ВЫБРАННОЙ ФАСОВКИ
+  const selectedQtyValue = typeof quantity === 'object' ? 
+    parseFloat(quantity.value) || 1 : 1;
+  totalPrice.value = Number((props.price * selectedQtyValue * countProduct.value).toFixed(2));
 }
 
 // АВТОМАТИЧЕСКИЙ ВЫБОР ПЕРВОЙ ФАСОВКИ
@@ -69,24 +71,26 @@ const emit = defineEmits(['updateCategory', 'addInBasket'])
 
 
 function addProduct() {
+  // Используем выбранную фасовку или первую из списка
+  const selectedVariant = selectedQuantity.value || 
+    (props.countitemproduct_set && props.countitemproduct_set.length > 0 ? props.countitemproduct_set[0] : null);
+
   let selectedQtyValue = 1;
   let selectedQtyUnit = '';
 
   // Парсим выбранную фасовку
-  if (selectedQuantity.value) {
-    if (typeof selectedQuantity.value === 'string') {
-      const match = selectedQuantity.value.match(/(\d+\.?\d*)\s*(.*)/);
+  if (selectedVariant) {
+    if (typeof selectedVariant === 'object') {
+      selectedQtyValue = parseFloat(selectedVariant.value) || 1;
+      selectedQtyUnit = selectedVariant.unit || '';
+    } else if (typeof selectedVariant === 'string') {
+      const match = selectedVariant.match(/(\d+\.?\d*)\s*(.*)/);
       if (match) {
         selectedQtyValue = parseFloat(match[1]);
         selectedQtyUnit = match[2] || '';
       }
-    } else {
-      // Если это объект
-      selectedQtyValue = parseFloat(selectedQuantity.value.value) || 1;
-      selectedQtyUnit = selectedQuantity.value.unit || '';
     }
   }
-
   const productToAdd = {
     id: props.id,
     image_prev: props.image_prev,
@@ -96,41 +100,49 @@ function addProduct() {
     countitemproduct_set: props.countitemproduct_set,
     title: props.title,
     price: Number(props.price),
-    quantity: countProduct.value,
-    variant: selectedQuantity.value,
-    selectedQuantity: selectedQuantity.value,
+    quantity: countProduct.value, // Убедитесь, что это число
+    variant: selectedVariant,
+    selectedQuantity: selectedVariant,
     totalCost: (
-    Number(props.price) * 
-    (parseFloat(selectedQuantity.value?.value) || 1) * 
-    countProduct.value
-  ).toFixed(2),
+      Number(props.price) * 
+      selectedQtyValue * 
+      countProduct.value
+    ).toFixed(2),
   }
+
 
   console.log('Adding product to cart:', productToAdd)
 
-  const cart = JSON.parse(localStorage.getItem('cart') || '[]')
+    const cart = JSON.parse(localStorage.getItem('cart') || '[]')
   
-  const productKey = `${productToAdd.id}-${productToAdd.variant.value}-${productToAdd.variant.unit}-${productToAdd.title}`
+   // Создаем уникальный ключ с учетом фасовки
+   const productKey = `${productToAdd.id}-${selectedQtyValue}-${selectedQtyUnit}-${productToAdd.title}`
 
-  const existingIndex = cart.findIndex(
-    (item) => 
-      `${item.id}-${item.variant?.value}-${item.variant?.unit}-${item.title}` === productKey
-  )
-
-  if (existingIndex !== -1) {
-    cart[existingIndex].quantity += productToAdd.quantity
-    cart[existingIndex].totalCost = (
-      Number(cart[existingIndex].price) *
-      (parseFloat(cart[existingIndex].variant?.value) || 1) *
-      cart[existingIndex].quantity
-    ).toFixed(2)
-  } else {
-    cart.push(productToAdd)
+const existingIndex = cart.findIndex(
+  (item: any) => {
+    const itemQtyValue = typeof item.variant === 'object' ? 
+      parseFloat(item.variant.value) || 1 : 1;
+    const itemQtyUnit = typeof item.variant === 'object' ? item.variant.unit : '';
+    const itemKey = `${item.id}-${itemQtyValue}-${itemQtyUnit}-${item.title}`;
+    return itemKey === productKey;
   }
+)
 
-  localStorage.setItem('cart', JSON.stringify(cart))
-  window.dispatchEvent(new CustomEvent('cartUpdated'))
+if (existingIndex !== -1) {
+  cart[existingIndex].quantity += productToAdd.quantity;
+  const existingQtyValue = typeof cart[existingIndex].variant === 'object' ? 
+    parseFloat(cart[existingIndex].variant.value) || 1 : 1;
+  cart[existingIndex].totalCost = (
+    Number(cart[existingIndex].price) *
+    existingQtyValue *
+    cart[existingIndex].quantity
+  ).toFixed(2);
+} else {
+  cart.push(productToAdd);
+}
 
+localStorage.setItem('cart', JSON.stringify(cart));
+window.dispatchEvent(new CustomEvent('cartUpdated'));
 }
 
 
@@ -255,6 +267,24 @@ function decreaseCount() {
   }
 }
 
+onMounted(() => {
+  if (props.countitemproduct_set && props.countitemproduct_set.length > 0 && !selectedQuantity.value) {
+    selectedQuantity.value = props.countitemproduct_set[0];
+    updateTotalPrice(props.countitemproduct_set[0]);
+  }
+})
+
+// watch(cartItems, (newItems) => {
+//   const totalCount = newItems.reduce((sum, item) => sum + (Number(item.quantity) || 1), 0)
+  
+//   // Сохраняем в localStorage
+//   localStorage.setItem('cartCount', totalCount.toString())
+  
+//   // Отправляем событие
+//   window.dispatchEvent(new CustomEvent('cartCountUpdated', {
+//     detail: { count: totalCount }
+//   }))
+// }, { deep: true })
 
 </script>
 
@@ -327,7 +357,7 @@ function decreaseCount() {
            <Quantity
             :list="props.countitemproduct_set || []"
             @updateQuantity="updateTotalPrice"
-            
+            :selected="variant"
           />
         </div>
       </div>
