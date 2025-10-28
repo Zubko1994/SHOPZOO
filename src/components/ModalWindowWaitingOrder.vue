@@ -26,7 +26,7 @@ const closeAccept = () => {
       </div>
       <div class="register__wrapper">
         <div class="checkmark">
-          <img class="mark" src="../assets/image/shape.svg" alt="галочка" />
+          <img class="mark" src="../assets/image/Shape.svg" alt="галочка" />
         </div>
         <div class="wrapper__info">
         <Text
