@@ -35,7 +35,7 @@ const closeAccept = () => {
         <div class="checkmark">
           <img
             class="mark"
-            src="../assets/image/shape.svg"
+            src="../assets/image/Shape.svg"
             alt="галочка"
           />
         </div>
