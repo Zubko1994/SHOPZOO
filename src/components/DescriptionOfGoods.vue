@@ -773,7 +773,7 @@ onUnmounted(() => {
             </div>
             <div class="checkmark">
           <img class="mark" src="../assets/image/Shape.svg" alt="галочка" />
-          <span class="mark-title">Товар добавлен в корзину</span>
+          <span class="mark-title">Товар добавлен в корзину.</span>
           </div>
           <div class="wrapper-card">
     <div class="wrapper-card_left">
